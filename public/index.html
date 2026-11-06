@@ -1225,7 +1225,7 @@ function seedCategories() {
   return [...SEED_EXPENSE.map(([name, icon, color]) => ({ id: uid(), name, kind: 'expense', icon, color })), ...SEED_INCOME.map(([name, icon, color]) => ({ id: uid(), name, kind: 'income', icon, color }))];
 }
 function defaultSettings(name) {
-  return { userName: name || 'Джамшид', city: { ...DEFAULT_CITY }, baseCurrency: 'UZS', rates: { USD: 12100, EUR: 13900, updatedAt: dayKey(new Date()) }, car: { ...DEFAULT_CAR }, goals: { ...DEFAULT_GOALS } };
+  return { userName: name || 'Джамшид', city: { ...DEFAULT_CITY }, baseCurrency: 'UZS', rates: { USD: 12100, EUR: 13900, updatedAt: dayKey(new Date()), source: 'default' }, car: { ...DEFAULT_CAR }, goals: { ...DEFAULT_GOALS } };
 }
 function emptyData(name) { return { settings: defaultSettings(name), accounts: [], categories: seedCategories(), transactions: [], debts: [], tasks: [], shopping: [], carLogs: [], health: [] }; }
 
@@ -1252,7 +1252,7 @@ function normSettings(s) {
     userName: str(s.userName, 'Джамшид'),
     city: { ...city, name: str(city.name, DEFAULT_CITY.name), lat: toNum(city.lat, DEFAULT_CITY.lat), lon: toNum(city.lon, DEFAULT_CITY.lon) },
     baseCurrency: 'UZS',
-    rates: { ...rates, USD: toNum(rates.USD, 12100) || 12100, EUR: toNum(rates.EUR, 13900) || 13900, updatedAt: str(rates.updatedAt, dayKey(new Date())) },
+    rates: { ...rates, USD: toNum(rates.USD, 12100) || 12100, EUR: toNum(rates.EUR, 13900) || 13900, updatedAt: str(rates.updatedAt, dayKey(new Date())), source: ['cbu', 'manual', 'default'].includes(rates.source) ? rates.source : 'manual' },
     car: { ...car, model: str(car.model, DEFAULT_CAR.model), grossKWh: toNum(car.grossKWh, DEFAULT_CAR.grossKWh), usableKWh: toNum(car.usableKWh, DEFAULT_CAR.usableKWh) || DEFAULT_CAR.usableKWh, cltcRangeKm: toNum(car.cltcRangeKm, DEFAULT_CAR.cltcRangeKm), consumptionKWhPer100: toNum(car.consumptionKWhPer100, DEFAULT_CAR.consumptionKWhPer100) || DEFAULT_CAR.consumptionKWhPer100 },
     goals: { ...goals, steps: toNum(goals.steps, DEFAULT_GOALS.steps), sleepHours: toNum(goals.sleepHours, DEFAULT_GOALS.sleepHours), waterMl: toNum(goals.waterMl, DEFAULT_GOALS.waterMl) },
   };
@@ -1911,7 +1911,7 @@ async function updateRates(manual) {
   if (manual) { S.ui.ratesMsg = 'loading'; render(); }
   try {
     const r = await fetchCbuRates();
-    commit(['settings'], (d) => { d.settings.rates = { ...d.settings.rates, USD: r.USD, EUR: r.EUR, updatedAt: r.updatedAt }; });
+    commit(['settings'], (d) => { d.settings.rates = { ...d.settings.rates, USD: r.USD, EUR: r.EUR, updatedAt: r.updatedAt, source: 'cbu' }; });
     S.ui.ratesMsg = manual ? 'ok' : '';
   } catch (e) {
     S.ui.ratesMsg = manual ? 'err' : '';
@@ -3566,7 +3566,7 @@ ${geo && geo.status === 'error' ? `<div class="hint warn">Поиск недос�
 ${geo && geo.status === 'ok' ? (geo.results.length ? `<div class="geo-list">${geo.results.map((x, i) => `<button class="geo-item" data-act="geo-pick" data-i="${i}">${ic('map-pin')}<span style="flex:1;min-width:0"><div>${esc(x.name)}</div><div class="cs">${esc(x.sub)} · ${fmtNum(x.lat, 2)}, ${fmtNum(x.lon, 2)}</div></span>${ic('chevron-right')}</button>`).join('')}</div>` : '<div class="hint">Ничего не найдено</div>') : ''}
 </section>
 <section class="card set-sec" style="--d:3"><h3>Курсы валют</h3>
-<div class="hint">Для пересчёта итогов в сумы. Курс от ${esc(fmtDay(pDate(r.updatedAt), { year: true }))}.</div>
+<div class="hint">Для пересчёта итогов в сумы. ${r.source === 'cbu' ? `Курс ЦБ РУз от ${esc(fmtDay(pDate(r.updatedAt), { year: true }))}.` : r.source === 'manual' ? `Введён вручную ${esc(fmtDay(pDate(r.updatedAt), { year: true }))}.` : 'Ориентировочный курс — нажмите «Курс ЦБ», чтобы загрузить официальный.'}</div>
 <div class="fields two keep"><div class="field"><label for="st-usd">1 USD, сум</label><input id="st-usd" class="inp" inputmode="decimal" value="${esc(String(r.USD).replace('.', ','))}" data-ch="st-rate" data-cur="USD"></div><div class="field"><label for="st-eur">1 EUR, сум</label><input id="st-eur" class="inp" inputmode="decimal" value="${esc(String(r.EUR).replace('.', ','))}" data-ch="st-rate" data-cur="EUR"></div></div>
 <div class="row-flex"><button class="btn sm" data-act="rates-cbu" ${rm === 'loading' ? 'disabled' : ''}>${rm === 'loading' ? '<span class="spinner"></span>' : ic('refresh-cw')}Курс ЦБ (cbu.uz)</button><span class="small ${rm === 'err' ? 'warn' : rm === 'ok' ? 'pos' : 'faint'}">${rm === 'err' ? 'Не удалось получить курс ЦБ — введите вручную' : rm === 'ok' ? 'Курс обновлён' : ''}</span></div></section>
 <section class="card set-sec" style="--d:4"><h3>Цели здоровья</h3>
@@ -3593,7 +3593,7 @@ ${geo && geo.status === 'ok' ? (geo.results.length ? `<div class="geo-list">${ge
   },
 };
 CH['st-name'] = (el) => { const v = el.value.trim(); if (!v) { el.value = S.data.settings.userName; return; } commit(['settings'], (d) => { d.settings.userName = v; }); toast('Имя сохранено'); };
-CH['st-rate'] = (el) => { const v = Math.round(toNum(el.value.replace(',', '.'), NaN) * 100) / 100; if (!(v > 0)) { toast('Курс должен быть положительным числом'); render(); return; } commit(['settings'], (d) => { d.settings.rates = { ...d.settings.rates, [el.dataset.cur]: v, updatedAt: dayKey(new Date()) }; }); toast(`Курс ${el.dataset.cur} сохранён`); };
+CH['st-rate'] = (el) => { const v = Math.round(toNum(el.value.replace(',', '.'), NaN) * 100) / 100; if (!(v > 0)) { toast('Курс должен быть положительным числом'); render(); return; } commit(['settings'], (d) => { d.settings.rates = { ...d.settings.rates, [el.dataset.cur]: v, updatedAt: dayKey(new Date()), source: 'manual' }; }); toast(`Курс ${el.dataset.cur} сохранён`); };
 CH['st-goal'] = (el) => { const g = { ...S.data.settings.goals }; const st = { steps: g.steps, sleep: g.sleepHours, water: g.waterMl }; const map = { steps: 'steps', sleepHours: 'sleep', waterMl: 'water' }; st[map[el.dataset.k]] = el.value; if (!saveGoals(st)) render(); };
 CH['st-car'] = (el) => {
   const k = el.dataset.k; let v = el.value.trim();
@@ -3778,7 +3778,7 @@ function startApp() {
   viewEl = null; curRoute = null;
   go(routeFromHash());
   loadWeather();
-  if (S.data.settings.rates.updatedAt < dayKey(new Date())) updateRates(false);
+  { const rt = S.data.settings.rates; if (rt.source === 'default' || (rt.source === 'cbu' && rt.updatedAt < dayKey(new Date()))) updateRates(false); }
   if (!_started) {
     _started = true;
     setInterval(() => { if (S.data && !D.hidden) loadWeather(); }, 15 * 60 * 1000);
