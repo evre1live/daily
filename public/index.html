@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#06070A">
+<meta name="theme-color" content="#0A0A1C">
 <meta name="color-scheme" content="dark">
 <meta name="description" content="Kun — персональная панель дня: задачи, покупки, финансы, долги, авто, здоровье и погода.">
 <title>Kun</title>
@@ -12,18 +12,15 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
 <style>
-/* ============ Kun v3 — Liquid Glass (iOS 27 era) · tokens shared with iOS ============ */
-@property --c1{syntax:'<color>';inherits:true;initial-value:rgba(222,255,28,.16)}
-@property --c2{syntax:'<color>';inherits:true;initial-value:rgba(255,181,71,.10)}
-@property --c3{syntax:'<color>';inherits:true;initial-value:rgba(34,211,197,.12)}
-@property --c4{syntax:'<color>';inherits:true;initial-value:rgba(124,92,255,.11)}
+/* ============ Kun v4 — smooth gradient backdrop + matte frosted glass (Ron Design Lab style) · tokens shared with iOS ============ */
+@property --hov{syntax:'<number>';inherits:true;initial-value:0}
 :root{
-  --bg:#06070A; --panel-solid:#121318; --sidebar:#101116;
+  --bg:#0A0A1C; --panel-solid:#1A1B24; --sidebar:#101116;
   --fill:rgba(255,255,255,.055); --fill2:rgba(255,255,255,.085); --fill3:rgba(255,255,255,.12);
   --strip:rgba(0,0,0,.24); --rowbg:rgba(255,255,255,.012);
-  --stroke:rgba(255,255,255,.07); --stroke-strong:rgba(255,255,255,.12);
+  --stroke:rgba(255,255,255,.08); --stroke-strong:rgba(255,255,255,.13);
   --surface:#15161B; --surface2:rgba(255,255,255,.06); --surface3:rgba(255,255,255,.11);
-  --text:#FCFBFE; --text2:#A9A9B3; --text3:#74747F;
+  --text:#FFFFFF; --text2:rgba(255,255,255,.66); --text3:rgba(255,255,255,.5); --text-ph:rgba(255,255,255,.58);
   --lime:#DEFF1C; --lime2:#EDFE88; --lime3:#F5FFBC; --lime-ink:#0B0B0D; --lime-glow:rgba(222,255,28,.18); --olive:#4F5B13;
   --teal:#22D3C5; --violet:#7C5CFF; --amber:#FFB547;
   --income:#9BE77A; --expense:#FF6B5B; --warning:#FFC857;
@@ -34,20 +31,20 @@
   --sat:env(safe-area-inset-top,0px); --sab:env(safe-area-inset-bottom,0px);
   --sal:env(safe-area-inset-left,0px); --sar:env(safe-area-inset-right,0px);
   --sbw:264px; --rail:72px; --edge:14px; --pad:24px;
-  /* glass (driven by the «Стекло» slider) */
-  --g-fill:.071; --g-tint:.496; --g-blur:27px; --g-sat:169%; --p-tint:.672;
-  --g-rim:inset 0 1px 0 rgba(255,255,255,.30),inset 1px 0 0 rgba(255,255,255,.07),inset -1px 0 0 rgba(255,255,255,.04),inset 0 -1px 0 rgba(255,255,255,.05),inset 0 0 0 1px rgba(255,255,255,.07),inset 0 16px 24px -18px rgba(255,255,255,.16);
-  --g-drop:0 18px 44px -16px rgba(0,0,0,.65),0 2px 8px rgba(0,0,0,.2);
-  --pn-rim:inset 0 1px 0 rgba(255,255,255,.075),inset 0 0 0 1px rgba(255,255,255,.05);
+  /* matte frosted glass — driven by the «Стекло» slider (Прозрачное ↔ Матовое ↔ Плотное) and the backdrop palette.
+     widgets: blur + saturate + per-palette dim of the backdrop, dark tint, milky white gradient, gradient rim, grain.
+     navigation layer (--n-*): the same recipe, more opaque */
+  --g-blur:32px; --g-sat:145%; --g-dim:.8; --g-tint-rgb:18,19,28; --g-tint:.36; --g-milk:.14; --g-milk2:.05;
+  --n-blur:36px; --n-tint:.46; --n-milk:.18; --n-milk2:.08;
+  --g-rim-hi:.3; --g-rim-lo:.06;
+  --g-rim:inset 0 1px 0 rgba(255,255,255,.18),inset 0 0 0 1px rgba(255,255,255,.07);
+  --g-drop:0 24px 60px -24px rgba(0,0,0,.45),0 2px 6px -2px rgba(0,0,0,.2);
+  --pn-rim:inset 0 1px 0 rgba(255,255,255,.18);
+  /* film grain tiles (SVG turbulence, data URIs — self-contained): opaque tile for overlays, 4.5 % tile for surfaces */
+  --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.86' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='1.7 0 0 0 -.35 1.7 0 0 0 -.35 1.7 0 0 0 -.35 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --grain-s:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.86' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='1.7 0 0 0 -.35 1.7 0 0 0 -.35 1.7 0 0 0 -.35 0 0 0 0 .045'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   color-scheme:dark;
-  --c1:rgba(222,255,28,.16); --c2:rgba(255,181,71,.10); --c3:rgba(34,211,197,.12); --c4:rgba(124,92,255,.11);
-  transition:--c1 2.6s ease,--c2 2.6s ease,--c3 2.6s ease,--c4 2.6s ease;
 }
-html[data-sky=cloudy]{--c1:rgba(34,211,197,.13);--c2:rgba(120,136,160,.15);--c3:rgba(124,92,255,.09);--c4:rgba(222,255,28,.06)}
-html[data-sky=rain]{--c1:rgba(34,211,197,.15);--c2:rgba(59,130,246,.15);--c3:rgba(124,92,255,.10);--c4:rgba(222,255,28,.05)}
-html[data-sky=snow]{--c1:rgba(165,200,255,.14);--c2:rgba(34,211,197,.12);--c3:rgba(124,92,255,.08);--c4:rgba(255,255,255,.05)}
-html[data-sky=storm]{--c1:rgba(124,92,255,.17);--c2:rgba(59,91,219,.15);--c3:rgba(34,211,197,.09);--c4:rgba(255,181,71,.05)}
-html[data-sky=night]{--c1:rgba(124,92,255,.16);--c2:rgba(46,76,190,.16);--c3:rgba(34,211,197,.08);--c4:rgba(222,255,28,.05)}
 *,*::before,*::after{box-sizing:border-box}
 html{background:var(--bg);scrollbar-gutter:stable;-webkit-text-size-adjust:100%;text-size-adjust:100%;scrollbar-color:#34343A transparent;scrollbar-width:thin;overscroll-behavior-y:none}
 html.locked{overflow:hidden}
@@ -66,38 +63,41 @@ mark{background:rgba(222,255,28,.18);color:var(--lime);border-radius:3px;padding
 :focus-visible{outline:2px solid rgba(222,255,28,.65);outline-offset:2px;border-radius:10px}
 .num,.m,.big,.mid,.tx-amt,.kpi-v,.roll{font-variant-numeric:tabular-nums}
 
-/* ============ ambient background: drifting colour fields + grain (transform-only, paused when hidden) ============ */
-.bgfx{position:fixed;inset:0;z-index:0;pointer-events:none;background:var(--bg);overflow:hidden;contain:strict}
-.bf{position:absolute;width:74vmax;height:74vmax;border-radius:50%;opacity:0;will-change:transform}
-.bf1{left:-26vmax;top:-32vmax;background:radial-gradient(closest-side,var(--c1),transparent);animation:bfIn 1.8s ease-out .05s forwards,d1 54s ease-in-out infinite alternate}
-.bf2{right:-28vmax;top:-26vmax;background:radial-gradient(closest-side,var(--c2),transparent);animation:bfIn 1.8s ease-out .25s forwards,d2 46s ease-in-out infinite alternate}
-.bf3{left:-22vmax;bottom:-38vmax;background:radial-gradient(closest-side,var(--c3),transparent);animation:bfIn 1.8s ease-out .45s forwards,d3 60s ease-in-out infinite alternate}
-.bf4{right:-16vmax;bottom:-34vmax;width:66vmax;height:66vmax;background:radial-gradient(closest-side,var(--c4),transparent);animation:bfIn 1.8s ease-out .6s forwards,d4 38s ease-in-out infinite alternate}
-@keyframes bfIn{to{opacity:1}}
-@keyframes d1{0%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(9vmax,7vmax,0) scale(1.1)}100%{transform:translate3d(3vmax,14vmax,0) scale(.94)}}
-@keyframes d2{0%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(-10vmax,9vmax,0) scale(.92)}100%{transform:translate3d(-4vmax,3vmax,0) scale(1.08)}}
-@keyframes d3{0%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(12vmax,-8vmax,0) scale(1.08)}100%{transform:translate3d(5vmax,-14vmax,0) scale(.96)}}
-@keyframes d4{0%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(-8vmax,-10vmax,0) scale(1.12)}100%{transform:translate3d(-14vmax,-2vmax,0) scale(.95)}}
-.bgrain{position:absolute;inset:0;opacity:.055;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:180px 180px}
-.bvig{position:absolute;inset:0;background:radial-gradient(130% 95% at 50% 0%,transparent 55%,rgba(0,0,0,.42))}
-.paused .bf,.paused .lq-wave,.paused .lq-caustic::before,.paused .orb-w,.paused .car-glow{animation-play-state:paused!important}
+/* ============ backdrop: smooth mesh-gradient field (canvas, dithered) + 2 slowly drifting pre-blurred glows + grain.
+   JS renders one .bk scene per palette (07b-fx.js); changing the palette cross-fades scenes (800 ms).
+   The CSS gradients below are the first paint / no-canvas fallback. Only transform/opacity animate. ============ */
+.bgfx{position:fixed;left:0;top:0;width:100vw;height:100vh;height:100lvh;z-index:0;pointer-events:none;overflow:hidden;contain:strict;background:var(--bk-fb,#0A0A1C)}
+html[data-bk=indigo]{--bg:#0A0A1C;--bk-fb:radial-gradient(42% 40% at 58% 27%,rgba(156,140,255,.42),transparent 70%),radial-gradient(70% 70% at 38% 66%,rgba(46,42,143,.8),transparent 72%),radial-gradient(50% 50% at 86% 22%,rgba(91,63,209,.55),transparent 70%),radial-gradient(28% 30% at 98% 94%,rgba(142,47,121,.5),transparent 70%),#0A0A1C}
+html[data-bk=sage]{--bg:#0E1312;--bk-fb:radial-gradient(42% 40% at 58% 27%,rgba(143,179,166,.42),transparent 70%),radial-gradient(70% 70% at 38% 64%,rgba(79,127,116,.7),transparent 72%),radial-gradient(28% 30% at 99% 96%,rgba(217,154,85,.38),transparent 70%),#0E1312}
+html[data-bk=ocean]{--bg:#071220;--bk-fb:radial-gradient(42% 40% at 60% 26%,rgba(95,196,214,.4),transparent 70%),radial-gradient(60% 60% at 30% 54%,rgba(31,79,168,.72),transparent 72%),radial-gradient(55% 55% at 84% 76%,rgba(18,96,111,.75),transparent 72%),#071220}
+html[data-bk=sunset]{--bg:#120A12;--bk-fb:radial-gradient(42% 40% at 64% 26%,rgba(242,166,90,.4),transparent 70%),radial-gradient(70% 70% at 36% 66%,rgba(90,35,80,.82),transparent 72%),radial-gradient(28% 30% at 94% 90%,rgba(224,103,79,.48),transparent 70%),#120A12}
+html[data-bk=graphite]{--bg:#0B0C0F;--bk-fb:radial-gradient(42% 40% at 60% 27%,rgba(108,122,143,.38),transparent 70%),radial-gradient(70% 70% at 38% 62%,rgba(43,51,64,.85),transparent 72%),#0B0C0F}
+.bk{position:absolute;inset:0;overflow:hidden}
+.bk.in{animation:bkIn 1.2s ease-out both}
+@keyframes bkIn{from{opacity:0}to{opacity:1}}
+.bk-field{position:absolute;inset:0;width:100%;height:100%;display:block}
+.bk-drift{position:absolute;display:block;will-change:transform;transform-origin:50% 50%}
+.bk-d1{animation:bkD1 72s cubic-bezier(.45,0,.55,1) infinite alternate}
+.bk-d2{animation:bkD2 88s cubic-bezier(.45,0,.55,1) -30s infinite alternate}
+@keyframes bkD1{from{transform:translate3d(-2.6vmax,-1.4vmax,0) scale(.97)}to{transform:translate3d(3.2vmax,2.2vmax,0) scale(1.07)}}
+@keyframes bkD2{from{transform:translate3d(2.4vmax,1.8vmax,0) scale(1.05)}to{transform:translate3d(-3vmax,-2.2vmax,0) scale(.95)}}
+.bgrain{position:absolute;inset:0;opacity:.04;background-image:var(--grain);background-size:160px 160px}
+.paused .bk-drift,.scrolling .bk-drift,.paused .card::after,.paused .lq-wave,.paused .lq-caustic::before,.paused .orb-w,.paused .car-glow{animation-play-state:paused!important}
 
-/* ============ glass (navigation layer): blur + saturate, specular rim, inner highlight, drop shadow;
-   Chromium adds an SVG refraction layer and a stronger-refracting edge ring ============ */
+/* ============ matte frosted glass — navigation layer (sidebar, top bar, tab bar, sheets, menus, toasts):
+   heavy blur + saturate + palette dim, dark tint, milky white gradient, film grain, gradient rim, soft low shadow.
+   No refraction layer any more (it read as clear liquid glass and cost performance). ============ */
 .glass{isolation:isolate}
 .glass::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;pointer-events:none;
-  background:linear-gradient(180deg,rgba(255,255,255,calc(var(--g-fill) + .03)),rgba(255,255,255,var(--g-fill)) 60%),rgba(16,17,22,var(--g-tint));
-  -webkit-backdrop-filter:blur(var(--g-blur)) saturate(var(--g-sat)) brightness(1.04);backdrop-filter:blur(var(--g-blur)) saturate(var(--g-sat)) brightness(1.04);
-  box-shadow:var(--g-rim),var(--g-drop)}
-.lg-refract .glass.refract::before{backdrop-filter:blur(var(--g-blur)) url(#lg) saturate(var(--g-sat)) brightness(1.04)}
-.lg-refract .glass.refract::after{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;pointer-events:none;padding:9px;
-  backdrop-filter:blur(calc(var(--g-blur) / 3)) url(#lge) saturate(calc(var(--g-sat) + 10%)) brightness(1.1);
-  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);opacity:.85}
-.glass-lite{background:rgba(255,255,255,.06);box-shadow:inset 0 1px 0 rgba(255,255,255,.13),inset 0 0 0 1px rgba(255,255,255,.07)}
-.glass-solid .glass::before{-webkit-backdrop-filter:none;backdrop-filter:none;background:#17181D}
-.glass-solid .glass::after{display:none!important}
-.glass-solid .bf{opacity:.55!important}
-@media (prefers-reduced-transparency:reduce){.glass::before{-webkit-backdrop-filter:none!important;backdrop-filter:none!important;background:#17181D!important}.glass::after{display:none!important}}
+  background:var(--grain-s) 0 0/160px 160px,linear-gradient(135deg,rgba(255,255,255,var(--n-milk)),rgba(255,255,255,var(--n-milk2)) 70%),rgba(var(--g-tint-rgb),var(--n-tint));
+  -webkit-backdrop-filter:blur(var(--n-blur)) saturate(var(--g-sat)) brightness(var(--g-dim));backdrop-filter:blur(var(--n-blur)) saturate(var(--g-sat)) brightness(var(--g-dim));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.16),var(--g-drop)}
+.glass::after{content:"";position:absolute;inset:0;z-index:2;border-radius:inherit;pointer-events:none;padding:1px;
+  background:linear-gradient(135deg,rgba(255,255,255,var(--g-rim-hi)),rgba(255,255,255,var(--g-rim-lo)) 50%,rgba(255,255,255,calc(var(--g-rim-lo) + .03)));
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0)}
+.glass-lite{background:linear-gradient(135deg,rgba(255,255,255,.13),rgba(255,255,255,.06));box-shadow:inset 0 1px 0 rgba(255,255,255,.16),inset 0 0 0 1px rgba(255,255,255,.07)}
+.glass-solid .glass::before{-webkit-backdrop-filter:none;backdrop-filter:none;background:var(--panel-solid)}
+@media (prefers-reduced-transparency:reduce){.glass::before{-webkit-backdrop-filter:none!important;backdrop-filter:none!important;background:var(--panel-solid)!important}}
 
 /* ============ app frame ============ */
 .app{position:relative;z-index:1;min-height:100dvh}
@@ -124,7 +124,7 @@ mark{background:rgba(222,255,28,.18);color:var(--lime);border-radius:3px;padding
 .sb-sf{display:flex;align-items:center;gap:10px;height:42px;padding:0 13px;border-radius:21px;background:rgba(0,0,0,.22);box-shadow:inset 0 1px 2px rgba(0,0,0,.45),inset 0 0 0 1px rgba(255,255,255,.06);color:var(--text3);transition:box-shadow .2s,width .34s var(--ease-io);width:100%;min-width:0;overflow:hidden}
 .sb-sf .i{width:17px;height:17px}
 .sb-sf input{flex:1;min-width:0;height:100%;background:none;border:0;outline:none;color:var(--text);font-size:14px}
-.sb-sf input::placeholder{color:var(--text3)}
+.sb-sf input::placeholder{color:var(--text-ph)}
 .sb-sf input::-webkit-search-cancel-button{display:none}
 .sb-sf:focus-within{box-shadow:inset 0 1px 2px rgba(0,0,0,.45),0 0 0 1px rgba(222,255,28,.45),0 0 0 4px rgba(222,255,28,.10)}
 .sb-sbtn{width:42px;justify-content:center;padding:0;color:var(--text2)}
@@ -141,7 +141,7 @@ mark{background:rgba(222,255,28,.18);color:var(--lime);border-radius:3px;padding
 .sb-group{position:relative}
 .sb-group+.sb-group{margin-top:8px;padding-top:8px}
 .sb-group+.sb-group::before{content:"";position:absolute;left:8px;right:8px;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.1),transparent)}
-.sb-gh{width:100%;height:34px;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 8px 0 6px;color:var(--text3);font-size:12px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;border-radius:10px;white-space:nowrap}
+.sb-gh{width:100%;height:34px;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 8px 0 6px;color:var(--text-ph);font-size:12px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;border-radius:10px;white-space:nowrap}
 .sb-gh:hover{color:var(--text2)}
 .sb-gh .i{width:16px;height:16px;transition:transform .3s var(--ease)}
 .sb-group.closed .sb-gh .i{transform:rotate(180deg)}
@@ -154,8 +154,8 @@ mark{background:rgba(222,255,28,.18);color:var(--lime);border-radius:3px;padding
 .sb-link .i{width:19px;height:19px;transition:color .3s,transform .4s var(--spring)}
 .sb-link.on .i{color:var(--lime);transform:scale(1.06)}
 .sb-link .lbl{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;transition:opacity .2s var(--ease)}
-.sb-cnt{font-size:12px;color:var(--text3);font-variant-numeric:tabular-nums}
-.sb-cnt .neg{color:var(--expense)}
+.sb-cnt{font-size:12px;color:var(--text-ph);font-variant-numeric:tabular-nums}
+.sb-cnt .neg{color:#FF8A7A}
 .sb-link:active{transform:scale(.98)}
 .app.rail .logo-name,.app.rail .sb-link .lbl,.app.rail .sb-gh span,.app.rail .sb-cnt{opacity:0;pointer-events:none}
 .app.rail .sb-gh{height:9px;pointer-events:none}
@@ -181,30 +181,13 @@ mark{background:rgba(222,255,28,.18);color:var(--lime);border-radius:3px;padding
 .sf{position:relative;display:block}
 .sf .i{position:absolute;left:15px;top:13px;color:var(--text3);width:17px;height:17px}
 .sf .inp{padding-left:42px}
-/* bottom car card (accessory) */
-.sb-foot{flex:none;padding:0 12px 12px}
-.sb-car{position:relative;padding:14px 14px 14px;border-radius:20px;background:radial-gradient(180px 140px at 0% 0%,rgba(222,255,28,.16),rgba(222,255,28,.03) 55%,transparent 75%),rgba(0,0,0,.22);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),inset 0 0 0 1px rgba(255,255,255,.06);overflow:hidden;transition:opacity .25s}
-.sb-car-hit{position:absolute;inset:0;z-index:1;border-radius:inherit}
-.sb-car-h{display:flex;align-items:center;gap:10px;min-width:0}
-.sb-car-ic{width:28px;height:28px;flex:none;border-radius:50%;display:grid;place-items:center;background:linear-gradient(180deg,#EBFF5E,#D2F20E);color:var(--lime-ink);box-shadow:0 0 18px rgba(222,255,28,.35),inset 0 1px 0 rgba(255,255,255,.5)}
-.sb-car-ic .i{width:15px;height:15px;stroke-width:2}
-.sb-car-t{flex:1;font-size:15px;font-weight:500;white-space:nowrap}
-.sb-car-x{position:relative;z-index:2;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;color:var(--text2);margin-right:-4px}
-.sb-car-x:hover{background:var(--fill2);color:var(--text)}
-.sb-car-x .i{width:15px;height:15px}
-.sb-car-s{margin-top:6px;font-size:13px;color:var(--text2)}
-.sb-car .car-stage{margin:6px -2px 10px}
-.sb-car-mini{position:relative;width:42px;height:42px;border-radius:50%;margin:0 auto;display:grid;place-items:center;background:linear-gradient(180deg,#EBFF5E,#D2F20E);color:var(--lime-ink);box-shadow:0 0 22px rgba(222,255,28,.32),inset 0 1px 0 rgba(255,255,255,.55)}
-.sb-car-mini .i{width:18px;height:18px;stroke-width:2}
-.sbm-ring{position:absolute;inset:-5px;border-radius:50%;background:conic-gradient(var(--lime) calc(var(--p) * 360deg),rgba(255,255,255,.1) 0);-webkit-mask:radial-gradient(closest-side,transparent calc(100% - 2.5px),#000 calc(100% - 2px));mask:radial-gradient(closest-side,transparent calc(100% - 2.5px),#000 calc(100% - 2px))}
-.app.rail .sb-foot{padding:0 0 16px}
 /* tooltips */
-.tip{position:fixed;z-index:300;transform:translate(-4px,-50%);opacity:0;pointer-events:none;padding:6px 12px;border-radius:999px;background:rgba(30,31,38,.9);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:var(--g-rim),0 10px 30px rgba(0,0,0,.45);color:var(--text);font-size:13px;white-space:nowrap;transition:opacity .15s,transform .2s var(--ease)}
+.tip{position:fixed;z-index:300;transform:translate(-4px,-50%);opacity:0;pointer-events:none;padding:6px 12px;border-radius:999px;background:linear-gradient(135deg,rgba(255,255,255,.14),rgba(255,255,255,.06)),rgba(22,23,32,.82);-webkit-backdrop-filter:blur(24px) saturate(140%);backdrop-filter:blur(24px) saturate(140%);box-shadow:var(--g-rim),0 10px 30px rgba(0,0,0,.45);color:var(--text);font-size:13px;white-space:nowrap;transition:opacity .15s,transform .2s var(--ease)}
 .tip.on{opacity:1;transform:translate(0,-50%)}
 
 /* ============ floating glass title bar ============ */
 .topbar{position:sticky;top:var(--edge);z-index:30;max-width:1600px;height:62px;margin:var(--edge) auto 0;display:flex;align-items:center;gap:14px;padding:0 10px 0 24px;border-radius:24px}
-.maincol::before{content:"";position:fixed;top:0;left:0;right:0;height:30px;z-index:29;pointer-events:none;background:linear-gradient(rgba(6,7,10,.85),rgba(6,7,10,0))}
+.maincol::before{content:"";position:fixed;top:0;left:0;right:0;height:30px;z-index:29;pointer-events:none;background:linear-gradient(color-mix(in srgb,var(--bg) 82%,transparent),transparent)}
 .tb-logo{display:none}
 .tb-l{display:flex;align-items:center;gap:14px;min-width:0;flex:1}
 .tb-title{margin:0;font:600 20px/1.2 var(--sans);letter-spacing:-.018em;white-space:nowrap}
@@ -224,9 +207,8 @@ mark{background:rgba(222,255,28,.18);color:var(--lime);border-radius:3px;padding
 .sync-dot{position:absolute;right:-1px;bottom:-1px;width:11px;height:11px;border-radius:50%;background:var(--lime);box-shadow:0 0 0 2.5px #16171C,0 0 8px rgba(222,255,28,.6)}
 .sync-dot.pending{background:var(--warning)}.sync-dot.err{background:var(--expense)}.sync-dot.mem{background:var(--text3)}
 
-/* ============ mobile tab bar + accessory (hidden on larger screens) ============ */
+/* ============ mobile tab bar (hidden on larger screens) ============ */
 .tabbar{display:none}
-.caracc-slot{display:none}
 
 /* ============ typography ============ */
 .ct{font-size:15px;font-weight:500;color:var(--text);letter-spacing:-.008em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.35}
@@ -243,7 +225,7 @@ mark{background:rgba(222,255,28,.18);color:var(--lime);border-radius:3px;padding
 .m{white-space:nowrap}
 .m .u{font-size:max(12px,.58em);margin-left:.32em;color:var(--text2);font-weight:500}
 .muted{color:var(--text2)}.faint{color:var(--text3)}
-.pos{color:var(--income)}.neg{color:var(--expense)}.warn{color:var(--warning)}
+.pos{color:var(--income)}.neg{color:#FF8A7A}.warn{color:var(--warning)}
 .small{font-size:12px}
 .ellip{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 .cap::first-letter{text-transform:uppercase}
@@ -274,10 +256,26 @@ mark{background:rgba(222,255,28,.18);color:var(--lime);border-radius:3px;padding
 .spacer{flex:1}
 .toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px}
 
-/* ============ widget surfaces: smoked panels (content layer — not true glass) ============ */
-.card{position:relative;min-width:0;border-radius:var(--r-card);padding:20px;background:linear-gradient(180deg,rgba(29,30,37,var(--p-tint)),rgba(16,17,22,var(--p-tint)));box-shadow:var(--pn-rim),0 26px 50px -30px rgba(0,0,0,.9),0 1px 2px rgba(0,0,0,.25);overflow:hidden;transition:transform .4s var(--spring),box-shadow .3s}
+/* ============ widget surfaces: matte frosted glass (Ron Design Lab): blur 28–36 px + saturate + palette dim of the
+   backdrop, dark tint, milky white gradient (14 % → 5 %), 4 % grain, gradient rim (white 30 % → 6 %) whose highlight
+   follows the pointer, a data-tinted glow orb inside (behind content, breathing slowly), soft low shadow, radius 28 ============ */
+.card{--hov:0;--orb:transparent;--orb-a:.26;--orb-x:96%;--orb-y:0%;--orb-s:96%;position:relative;min-width:0;border-radius:var(--r-card);padding:20px;isolation:isolate;overflow:hidden;
+  background:var(--grain-s) 0 0/160px 160px,linear-gradient(135deg,rgba(255,255,255,calc(var(--g-milk) + var(--hov) * .04)) 0%,rgba(255,255,255,calc(var(--g-milk2) + var(--hov) * .025)) 100%),rgba(var(--g-tint-rgb),var(--g-tint));
+  -webkit-backdrop-filter:blur(var(--g-blur)) saturate(var(--g-sat)) brightness(var(--g-dim));backdrop-filter:blur(var(--g-blur)) saturate(var(--g-sat)) brightness(var(--g-dim));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.14),inset 0 0 34px rgba(255,255,255,.035),var(--g-drop);transition:transform .4s var(--spring),--hov .35s ease}
+.card::before{content:"";position:absolute;inset:0;z-index:7;border-radius:inherit;pointer-events:none;padding:1px;
+  background:radial-gradient(280px circle at var(--px,-500px) var(--py,-500px),rgba(255,255,255,calc(var(--hov) * .5)),rgba(255,255,255,0) 72%),linear-gradient(135deg,rgba(255,255,255,var(--g-rim-hi)),rgba(255,255,255,var(--g-rim-lo)) 50%,rgba(255,255,255,calc(var(--g-rim-lo) + .03)));
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0)}
+.card::after{content:"";display:none;position:absolute;z-index:-1;left:var(--orb-x);top:var(--orb-y);width:var(--orb-s);aspect-ratio:1;translate:-50% -50%;pointer-events:none;border-radius:50%;
+  background:radial-gradient(closest-side,var(--orb) 0%,color-mix(in srgb,var(--orb) 80%,transparent) 20%,color-mix(in srgb,var(--orb) 48%,transparent) 46%,color-mix(in srgb,var(--orb) 18%,transparent) 72%,color-mix(in srgb,var(--orb) 5%,transparent) 89%,transparent 100%);
+  opacity:var(--orb-a);animation:orbBreath var(--orb-t,10s) ease-in-out infinite alternate;will-change:transform}
+.card[data-orb]::after{display:block}
+@keyframes orbBreath{from{transform:scale(.96)}to{transform:scale(1.04)}}
+[data-orb=lime]{--orb:#DEFF1C;--orb-a:.2}[data-orb=coral]{--orb:#FF6B5B}[data-orb=amber]{--orb:#FFB547;--orb-a:.24}[data-orb=violet]{--orb:#8B6CFF;--orb-a:.34}
+[data-orb=teal]{--orb:#22D3C5;--orb-a:.22}[data-orb=sky]{--orb:#5EC8FF;--orb-a:.24}[data-orb=wx]{--orb:var(--wx-c)}
+.card:nth-child(3n+1){--orb-t:11s}.card:nth-child(3n+2){--orb-t:8.5s}
 .card.tap{cursor:pointer}
-@media (hover:hover){.card.tap:hover{transform:translate3d(0,-2px,0);box-shadow:inset 0 1px 0 rgba(255,255,255,.1),inset 0 0 0 1px rgba(255,255,255,.075),0 30px 60px -30px rgba(0,0,0,.95)}}
+@media (hover:hover){.card:hover{--hov:1}.card.tap:hover{transform:translate3d(0,-2px,0)}}
 .card.tap:active{transform:scale(.992)}
 .glass-solid .card{background:var(--panel-solid);-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
 .ch{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;min-width:0}
@@ -320,16 +318,18 @@ mark{background:rgba(222,255,28,.18);color:var(--lime);border-radius:3px;padding
 .entering .card,.entering .rise,.entering>.grid>.acc-card{animation:riseIn .75s var(--spring) both;animation-delay:calc(var(--d,0) * 50ms + 10ms)}
 @keyframes riseIn{from{opacity:0;transform:translate3d(0,12px,0) scale(.96);filter:blur(8px)}60%{filter:blur(0)}to{opacity:1;transform:none;filter:none}}
 .fin-body{animation:bodyIn .5s var(--spring) both}
-@keyframes bodyIn{from{opacity:0;transform:translate3d(0,8px,0)}to{opacity:1;transform:none}}
+.fin-body>*{animation:fadeIn .42s ease both}
+@keyframes bodyIn{from{transform:translate3d(0,8px,0)}to{transform:none}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
 .view{position:relative}
 
 /* ============ buttons & inputs (glass capsules) ============ */
-.btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:8px;height:38px;padding:0 16px;border-radius:999px;background:rgba(255,255,255,.07);box-shadow:inset 0 1px 0 rgba(255,255,255,.12),inset 0 0 0 1px rgba(255,255,255,.065);color:#ECECF0;font-size:14px;font-weight:400;white-space:nowrap;transition:background .2s,color .2s,transform .35s var(--overshoot),opacity .2s,box-shadow .2s;user-select:none}
+.btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:8px;height:38px;padding:0 16px;border-radius:999px;background:linear-gradient(135deg,rgba(255,255,255,.15),rgba(255,255,255,.07));box-shadow:inset 0 1px 0 rgba(255,255,255,.2),inset 0 0 0 1px rgba(255,255,255,.075);color:#ECECF0;font-size:14px;font-weight:400;white-space:nowrap;transition:background .2s,color .2s,transform .35s var(--overshoot),opacity .2s,box-shadow .2s;user-select:none}
 .btn .i{width:17px;height:17px;color:var(--text2)}
-.btn:hover{background:rgba(255,255,255,.12);color:var(--text)}
+.btn:hover{background:linear-gradient(135deg,rgba(255,255,255,.21),rgba(255,255,255,.11));color:var(--text)}
 .btn:hover .i{color:var(--text)}
 .btn:active{transform:scale(.95)}
-.btn.on{background:rgba(255,255,255,.15);color:var(--text);box-shadow:inset 0 1px 0 rgba(255,255,255,.22),inset 0 0 0 1px rgba(255,255,255,.12)}
+.btn.on{background:linear-gradient(135deg,rgba(255,255,255,.26),rgba(255,255,255,.14));color:var(--text);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),inset 0 0 0 1px rgba(255,255,255,.12)}
 .btn.primary{background:linear-gradient(180deg,#ECFF60,#D3F30F);color:var(--lime-ink);font-weight:500;box-shadow:inset 0 1px 0 rgba(255,255,255,.6),inset 0 -1px 0 rgba(0,0,0,.12),0 10px 24px -10px rgba(222,255,28,.6)}
 .btn.primary .i{color:var(--lime-ink)}
 .btn.primary:hover{background:linear-gradient(180deg,#F2FF85,#DDFB2E)}
@@ -343,7 +343,7 @@ mark{background:rgba(222,255,28,.18);color:var(--lime);border-radius:3px;padding
 .btn.sm .i{width:15px;height:15px}
 .btn[disabled],.btn.disabled{opacity:.38;pointer-events:none}
 .inp{width:100%;height:42px;padding:0 14px;border-radius:var(--r-field);background:rgba(255,255,255,.05);border:0;box-shadow:inset 0 1px 2px rgba(0,0,0,.4),inset 0 0 0 1px rgba(255,255,255,.07);color:var(--text);font-size:14px;outline:none;transition:box-shadow .2s,background .2s;appearance:none;-webkit-appearance:none;min-width:0}
-.inp::placeholder{color:var(--text3)}
+.inp::placeholder{color:var(--text-ph)}
 .inp:focus{box-shadow:inset 0 1px 2px rgba(0,0,0,.4),0 0 0 1px rgba(222,255,28,.55),0 0 0 4px rgba(222,255,28,.10)}
 .inp[disabled]{opacity:.5}
 textarea.inp{height:auto;min-height:84px;padding:11px 14px;resize:vertical;line-height:1.5}
@@ -356,7 +356,7 @@ input[type=date]::-webkit-calendar-picker-indicator,input[type=time]::-webkit-ca
 .fields{display:grid;gap:14px}
 .fields.two{grid-template-columns:1fr 1fr}
 .fields.three{grid-template-columns:1fr 1fr 1fr}
-.err-text{font-size:13px;color:var(--expense)}
+.err-text{font-size:13px;color:#FF8A7A}
 .inp-wrap{position:relative;display:flex;align-items:center}
 .inp-wrap .i{position:absolute;left:14px;color:var(--text3);pointer-events:none;width:16px;height:16px}
 .inp-wrap .inp{padding-left:40px}
@@ -365,10 +365,10 @@ input[type=date]::-webkit-calendar-picker-indicator,input[type=time]::-webkit-ca
 .tsearch{position:relative;display:flex;align-items:center;gap:9px;height:38px;width:250px;max-width:100%;padding:0 14px;border-radius:999px;background:rgba(255,255,255,.055);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),inset 0 0 0 1px rgba(255,255,255,.08);color:var(--text3);transition:box-shadow .2s;min-width:0}
 .tsearch .i{width:17px;height:17px}
 .tsearch input{flex:1;min-width:0;height:100%;background:none;border:0;outline:none;color:var(--text);font-size:14px}
-.tsearch input::placeholder{color:var(--text3)}
+.tsearch input::placeholder{color:var(--text-ph)}
 .tsearch:focus-within{box-shadow:inset 0 0 0 1px rgba(222,255,28,.5),0 0 0 4px rgba(222,255,28,.08)}
 .tsearch.launcher{cursor:text;text-align:left}
-.tsearch.launcher span{flex:1;font-size:14px}
+.tsearch.launcher span{flex:1;font-size:14px;color:var(--text2)}
 .tsearch.launcher:hover{color:var(--text2);background:rgba(255,255,255,.08)}
 .tsearch kbd{right:11px;top:9px}
 .tsearch.grow{flex:1 1 240px;width:auto}
@@ -384,7 +384,7 @@ input[type=date]::-webkit-calendar-picker-indicator,input[type=time]::-webkit-ca
 .qa:focus-within{box-shadow:inset 0 1px 2px rgba(0,0,0,.35),0 0 0 1px rgba(222,255,28,.5),0 0 0 4px rgba(222,255,28,.08)}
 .qa>.i{color:var(--text3);width:17px;height:17px}
 .qa input{flex:1;min-width:0;height:100%;background:none;border:0;outline:none;font-size:14px;color:var(--text)}
-.qa input::placeholder{color:var(--text3)}
+.qa input::placeholder{color:var(--text-ph)}
 .qa .go{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(180deg,#ECFF60,#D3F30F);color:var(--lime-ink);flex:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 6px 16px -8px rgba(222,255,28,.7);transition:transform .35s var(--overshoot)}
 .qa .go:active{transform:scale(.88)}
 .qa .go .i{color:var(--lime-ink);stroke-width:2;width:16px;height:16px}
@@ -396,12 +396,12 @@ input[type=date]::-webkit-calendar-picker-indicator,input[type=time]::-webkit-ca
 .chips{display:flex;flex-wrap:wrap;gap:6px;min-width:0}
 .chips.scroll{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
 .chips.scroll::-webkit-scrollbar{display:none}
-.chip{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 13px;border-radius:999px;background:rgba(255,255,255,.06);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),inset 0 0 0 1px rgba(255,255,255,.06);color:var(--text2);font-size:13px;white-space:nowrap;transition:background .2s,color .2s,transform .35s var(--overshoot),box-shadow .2s;max-width:100%;flex:none}
+.chip{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 13px;border-radius:999px;background:linear-gradient(135deg,rgba(255,255,255,.13),rgba(255,255,255,.06));box-shadow:inset 0 1px 0 rgba(255,255,255,.16),inset 0 0 0 1px rgba(255,255,255,.065);color:var(--text2);font-size:13px;white-space:nowrap;transition:background .2s,color .2s,transform .35s var(--overshoot),box-shadow .2s;max-width:100%;flex:none}
 .chip .i{width:15px;height:15px}
-.chip:hover{color:var(--text);background:rgba(255,255,255,.1)}
+.chip:hover{color:var(--text);background:linear-gradient(135deg,rgba(255,255,255,.19),rgba(255,255,255,.1))}
 .chip:active{transform:scale(.93)}
-.chip.on{background:rgba(255,255,255,.15);box-shadow:inset 0 1px 0 rgba(255,255,255,.24),inset 0 0 0 1px rgba(255,255,255,.12);color:var(--text)}
-.chip .cnt{font-size:12px;color:var(--text3)}
+.chip.on{background:linear-gradient(135deg,rgba(255,255,255,.26),rgba(255,255,255,.14));box-shadow:inset 0 1px 0 rgba(255,255,255,.3),inset 0 0 0 1px rgba(255,255,255,.12);color:var(--text)}
+.chip .cnt{font-size:12px;color:var(--text-ph)}
 .chip.static{cursor:default}
 .chip.sq{height:26px;padding:0 10px;border-radius:999px;background:rgba(255,255,255,.08);box-shadow:none;color:var(--text);font-size:13px;cursor:inherit;max-width:100%;overflow:hidden;text-overflow:ellipsis;display:inline-block;line-height:26px}
 .chip.sq:hover{background:rgba(255,255,255,.08)}
@@ -421,7 +421,7 @@ input[type=date]::-webkit-calendar-picker-indicator,input[type=time]::-webkit-ca
 .seg>button.on{color:var(--text)}
 .seg>button.on .i{color:var(--lime)}
 .seg>button:active{transform:scale(.94)}
-.seg-ind{position:absolute;left:0;top:3px;height:34px;width:60px;border-radius:999px;background:linear-gradient(180deg,rgba(255,255,255,.18),rgba(255,255,255,.10));box-shadow:inset 0 1px 0 rgba(255,255,255,.3),inset 0 0 0 1px rgba(255,255,255,.08),0 4px 14px -4px rgba(0,0,0,.55);transform-origin:50% 50%;transition:width .45s var(--spring),opacity .2s;pointer-events:none}
+.seg-ind{position:absolute;left:0;top:3px;height:34px;width:60px;border-radius:999px;background:linear-gradient(135deg,rgba(255,255,255,.24),rgba(255,255,255,.13));box-shadow:inset 0 1px 0 rgba(255,255,255,.32),inset 0 0 0 1px rgba(255,255,255,.09),0 4px 14px -4px rgba(0,0,0,.5);transform-origin:50% 50%;transition:width .45s var(--spring),opacity .2s;pointer-events:none}
 .seg.sm>button{height:28px;padding:0 12px;font-size:13px}
 .seg.sm .seg-ind{height:28px}
 .seg.accent .seg-ind{background:linear-gradient(180deg,rgba(222,255,28,.30),rgba(222,255,28,.16));box-shadow:inset 0 1px 0 rgba(255,255,255,.3),inset 0 0 0 1px rgba(222,255,28,.3),0 6px 16px -6px rgba(222,255,28,.4)}
@@ -435,15 +435,25 @@ a.badge:hover{color:var(--text);background:rgba(255,255,255,.1)}
 .badge.st-active i{width:6px;height:6px;border-radius:50%;background:var(--lime);box-shadow:0 0 8px rgba(222,255,28,.6)}
 .badge.st-closed{background:rgba(255,255,255,.04);color:var(--text3)}
 
+/* controls that sit directly on the backdrop (page toolbar, city badge, search launcher, month switcher, page segments
+   and list chips) get real frost — blur 30 px; buttons and chips keep their own fill states with a dark tint beneath.
+   Controls inside widgets only imitate it (no glass on glass) */
+:root{--pg-frost:blur(30px) saturate(var(--g-sat)) brightness(var(--g-dim))}
+.ph .btn:not(.primary):not(.danger),.view>.chips>.chip{background-color:rgba(var(--g-tint-rgb),.3);-webkit-backdrop-filter:var(--pg-frost);backdrop-filter:var(--pg-frost)}
+.hero-meta .badge,.ph .tsearch,.ph .month-sw,.ph .seg,.ph .selw,.view>.toolbar>.seg{background:linear-gradient(135deg,rgba(255,255,255,.15),rgba(255,255,255,.07)),rgba(var(--g-tint-rgb),.32);-webkit-backdrop-filter:var(--pg-frost);backdrop-filter:var(--pg-frost)}
+.ph .tsearch.launcher:hover{background:linear-gradient(135deg,rgba(255,255,255,.21),rgba(255,255,255,.11)),rgba(var(--g-tint-rgb),.32)}
+.glass-solid :is(.ph .btn:not(.primary):not(.danger),.view>.chips>.chip,.hero-meta .badge,.ph .tsearch,.ph .month-sw,.ph .seg,.ph .selw,.view>.toolbar>.seg){-webkit-backdrop-filter:none;backdrop-filter:none;background-color:var(--panel-solid)}
+@media (prefers-reduced-transparency:reduce){:is(.ph .btn:not(.primary):not(.danger),.view>.chips>.chip,.hero-meta .badge,.ph .tsearch,.ph .month-sw,.ph .seg,.ph .selw,.view>.toolbar>.seg,.card,.sg-card){-webkit-backdrop-filter:none!important;backdrop-filter:none!important}}
+
 /* ============ lists (tasks / shopping rows) — solid, legible ============ */
 .list{position:relative;display:flex;flex-direction:column}
 .gh{display:flex;align-items:center;gap:8px;min-height:38px;padding:0 18px;font-size:12px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text2);background:rgba(255,255,255,.025);border-bottom:1px solid var(--stroke)}
 .gh .i{width:15px;height:15px;color:var(--text3)}
 .gh .gh-r{margin-left:auto;text-transform:none;letter-spacing:0;font-weight:400}
-.gh.neg{color:var(--expense)}
+.gh.neg{color:#FF8A7A}
 .row{position:relative;display:flex;align-items:center;gap:12px;min-height:54px;padding:8px 18px;border-bottom:1px solid var(--stroke);background:transparent;transition:background .2s}
 .row:last-child{border-bottom:0}
-@media (hover:hover){.row:hover{background:rgba(255,255,255,.03)}.row:hover .row-act{opacity:1;transform:none}}
+@media (hover:hover){.row:hover{background:rgba(255,255,255,.06)}.row:hover .row-act{opacity:1;transform:none}}
 .row-main{flex:1;min-width:0}
 .row-title{font-size:14px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .row-sub{font-size:13px;color:var(--text3);margin-top:1px;display:flex;align-items:center;gap:6px;min-width:0;white-space:nowrap;overflow:hidden}
@@ -454,7 +464,7 @@ a.badge:hover{color:var(--text);background:rgba(255,255,255,.1)}
 .row-more{display:none}
 .tag{display:inline-block;max-width:100%;height:24px;line-height:24px;padding:0 9px;border-radius:999px;background:rgba(255,255,255,.08);color:var(--text);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .qty{font-size:13px;color:var(--text2);font-variant-numeric:tabular-nums;white-space:nowrap;min-width:64px;text-align:right}
-.overdue{color:var(--expense)!important}
+.overdue{color:#FF8A7A!important}
 .prio{display:inline-block;width:7px;height:7px;border-radius:50%;flex:none}
 .prio.high{background:var(--expense);box-shadow:0 0 6px rgba(255,107,91,.5)}
 .task-head,.shop-head{display:grid;align-items:center}
@@ -502,7 +512,7 @@ a.badge:hover{color:var(--text);background:rgba(255,255,255,.1)}
 .done .row-sub,.done .row-cells{opacity:.55}
 
 /* ============ data tables (solid — glass never on long lists) ============ */
-.tcard{padding:0;background:rgba(13,14,18,.94)}
+.tcard{padding:0}
 .ttools{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:16px 18px}
 .tt-title{margin-right:6px}
 .tt-f{display:flex;gap:6px;flex-wrap:wrap}
@@ -526,9 +536,9 @@ a.badge:hover{color:var(--text);background:rgba(255,255,255,.1)}
 .tbody{position:relative}
 .tr{display:grid;align-items:stretch;min-height:54px;border-bottom:1px solid var(--stroke);transition:background .2s;cursor:pointer;outline:none}
 .tr:last-child{border-bottom:0}
-@media (hover:hover){.tr:hover{background:rgba(255,255,255,.03)}}
+@media (hover:hover){.tr:hover{background:rgba(255,255,255,.06)}}
 .tr:focus-visible{box-shadow:inset 0 0 0 1px rgba(222,255,28,.5)}
-.tr.sel{background:rgba(222,255,28,.05)}
+.tr.sel{background:rgba(255,255,255,.06)}
 .td{display:flex;align-items:center;gap:10px;padding:0 14px;min-width:0;font-size:14px;color:var(--text);white-space:nowrap}
 .td+.td{border-left:1px solid var(--stroke)}
 .td.c-date{flex-direction:column;align-items:flex-start;justify-content:center;gap:0;font-size:14px;line-height:1.3}
@@ -764,7 +774,7 @@ a.badge:hover{color:var(--text);background:rgba(255,255,255,.1)}
 .car-pct .u{font-size:20px}
 .car-ranges{display:flex;flex-direction:column;align-items:flex-end;gap:3px;font-size:13px;color:var(--text2);text-align:right;min-width:0}
 .car-ranges b{font-weight:500;color:var(--text);font-size:15px}
-.car-hero{padding-bottom:18px;background:radial-gradient(70% 60% at 50% 100%,rgba(222,255,28,.07),transparent 70%),linear-gradient(180deg,rgba(29,30,37,var(--p-tint)),rgba(16,17,22,var(--p-tint)))}
+.car-hero{padding-bottom:18px;--orb-x:50%;--orb-y:40%;--orb-s:64%}
 .hero-charge{margin:18px auto 0;max-width:900px;padding:16px 18px 12px;border-radius:22px;background:rgba(0,0,0,.24);box-shadow:inset 0 1px 0 rgba(255,255,255,.05),inset 0 0 0 1px rgba(255,255,255,.05)}
 .hc-top{display:flex;align-items:baseline;justify-content:space-between;gap:14px;margin-bottom:14px;flex-wrap:wrap;min-width:0}
 .hc-r{display:flex;gap:18px;flex-wrap:wrap;font-size:13px;color:var(--text2)}
@@ -835,7 +845,7 @@ a.badge:hover{color:var(--text);background:rgba(255,255,255,.1)}
 .wx-now{display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-rows:auto auto;column-gap:20px;align-items:center;min-width:0}
 .wx-when{grid-column:1/-1;display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--text2);margin-bottom:2px;transition:color .2s}
 .wx-now.scrubbed .wx-when{color:var(--lime)}
-.wx-temp{font:600 72px/1 var(--sans);letter-spacing:-.05em;white-space:nowrap;text-shadow:0 6px 30px rgba(0,0,0,.35)}
+.wx-temp{font:600 72px/1 var(--sans);letter-spacing:-.05em;white-space:nowrap}
 .wx-temp sup{font-size:.42em;vertical-align:top;position:relative;top:.12em;color:var(--text2);font-weight:500;margin-left:2px}
 .wx-cond{min-width:0}
 .wx-cond .c1{display:flex;align-items:center;gap:8px;font-size:17px;font-weight:500;color:var(--text)}
@@ -886,7 +896,7 @@ a.badge:hover{color:var(--text);background:rgba(255,255,255,.1)}
 .skel{border-radius:14px;background:linear-gradient(90deg,rgba(255,255,255,.04),rgba(255,255,255,.08),rgba(255,255,255,.04));background-size:200% 100%;animation:shimmer 1.6s linear infinite}
 @keyframes shimmer{to{background-position:-200% 0}}
 /* car widget */
-.c-car{display:flex;flex-direction:column;background:radial-gradient(80% 55% at 50% 72%,rgba(222,255,28,.06),transparent 70%),linear-gradient(180deg,rgba(29,30,37,var(--p-tint)),rgba(16,17,22,var(--p-tint)))}
+.c-car{display:flex;flex-direction:column;--orb-x:44%;--orb-y:52%;--orb-s:90%}
 .c-car .car-stage{margin-top:auto;margin-bottom:auto;padding:14px 0 8px}
 .tasks-mini{margin:12px -20px -20px;border-top:1px solid var(--stroke)}
 .tasks-mini .row{min-height:50px;padding:6px 20px;gap:11px}
@@ -1048,15 +1058,28 @@ a.badge:hover{color:var(--text);background:rgba(255,255,255,.1)}
 .set-sec h3+.set-row{border-top:0;padding-top:0}
 .set-row .faint{text-align:right}
 .set-toggle{cursor:pointer}
-.set-glass{display:flex;flex-direction:column;gap:10px;padding:14px;border-radius:20px;background:radial-gradient(120% 140% at 0% 0%,rgba(222,255,28,.10),transparent 55%),radial-gradient(120% 140% at 100% 100%,rgba(124,92,255,.14),transparent 55%),rgba(0,0,0,.2);box-shadow:inset 0 0 0 1px rgba(255,255,255,.06)}
+.set-glass,.set-bk{display:flex;flex-direction:column;gap:12px;padding:14px;border-radius:20px;background:rgba(0,0,0,.16);box-shadow:inset 0 1px 0 rgba(255,255,255,.06),inset 0 0 0 1px rgba(255,255,255,.05)}
+.set-bk{gap:14px}
+.bk-pick{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.bk-opt{display:flex;flex-direction:column;gap:7px;padding:6px 6px 8px;border-radius:18px;text-align:left;font-size:13px;color:var(--text2);min-width:0;transition:background .2s,color .2s,box-shadow .2s,transform .35s var(--overshoot)}
+.bk-opt:hover{background:rgba(255,255,255,.05);color:var(--text)}
+.bk-opt:active{transform:scale(.96)}
+.bk-opt.on{color:var(--text);background:rgba(255,255,255,.07);box-shadow:inset 0 0 0 1.5px rgba(222,255,28,.55)}
+.bk-swb{position:relative;display:block;border-radius:13px;overflow:hidden;aspect-ratio:16/10;background:var(--bg)}
+.bk-swb::after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 1px 0 rgba(255,255,255,.16),inset 0 0 0 1px rgba(255,255,255,.1);pointer-events:none}
+.bk-sw{display:block;width:100%;height:100%}
+.bk-a{position:absolute;right:6px;top:6px;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(180deg,#ECFF60,#D3F30F);color:var(--lime-ink);box-shadow:0 2px 8px rgba(0,0,0,.35)}
+.bk-a .i{width:13px;height:13px;stroke-width:2}
+.bk-n{padding:0 3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sg-ticks{display:flex;justify-content:space-between;margin-top:-6px;font-size:12px;color:var(--text3)}
+.sg-ticks span:nth-child(2){transform:translateX(-4px)}
+.glass-range{background:transparent}
 .sg-h{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;font-size:14px}
 .sg-v{font-size:12px;font-weight:500;color:var(--lime);white-space:nowrap;padding-top:2px}
-.sg-row{display:flex;align-items:center;gap:12px;font-size:12px}
-.sg-row .range{flex:1}
 .sg-demo{display:flex;align-items:center;gap:8px;padding:12px;border-radius:16px;background:repeating-linear-gradient(90deg,rgba(255,255,255,.08) 0 6px,transparent 6px 16px),linear-gradient(90deg,rgba(222,255,28,.25),rgba(34,211,197,.25),rgba(124,92,255,.25))}
 .sg-chip{position:relative;display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 14px;border-radius:999px;font-size:13px;color:var(--text)}
 .sg-chip .i{width:16px;height:16px;color:var(--lime)}
-.sg-card{margin-left:auto;padding:7px 12px;border-radius:12px;font-size:12px;color:var(--text2);background:linear-gradient(180deg,rgba(29,30,37,var(--p-tint)),rgba(16,17,22,var(--p-tint)))}
+.sg-card{position:relative;margin-left:auto;padding:7px 12px;border-radius:12px;font-size:12px;color:var(--text2);background:linear-gradient(135deg,rgba(255,255,255,var(--g-milk)),rgba(255,255,255,var(--g-milk2))),rgba(var(--g-tint-rgb),var(--g-tint));-webkit-backdrop-filter:blur(var(--g-blur)) saturate(var(--g-sat));backdrop-filter:blur(var(--g-blur)) saturate(var(--g-sat));box-shadow:inset 0 1px 0 rgba(255,255,255,.16),inset 0 0 0 1px rgba(255,255,255,.07)}
 .switch{position:relative;width:46px;height:28px;flex:none;border-radius:999px;background:rgba(255,255,255,.12);box-shadow:inset 0 1px 2px rgba(0,0,0,.4);transition:background .25s}
 .switch::after{content:"";position:absolute;top:2px;left:2px;width:24px;height:24px;border-radius:50%;background:radial-gradient(circle at 50% 35%,#fff,#E6E6EA);box-shadow:0 2px 6px rgba(0,0,0,.4);transition:transform .45s var(--overshoot)}
 .switch.on{background:linear-gradient(180deg,#E2FF3A,#C9EA0D)}
@@ -1072,7 +1095,7 @@ a.badge:hover{color:var(--text);background:rgba(255,255,255,.1)}
 .sheet-wrap{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:24px}
 .sheet-backdrop{position:absolute;inset:0;background:rgba(4,5,8,.5);-webkit-backdrop-filter:blur(8px) saturate(120%);backdrop-filter:blur(8px) saturate(120%)}
 .sheet{position:relative;width:min(540px,100%);max-height:min(860px,calc(100dvh - 48px));display:flex;flex-direction:column;border-radius:30px;overflow:hidden;--g-drop:0 40px 100px rgba(0,0,0,.6)}
-.sheet.glass::before{background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.03) 40%),rgba(18,19,24,max(.78,var(--g-tint)))}
+.sheet.glass::before{background:var(--grain-s) 0 0/160px 160px,linear-gradient(135deg,rgba(255,255,255,.13),rgba(255,255,255,.05) 60%),rgba(var(--g-tint-rgb),max(.74,var(--n-tint)))}
 .sheet.wide{width:min(860px,100%)}
 .sheet.sm{width:min(430px,100%)}
 .sheet.search{width:min(580px,100%);align-self:flex-start;margin-top:8vh}
@@ -1219,10 +1242,9 @@ a.badge:hover{color:var(--text);background:rgba(255,255,255,.1)}
   .sidebar{display:none}
   .maincol::before{display:none}
   .maincol,.app.rail .maincol{margin-left:0;padding-right:0}
-  .bf{width:110vmax;height:110vmax}
   /* compact header, glass appears with the scroll-edge effect */
   .topbar{top:0;height:calc(58px + var(--sat));margin:0;padding:var(--sat) 14px 0 16px;gap:10px;border-radius:0;max-width:none}
-  .topbar.glass::before{opacity:0;transition:opacity .3s;box-shadow:inset 0 -1px 0 rgba(255,255,255,.06),0 10px 24px -14px rgba(0,0,0,.7);background:rgba(12,13,17,calc(var(--g-tint) + .1))}
+  .topbar.glass::before{opacity:0;transition:opacity .3s;box-shadow:inset 0 -1px 0 rgba(255,255,255,.08),0 10px 24px -14px rgba(0,0,0,.7);background:var(--grain-s) 0 0/160px 160px,linear-gradient(180deg,rgba(255,255,255,var(--n-milk)),rgba(255,255,255,var(--n-milk2))),rgba(var(--g-tint-rgb),calc(var(--n-tint) + .12))}
   .topbar.glass::after{display:none!important}
   body.scrolled .topbar.glass::before{opacity:1}
   .tb-logo{display:inline-flex}
@@ -1230,7 +1252,7 @@ a.badge:hover{color:var(--text);background:rgba(255,255,255,.1)}
   .tb-sep,.tb-sub,.ibtn.tb-search{display:none}
   .ibtn{width:40px;height:40px}
   .avatar{width:40px;height:40px}
-  .main{padding:8px 16px calc(176px + var(--sab))}
+  .main{padding:8px 16px calc(112px + var(--sab))}
   .banner-slot{padding:0 16px}
   .ph{margin-bottom:14px}
   .ph-sub{display:block}
@@ -1378,20 +1400,7 @@ a.badge:hover{color:var(--text);background:rgba(255,255,255,.1)}
   .tabbar.pressing .tab-ind>.lens::after{animation:lensShimmer .75s ease-out}
   .tabbar.dragging .tab-ind>.lens{transform:scale(1.14,1.16)}
   @keyframes lensShimmer{0%{opacity:0;transform:translate3d(-120%,0,0)}30%{opacity:1}100%{opacity:0;transform:translate3d(120%,0,0)}}
-  .caracc-slot{display:block;position:fixed;left:calc(21px + var(--sal));right:calc(21px + var(--sar));bottom:calc(95px + var(--sab));z-index:49}
-  .caracc-slot:empty{display:none}
-  .caracc{position:relative;display:flex;align-items:center;gap:10px;height:50px;padding:0 8px 0 10px;border-radius:25px;transition:transform .45s var(--overshoot)}
-  .caracc:active{transform:scale(.96)}
-  .caracc.on{box-shadow:inset 0 0 0 1px rgba(222,255,28,.35);border-radius:25px}
-  .ca-car{width:58px;flex:none;margin:0 2px}
-  .ca-car .car-draw{filter:none}
-  .ca-t{display:flex;flex-direction:column;min-width:0;flex:1;line-height:1.2}
-  .ca-t b{font-size:13px;font-weight:600}
-  .ca-t span{font-size:12px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .caracc .lq{width:52px;flex:none}
-  .ca-go{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;color:var(--text2);flex:none}
-  .ca-go .i{width:16px;height:16px}
-  .toasts{bottom:calc(158px + var(--sab))}
+  .toasts{bottom:calc(100px + var(--sab))}
   .ptr{top:calc(var(--sat) + 60px)}
 }
 @media (max-width:420px){
@@ -1410,9 +1419,11 @@ a.badge:hover{color:var(--text);background:rgba(255,255,255,.1)}
 
 /* ============ reduced motion: fades only — no drift, parallax, particles, waves ============ */
 .rm *,.rm *::before,.rm *::after{animation-duration:.001ms!important;animation-delay:0ms!important;transition-duration:.001ms!important;transition-delay:0ms!important}
-.rm .entering .card,.rm .entering .rise,.rm .fin-body{animation:fadeOnly .3s ease both!important;animation-delay:0ms!important}
+.rm .entering .card,.rm .entering .rise,.rm .fin-body>*{animation:fadeOnly .3s ease both!important;animation-delay:0ms!important}
+.rm .fin-body{animation:none!important}
 html.rm{transition:none!important}
-.rm .bf{animation:none!important;opacity:1}
+.rm .bk-drift,.rm .card::after,.rm .bk.in{animation:none!important}
+.rm .card::after{transform:none}
 .rm .car-glow,.rm .lq-wave,.rm .lq-caustic::before,.rm .orb-w,.rm .onb-mark .logo-tile,.rm .lq.charging .lq-fill,.rm .skel,.rm .calc-amt .caret,.rm .spinner{animation:none!important}
 .rm .car-tilt{transform:none!important}
 @keyframes fadeOnly{from{opacity:0}to{opacity:1}}
@@ -1420,20 +1431,21 @@ html.rm{transition:none!important}
 @media (hover:none),(max-width:759px){.row-act{display:none!important}.row-more{display:inline-grid}}
 
 </style>
+<script>/* first paint: the last backdrop palette (or one by the time of day) so the CSS gradient matches before JS boots */
+try{var k=(JSON.parse(localStorage.getItem('kun.ui.v1')||'{}')||{}).bk,h=new Date().getHours();document.documentElement.setAttribute('data-bk',/^(indigo|sage|ocean|sunset|graphite)$/.test(k)?k:h>=17&&h<19?'sunset':h>=6&&h<17?'sage':'indigo')}catch(e){document.documentElement.setAttribute('data-bk','indigo')}</script>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true" focusable="false"><symbol id="car-yu7" viewBox="0 0 3146 1374"><g transform="translate(0.000000,1374.000000) scale(0.100000,-0.100000)"><path d="M18435 13603 c-294 -2 -776 -15 -1205 -33 -227 -10 -395 -20 -700 -40 -80 -6 -251 -17 -380 -25 -129 -9 -300 -22 -380 -30 -80 -8 -215 -22 -300 -30 -342 -34 -1036 -132 -1245 -176 -552 -115 -791 -186 -1176 -349 -122 -52 -449 -210 -474 -230 -5 -4 -55 -31 -110 -61 -55 -29 -138 -75 -185 -102 -47 -27 -105 -61 -130 -75 -338 -191 -1123 -719 -1609 -1080 -121 -90 -231 -168 -401 -284 -58 -39 -132 -92 -165 -118 -129 -100 -195 -134 -211 -109 -27 45 -184 81 -354 83 -520 4 -927 -235 -1081 -634 -8 -20 -14 -73 -14 -125 0 -102 39 -205 104 -274 38 -41 39 -39 -29 -90 l-54 -41 -111 0 c-114 0 -365 -22 -470 -40 -71 -13 -146 -26 -235 -40 -36 -5 -90 -14 -120 -20 -130 -23 -240 -30 -675 -40 -253 -6 -545 -15 -650 -20 -104 -6 -282 -15 -395 -20 -284 -13 -573 -38 -935 -80 -772 -90 -1676 -357 -2247 -663 -45 -24 -123 -66 -173 -92 -182 -97 -393 -239 -595 -401 -253 -203 -512 -522 -587 -724 -21 -59 -28 -66 -88 -104 -87 -56 -240 -192 -288 -255 -98 -131 -120 -282 -64 -451 l28 -86 -46 -69 c-115 -174 -143 -287 -115 -460 5 -33 21 -148 34 -256 33 -252 35 -234 -109 -726 -41 -139 -86 -297 -100 -353 -14 -55 -36 -135 -50 -178 -54 -174 -201 -848 -212 -972 -8 -98 57 -360 149 -597 11 -30 10 -33 -44 -92 -111 -120 -99 -213 53 -416 83 -111 134 -159 242 -228 241 -155 506 -238 836 -260 33 -2 34 -4 90 -132 274 -631 742 -1068 1299 -1215 107 -29 319 -59 502 -71 177 -13 869 -5 995 10 88 12 273 47 320 61 151 47 318 115 398 162 26 15 50 28 53 28 10 0 183 120 254 177 244 195 532 536 655 776 11 21 25 43 32 48 8 7 187 5 530 -5 285 -9 725 -20 978 -26 599 -13 1131 -27 1535 -40 179 -6 548 -15 820 -20 l495 -10 55 -38 c178 -125 322 -200 445 -231 143 -37 212 -41 716 -41 385 0 499 -3 506 -12 6 -7 34 -58 63 -113 160 -302 309 -503 536 -725 305 -297 625 -455 1084 -534 212 -37 368 -46 841 -46 901 0 1173 59 1602 349 389 262 767 760 987 1301 l47 115 64 7 c81 9 575 51 964 83 165 13 347 29 405 35 58 5 164 14 235 20 72 6 168 15 215 20 47 5 137 14 200 20 63 5 187 17 275 25 88 8 196 17 240 20 85 7 345 30 510 46 122 11 387 35 555 49 69 6 189 18 268 25 79 8 205 19 280 25 75 6 205 16 287 24 83 8 209 19 280 25 279 24 576 51 770 70 137 14 367 35 775 71 190 17 388 34 440 40 52 5 158 14 235 20 77 6 232 19 345 30 113 10 266 24 340 30 274 22 388 31 490 40 58 5 164 14 235 20 72 6 171 15 220 20 50 5 128 12 175 16 l86 6 43 -118 c167 -463 481 -891 811 -1109 222 -146 399 -211 691 -255 365 -54 1165 -51 1529 6 491 77 881 391 1214 982 151 267 301 707 381 1115 l33 167 79 83 c202 211 300 457 390 978 42 248 40 385 -9 544 -84 274 -88 440 -23 850 84 528 98 650 93 799 -5 128 -25 208 -78 321 -71 150 -229 541 -250 618 -33 124 -40 231 -38 598 3 455 -17 585 -134 859 -108 255 -289 478 -476 586 -37 21 -108 78 -158 125 -148 138 -291 199 -709 304 -188 48 -281 76 -340 104 -86 42 -55 14 -450 421 -173 178 -454 467 -526 540 -84 87 -464 446 -512 484 -33 27 -59 61 -83 109 -118 235 -359 436 -759 631 -289 141 -479 214 -905 346 -74 23 -162 50 -195 60 -327 103 -1096 285 -1460 346 -49 8 -173 30 -275 49 -102 19 -241 41 -310 50 -69 9 -168 22 -220 30 -52 8 -115 17 -140 19 -25 3 -101 13 -170 21 -175 21 -514 51 -850 75 -157 11 -332 25 -390 30 -141 12 -473 38 -645 50 -327 23 -441 30 -635 40 -113 6 -279 15 -370 20 -422 25 -1100 38 -1815 33z m1375 -178 c428 -14 1050 -45 1330 -65 69 -5 200 -15 292 -22 93 -7 165 -15 160 -19 -4 -4 -74 -19 -157 -34 -469 -85 -831 -255 -1231 -580 -28 -23 -34 -24 -90 -15 -32 5 -108 14 -169 20 -60 6 -177 20 -260 30 -231 30 -421 49 -640 65 -110 8 -213 17 -230 20 -96 16 -938 54 -1407 64 -304 6 -371 10 -390 23 -33 22 -119 107 -218 217 -141 158 -188 170 -648 178 -178 3 -320 9 -315 14 8 8 133 18 498 39 99 5 288 17 420 25 205 12 888 39 1220 48 366 10 1438 5 1835 -8z m-4420 -153 c0 -5 -13 -15 -30 -23 -16 -8 -108 -91 -203 -185 -247 -244 -165 -215 -757 -264 -131 -11 -560 -59 -580 -65 -8 -3 -62 -9 -120 -14 -58 -6 -175 -19 -260 -31 -85 -11 -186 -25 -225 -30 -134 -18 -330 -50 -400 -65 -107 -23 -142 -16 -72 14 30 14 151 70 282 131 80 38 357 148 420 168 28 8 82 25 120 37 264 85 593 156 1085 235 279 45 299 48 460 70 216 29 280 34 280 22z m7295 -33 c132 -11 310 -28 395 -39 85 -11 268 -33 405 -50 138 -17 266 -35 285 -40 19 -5 87 -16 150 -25 63 -9 171 -27 240 -41 69 -13 195 -38 280 -54 248 -48 252 -49 550 -121 281 -68 433 -108 600 -156 100 -29 113 -33 250 -71 167 -47 444 -144 585 -206 360 -158 406 -193 1069 -793 178 -161 915 -898 1187 -1186 319 -340 343 -355 682 -442 259 -67 524 -160 612 -216 77 -49 74 -49 -215 2 -150 26 -623 37 -850 20 -225 -17 -597 -60 -667 -77 -17 -5 -31 0 -46 14 -25 23 -156 86 -164 78 -3 -2 19 -18 49 -35 29 -16 59 -34 67 -39 24 -14 5 -42 -28 -42 -29 0 -363 -55 -521 -86 -41 -8 -100 -19 -130 -24 -96 -17 -262 -51 -345 -70 -181 -42 -357 -81 -470 -105 -224 -48 -315 -75 -249 -75 28 0 337 46 427 64 157 31 298 56 422 76 116 18 265 45 395 70 126 25 279 51 400 70 74 11 148 23 164 25 96 16 294 -355 360 -675 42 -206 68 -502 58 -673 l-4 -79 -67 -31 c-250 -118 -504 -329 -713 -593 l-97 -122 -73 -13 c-118 -22 -652 -19 -793 4 -295 49 -516 160 -838 421 -416 337 -607 431 -1032 503 -69 12 -195 16 -529 19 -242 2 -441 6 -443 8 -2 2 -10 77 -18 166 -8 89 -17 177 -20 194 -36 232 -38 240 -80 381 -54 185 -88 274 -156 414 -39 79 -68 145 -65 148 5 5 92 13 361 33 77 6 192 15 255 20 63 5 180 14 260 20 80 6 235 19 345 30 110 11 259 24 330 30 72 6 162 15 200 20 39 5 106 14 150 20 44 5 127 17 185 25 58 8 200 29 315 45 116 17 246 37 290 44 44 8 109 20 145 26 90 15 666 128 715 140 22 5 85 19 140 31 219 47 548 144 632 188 209 107 95 323 -421 799 -694 641 -1545 1073 -2741 1392 -253 68 -382 98 -510 120 -27 5 -147 27 -265 49 -118 22 -249 45 -290 51 -41 6 -102 16 -135 21 -959 150 -1976 104 -2480 -110 -11 -5 -54 -23 -95 -41 -89 -37 -260 -131 -379 -208 -264 -170 -733 -628 -1001 -977 -30 -38 -75 -95 -102 -125 -83 -95 -416 -538 -634 -844 -160 -225 -472 -693 -580 -868 -36 -60 -71 -108 -77 -108 -44 1 -368 69 -380 80 -30 27 774 1174 1213 1728 232 294 290 365 414 508 587 679 862 925 1241 1110 292 142 503 200 930 255 224 30 570 29 950 -2z m-6152 -28 c90 -20 137 -52 222 -150 44 -51 99 -104 122 -119 61 -39 57 -56 -12 -50 -51 4 -58 8 -127 74 -162 153 -185 166 -333 185 -164 20 -828 3 -1010 -27 -36 -6 -38 -5 -25 11 21 25 108 67 170 82 69 16 918 11 993 -6z m-139 -141 c66 -8 104 -18 145 -40 66 -36 185 -144 178 -163 -3 -7 -38 -26 -78 -41 -41 -15 -112 -43 -159 -61 -47 -18 -125 -44 -175 -58 l-90 -26 -597 -3 c-328 -2 -600 1 -604 5 -16 15 30 77 137 185 171 171 220 189 532 201 307 12 612 12 711 1z m6571 -240 c242 -20 362 -31 455 -41 188 -21 691 -99 765 -119 32 -8 91 -21 220 -46 122 -23 393 -91 460 -114 33 -12 128 -39 210 -60 201 -52 677 -215 830 -285 28 -12 79 -32 115 -45 125 -44 571 -271 755 -383 296 -182 554 -384 835 -653 58 -56 122 -116 143 -134 139 -120 309 -373 281 -418 -46 -74 -437 -190 -1014 -301 -146 -28 -303 -60 -350 -71 -163 -38 -401 -76 -940 -149 -229 -31 -739 -85 -960 -101 -80 -6 -203 -15 -275 -20 -71 -6 -224 -17 -340 -25 -115 -8 -279 -20 -364 -26 l-155 -12 -23 29 c-44 56 -45 56 277 74 96 6 218 15 270 20 52 5 214 19 360 30 146 11 312 24 370 30 58 5 161 14 230 20 139 13 347 40 875 116 367 52 903 149 1245 224 233 52 566 154 601 186 29 26 26 116 -5 171 -70 123 -332 388 -528 535 -31 24 -119 91 -195 149 -223 171 -504 350 -700 448 -277 137 -424 204 -603 273 -242 93 -384 142 -572 197 -96 28 -194 58 -219 66 -58 21 -175 53 -274 75 -44 10 -127 30 -185 44 -141 35 -420 93 -506 106 -38 5 -130 19 -204 30 -218 33 -260 39 -355 50 -49 5 -133 14 -185 20 -805 89 -1580 29 -2055 -160 -471 -187 -948 -594 -1495 -1274 -52 -65 -125 -155 -161 -200 -77 -96 -261 -340 -309 -411 -18 -27 -84 -117 -145 -200 -112 -150 -383 -547 -465 -681 -23 -39 -55 -78 -69 -86 -26 -14 -81 -13 -81 1 0 20 233 381 376 581 37 52 92 131 122 175 75 108 239 333 396 545 576 773 1132 1322 1555 1535 173 87 406 173 556 206 50 10 119 25 155 33 68 14 213 32 385 45 146 12 750 12 890 1z m-5015 -40 c282 -14 532 -28 705 -40 249 -19 518 -41 605 -50 47 -5 162 -16 255 -25 94 -8 193 -20 220 -25 28 -5 87 -14 133 -21 45 -6 82 -15 82 -19 0 -4 -88 -94 -196 -201 -107 -107 -242 -246 -299 -309 -182 -204 -415 -473 -458 -530 -23 -30 -94 -120 -158 -200 -96 -121 -344 -451 -574 -764 -27 -37 -89 -121 -136 -185 -80 -109 -136 -188 -277 -396 -75 -111 -106 -141 -187 -181 -135 -67 -125 -66 -945 -57 -1566 17 -6262 6 -7035 -17 -443 -14 -849 -14 -853 -1 -2 6 1 11 6 11 5 0 36 24 69 53 79 68 331 274 458 372 55 43 170 136 255 206 85 70 199 163 252 206 214 171 458 372 553 454 88 76 170 138 320 244 23 17 62 46 86 65 89 73 636 454 738 516 25 15 81 53 125 85 111 78 564 359 581 359 2 0 34 19 71 42 108 65 137 74 334 108 102 17 223 38 270 46 178 31 394 61 755 104 94 11 206 25 250 30 108 14 385 40 520 50 61 4 186 16 278 25 92 10 170 15 173 12 3 -3 -1 -16 -10 -29 -41 -58 -8 -117 77 -139 61 -15 1156 -6 1260 10 82 13 222 58 314 102 132 61 241 93 348 100 131 8 762 1 1035 -11z m4932 -132 c9 -7 29 -51 44 -98 15 -47 43 -128 64 -180 136 -349 378 -1120 492 -1570 72 -285 168 -717 171 -775 l2 -30 -95 -6 c-78 -5 -310 -22 -434 -32 -38 -3 -42 8 -56 138 -7 61 -16 130 -20 155 -5 25 -13 86 -20 135 -43 341 -144 898 -256 1415 -34 157 -150 598 -221 843 -5 16 7 17 154 17 112 0 164 -4 175 -12z m-432 -40 c7 -24 24 -86 40 -138 38 -126 93 -335 130 -495 17 -71 44 -184 60 -250 62 -251 137 -648 204 -1075 16 -102 61 -457 71 -555 3 -33 8 -79 11 -102 5 -43 5 -43 -27 -43 -18 0 -81 -5 -139 -10 -238 -24 -1083 -71 -1093 -61 -7 7 -6 20 2 38 23 48 26 181 6 249 -101 353 -611 604 -1228 604 -339 0 -584 -91 -764 -283 -237 -254 -295 -498 -157 -666 56 -68 50 -73 -83 -69 l-98 3 -2 30 c-5 64 -25 203 -40 275 -14 70 -41 225 -64 367 l-10 61 44 59 c24 32 91 121 148 198 104 141 151 202 360 465 462 580 924 999 1309 1187 75 37 182 80 295 118 203 68 615 130 887 134 l127 1 11 -42z m1050 -9 c339 -43 461 -61 610 -92 41 -9 116 -23 165 -32 147 -26 331 -70 505 -120 63 -18 169 -47 235 -65 124 -32 636 -200 691 -226 24 -11 47 -43 99 -137 37 -67 94 -162 125 -212 142 -223 717 -1361 698 -1380 -13 -14 -478 -94 -693 -120 -71 -8 -197 -24 -280 -36 -368 -49 -889 -104 -1245 -129 -74 -6 -247 -19 -385 -29 -137 -11 -253 -16 -256 -13 -4 4 -21 70 -39 147 -52 227 -111 473 -136 570 -14 50 -45 169 -70 265 -54 209 -62 237 -110 405 -53 190 -72 249 -184 575 -56 162 -117 343 -136 402 -19 59 -48 139 -64 179 -17 39 -30 76 -30 81 0 15 249 -2 500 -33z m-3442 -70 c-167 -169 -371 -393 -524 -574 -201 -238 -437 -532 -574 -715 -35 -47 -77 -103 -94 -125 -54 -70 -209 -280 -263 -356 -87 -123 -163 -230 -227 -317 -148 -202 -451 -645 -496 -725 -40 -71 -45 -74 -112 -51 -29 10 -77 22 -106 28 -58 12 -69 28 -25 37 108 22 175 80 293 253 49 72 132 190 185 261 52 72 132 181 178 244 45 63 109 150 142 194 33 44 93 126 134 181 40 56 101 135 135 176 34 41 107 136 162 210 56 75 141 183 190 240 49 58 114 137 144 175 174 224 805 896 872 928 57 28 51 2 -14 -64z m5932 -582 c411 -169 902 -468 1215 -740 65 -56 155 -132 199 -168 171 -139 336 -334 339 -399 3 -47 -27 -64 -183 -104 -74 -20 -178 -47 -230 -61 -139 -36 -450 -105 -548 -120 l-42 -7 -93 189 c-241 486 -512 997 -695 1311 -72 123 -83 149 -59 139 6 -3 50 -21 97 -40z m-16412 -1172 c56 -17 65 -32 30 -54 -69 -42 -493 -358 -613 -456 l-70 -57 -214 5 c-129 3 -217 9 -224 16 -26 26 53 170 151 274 146 152 368 253 647 291 59 8 241 -4 293 -19z m232 -95 c-25 -21 -144 -119 -265 -216 -121 -98 -254 -208 -295 -244 -41 -37 -122 -102 -179 -146 -185 -142 -235 -181 -330 -263 l-95 -81 -63 0 c-35 0 -63 4 -63 8 0 4 39 39 86 77 48 39 112 91 143 116 419 340 796 619 996 736 107 62 126 66 65 13z m10937 -41 c120 -16 376 -84 449 -118 163 -76 277 -168 351 -283 43 -66 49 -98 20 -98 -8 0 -81 -6 -163 -14 -434 -42 -1477 -72 -1716 -49 -83 7 -82 6 -23 131 100 211 347 389 597 431 77 13 393 13 485 0z m-1537 -294 c0 -14 6 -58 14 -98 32 -156 89 -498 84 -502 -3 -3 -119 -10 -259 -15 -140 -6 -262 -13 -271 -16 -12 -4 -18 0 -18 12 0 30 420 644 441 644 5 0 9 -11 9 -25z m-10542 -241 c51 -4 92 -10 92 -14 0 -6 -137 -116 -168 -134 -27 -16 -112 86 -112 134 0 23 27 25 188 14z m12934 -124 c-6 -74 -104 -193 -196 -239 -95 -47 -330 -77 -465 -60 -38 4 -246 8 -462 8 -360 -1 -402 1 -487 19 -120 27 -202 59 -260 102 -50 38 -118 128 -105 141 4 4 274 12 598 19 575 11 911 22 1205 39 186 11 176 12 172 -29z m1958 -122 c11 -18 16 -35 12 -39 -8 -7 -203 -24 -457 -39 -231 -14 -449 -28 -635 -40 -85 -6 -301 -19 -480 -30 -179 -11 -355 -22 -392 -26 -79 -7 -82 -2 -30 48 46 45 32 43 462 69 184 11 400 24 480 29 80 5 228 14 330 21 102 6 255 16 340 23 85 7 199 14 253 15 l97 1 20 -32z m6240 -151 c312 -55 399 -87 550 -203 211 -162 374 -462 430 -795 35 -204 -70 -534 -232 -734 -58 -71 -153 -158 -173 -157 -4 0 -41 33 -83 74 -169 163 -257 226 -437 313 -113 55 -148 68 -270 103 -153 44 -468 58 -612 28 -89 -19 -243 -63 -265 -76 -10 -6 -20 -10 -23 -10 -3 0 -5 66 -5 148 -1 286 -36 530 -111 767 -65 203 -138 347 -231 453 -35 41 -31 48 29 55 158 20 214 26 358 41 242 24 237 24 595 21 309 -2 346 -4 480 -28z m-6102 -94 c32 -65 73 -156 91 -203 18 -47 37 -96 42 -109 64 -159 161 -717 147 -851 l-3 -35 -275 -17 c-151 -9 -340 -22 -420 -28 -80 -6 -203 -15 -275 -20 -163 -11 -841 -66 -995 -80 -63 -6 -162 -15 -220 -20 -196 -17 -444 -41 -630 -60 -102 -11 -232 -24 -290 -30 -58 -6 -139 -15 -180 -20 -41 -5 -129 -14 -195 -20 -66 -6 -137 -13 -158 -16 -21 -2 -125 -13 -230 -24 -106 -11 -226 -25 -267 -30 -70 -9 -145 -17 -350 -40 -47 -5 -159 -18 -250 -29 -91 -11 -242 -29 -337 -40 -94 -11 -182 -23 -196 -26 l-24 -6 -6 173 c-11 320 -57 625 -121 816 -77 226 -237 424 -469 581 -71 48 -77 48 194 7 195 -30 396 -29 1139 3 107 5 197 7 199 5 3 -3 -3 -18 -13 -35 -24 -41 4 -98 83 -171 203 -186 497 -231 736 -114 88 44 93 45 235 56 258 19 331 43 394 129 56 77 69 109 64 161 l-5 47 166 12 c91 6 225 16 296 21 72 5 207 14 300 19 449 27 529 32 645 41 69 5 217 14 330 20 290 15 664 41 669 46 2 2 30 4 62 4 l58 0 59 -117z m-3910 38 c20 -10 61 -24 90 -31 78 -18 71 -26 -31 -34 -255 -20 -1402 -43 -1410 -28 -4 5 6 23 21 40 l28 29 284 6 c358 8 801 25 808 32 15 14 175 4 210 -14z m-4288 -2 c1013 -2 1853 -14 2025 -30 366 -34 752 -291 908 -605 106 -211 169 -543 171 -899 l1 -209 -40 -7 c-22 -4 -80 -12 -130 -19 -121 -16 -389 -59 -445 -71 -25 -6 -97 -19 -160 -30 -63 -11 -140 -26 -170 -34 -30 -8 -131 -33 -225 -56 -188 -45 -407 -114 -529 -165 -44 -19 -82 -34 -83 -34 -1 0 -35 30 -75 66 -228 205 -450 343 -703 436 -150 55 -227 76 -400 109 -96 19 -505 19 -600 0 -446 -86 -846 -284 -1183 -585 -48 -43 -70 -56 -104 -60 -383 -48 -909 -108 -912 -105 -2 2 0 24 4 49 13 65 12 191 -2 231 -71 209 -339 255 -1033 179 -545 -60 -770 -94 -1314 -200 -146 -29 -787 -185 -901 -220 -52 -16 -185 -54 -295 -86 -110 -31 -261 -78 -335 -104 -74 -27 -204 -71 -288 -99 -84 -28 -210 -73 -280 -99 l-127 -49 -280 -12 c-412 -17 -1024 -40 -1400 -52 -517 -16 -2782 -24 -3229 -10 -1006 30 -1811 73 -1993 107 -41 8 -55 26 -75 94 -56 187 -64 352 -22 458 99 245 359 559 636 765 580 431 1361 765 2203 941 430 90 747 132 1345 176 74 5 192 14 263 20 70 5 162 10 205 10 42 0 136 4 207 10 72 5 352 15 624 20 474 11 546 15 746 50 198 35 350 57 470 69 110 10 193 12 1440 32 918 15 3297 27 4340 23 479 -2 1264 -5 1745 -5z m5455 -104 c50 -25 55 -55 17 -109 -44 -63 -91 -81 -255 -95 -228 -19 -296 -30 -351 -58 -163 -82 -328 -83 -490 -2 -63 31 -175 134 -161 147 6 6 91 27 190 46 99 20 221 45 270 56 154 35 202 38 475 37 243 -2 268 -4 305 -22z m9847 -1393 c-7 -401 31 -570 223 -997 133 -295 145 -335 145 -479 0 -99 -30 -364 -55 -486 -7 -36 -18 -108 -25 -160 -16 -125 -19 -140 -29 -140 -11 0 -21 50 -21 104 0 63 -56 412 -91 561 -107 466 -282 866 -505 1157 -24 31 -44 60 -44 65 0 5 41 51 91 103 50 52 114 129 142 170 48 70 137 250 137 277 0 20 19 63 27 63 5 0 7 -107 5 -238z m-5822 168 c416 -61 581 -141 1060 -515 476 -371 749 -450 1391 -400 107 8 213 17 237 21 52 7 52 1 3 -73 -120 -181 -235 -399 -368 -703 -296 -675 -505 -1699 -526 -2570 l-2 -95 -65 3 c-173 7 -630 74 -935 137 -771 157 -1279 188 -1930 115 -44 -5 -83 -6 -87 -2 -3 4 3 41 13 82 22 81 28 111 60 270 12 58 25 123 29 145 5 22 20 114 35 205 15 91 29 174 31 186 3 17 20 24 106 43 57 13 117 27 133 31 17 5 82 18 145 30 63 12 178 34 255 50 77 16 196 38 265 50 69 12 190 35 270 50 151 30 265 49 590 100 426 67 428 92 5 55 -366 -33 -700 -85 -1285 -200 -250 -49 -342 -68 -398 -81 -35 -9 -66 -14 -67 -12 -2 2 -9 76 -14 163 -6 88 -16 220 -22 293 -6 73 -9 135 -7 137 2 2 42 9 88 14 416 48 485 59 375 59 -33 0 -148 -7 -255 -17 -115 -11 -199 -14 -205 -9 -6 6 -9 123 -9 319 2 286 9 451 34 734 5 61 14 171 20 245 6 74 15 171 20 215 10 91 25 271 40 490 6 83 15 216 22 297 l11 147 96 4 c178 7 765 -2 841 -13z m-1003 -7 c9 -24 -27 -513 -77 -1033 -43 -451 -62 -819 -60 -1163 1 -137 0 -250 -2 -252 -1 -1 -131 -15 -288 -29 -157 -15 -339 -33 -405 -41 -66 -8 -190 -21 -275 -30 -85 -8 -292 -28 -460 -45 -168 -16 -386 -37 -485 -45 -99 -8 -297 -27 -440 -41 -143 -13 -327 -31 -410 -39 -82 -8 -220 -21 -305 -30 -85 -8 -207 -20 -270 -25 -63 -6 -153 -15 -200 -20 -109 -12 -254 -26 -400 -40 -63 -6 -194 -20 -290 -30 -96 -11 -251 -27 -345 -35 -93 -9 -217 -21 -275 -26 -140 -14 -353 -27 -361 -23 -38 20 -72 711 -58 1164 7 261 34 657 47 720 l8 35 94 13 c361 49 473 72 561 117 192 99 375 368 348 510 -5 22 28 28 396 65 116 12 289 30 385 40 96 11 285 31 420 45 135 14 288 30 340 35 52 6 140 15 195 20 55 6 143 14 195 20 52 5 147 14 210 20 63 5 169 14 235 20 66 6 174 15 240 21 66 5 170 14 230 19 61 5 175 14 255 20 80 6 201 15 270 21 229 19 373 28 620 39 135 7 247 13 249 16 13 13 102 3 108 -13z m5431 -58 c118 -18 190 -36 295 -74 117 -41 299 -151 446 -270 225 -182 531 -693 631 -1056 15 -55 38 -131 49 -170 36 -117 117 -533 106 -543 -10 -10 -16 7 -50 141 -93 365 -206 625 -372 853 -220 304 -387 449 -693 604 -244 123 -669 167 -945 97 -474 -121 -894 -441 -1224 -932 -116 -173 -283 -526 -268 -568 2 -6 21 24 43 68 214 445 601 900 954 1122 425 268 902 328 1315 166 175 -69 317 -151 454 -262 50 -41 277 -293 320 -355 129 -188 288 -499 335 -658 14 -49 38 -127 52 -174 19 -64 34 -96 60 -122 19 -19 34 -36 34 -38 0 -1 9 -72 20 -156 18 -143 41 -364 55 -538 8 -96 26 -173 76 -332 48 -151 52 -210 19 -262 -38 -63 -211 -196 -253 -196 -18 0 -19 6 -12 133 8 152 -9 589 -29 775 -19 169 -77 423 -137 607 -146 441 -417 832 -715 1032 -372 251 -823 299 -1223 130 -329 -139 -677 -447 -928 -822 -57 -86 -76 -119 -198 -350 -130 -243 -278 -699 -367 -1125 -40 -193 -75 -449 -115 -827 l-18 -173 -132 0 -133 0 0 38 c0 168 60 823 96 1052 85 539 297 1274 475 1649 23 47 48 104 57 126 87 222 326 596 516 807 419 464 917 678 1404 603z m-13733 -250 c477 -88 864 -325 1265 -775 165 -185 452 -670 521 -881 11 -34 34 -91 51 -127 123 -267 259 -822 312 -1277 67 -569 20 -1300 -120 -1877 -19 -79 -20 -81 -104 -103 -36 -10 -72 -22 -81 -26 -16 -8 -45 11 -34 22 2 3 13 68 25 144 11 77 25 163 30 190 49 260 73 984 42 1240 -29 237 -35 278 -63 430 -196 1085 -840 1888 -1669 2084 -181 43 -205 45 -415 45 -311 1 -444 -26 -753 -149 -611 -245 -1091 -734 -1478 -1506 -52 -104 -98 -189 -103 -189 -35 0 -181 89 -237 144 -117 117 -115 255 9 502 13 27 37 81 52 119 104 266 388 748 616 1045 157 205 468 488 682 621 335 208 574 294 982 353 79 12 337 -5 470 -29z m3843 -102 c-3 -19 -13 -21 -183 -42 -49 -6 -124 -16 -165 -21 -41 -5 -151 -19 -245 -31 -93 -11 -237 -31 -320 -45 -386 -62 -397 -63 -366 -30 19 20 45 27 199 51 97 15 213 33 257 40 44 7 193 27 330 44 138 18 277 35 310 40 113 16 187 13 183 -6z m-18 -104 c0 -15 -76 -126 -131 -190 -73 -85 -172 -131 -352 -164 -123 -22 -388 -56 -397 -50 -4 3 -4 22 1 42 4 21 11 81 15 133 9 130 2 123 146 143 68 10 188 27 268 38 183 26 410 56 433 58 9 0 17 -4 17 -10z m-1380 -63 c0 -7 -7 -19 -15 -26 -28 -23 -147 -241 -191 -348 -88 -218 -95 -340 -33 -579 54 -212 210 -668 289 -848 12 -27 46 -108 75 -180 138 -339 236 -564 355 -810 l72 -150 -5 -300 c-4 -228 -11 -359 -31 -545 -45 -410 -86 -724 -97 -734 -2 -2 -38 -11 -79 -20 -41 -9 -209 -53 -373 -97 -164 -45 -300 -79 -303 -76 -3 3 6 56 20 119 120 538 166 1045 136 1513 -31 484 -127 980 -273 1411 -108 320 -124 355 -322 729 -89 167 -263 413 -399 563 -63 69 -73 92 -41 92 8 0 74 20 147 46 130 44 488 142 678 185 77 17 177 35 383 68 4 0 7 -5 7 -13z m-5475 -61 c69 -35 94 -72 95 -146 0 -60 -14 -75 -80 -83 -30 -3 -156 -18 -280 -31 -124 -14 -310 -37 -415 -50 -260 -34 -246 -36 -195 28 100 127 246 288 265 293 61 15 180 22 355 21 l195 -2 60 -30z m-755 1 c0 -7 -7 -20 -17 -27 -21 -18 -200 -241 -241 -301 -26 -38 -39 -48 -70 -53 -20 -3 -47 -8 -59 -11 -12 -2 -24 0 -27 5 -8 12 69 113 179 235 120 131 137 147 177 156 50 12 58 11 58 -4z m6714 -56 c-1 -188 -7 -232 -28 -240 -12 -5 -124 -22 -251 -39 -317 -41 -335 -43 -335 -33 0 12 117 229 151 277 l27 41 163 23 c89 13 174 27 188 32 14 4 40 7 56 6 l30 -2 -1 -65z m-6904 46 c0 -2 -29 -33 -64 -69 -36 -36 -88 -99 -118 -140 -29 -41 -76 -103 -105 -139 l-52 -64 -158 -16 c-87 -9 -159 -15 -161 -14 -6 7 281 330 352 395 22 21 42 26 143 36 140 15 163 16 163 11z m-443 -52 c9 -26 -169 -73 -552 -148 -469 -92 -765 -159 -1110 -251 -120 -32 -453 -137 -654 -206 -234 -80 -281 -95 -381 -119 -97 -22 -160 -52 -194 -89 -25 -27 -32 -28 224 19 203 37 349 59 600 90 135 17 274 35 310 40 171 24 421 61 475 69 33 6 112 15 175 21 63 7 232 27 375 46 143 18 316 41 385 50 69 9 181 25 250 35 242 37 503 72 730 99 96 11 245 29 330 40 329 42 484 59 489 54 3 -3 0 -13 -5 -22 -13 -19 -10 -19 -384 -61 -274 -32 -295 -34 -595 -76 -99 -14 -216 -30 -260 -36 -44 -6 -165 -24 -269 -40 -104 -16 -259 -38 -345 -49 -348 -43 -414 -52 -591 -76 -102 -13 -275 -35 -385 -49 -110 -13 -254 -31 -320 -39 -107 -14 -160 -22 -365 -56 -30 -5 -86 -14 -125 -19 -148 -23 -452 -72 -500 -81 -27 -5 -86 -12 -130 -15 -202 -15 -239 -22 -405 -80 -185 -65 -242 -107 -88 -65 46 12 142 31 213 41 127 17 200 29 455 70 235 37 356 56 460 69 47 6 117 15 155 20 39 5 111 14 160 20 50 6 137 18 195 27 58 9 132 19 165 24 33 5 94 13 135 19 41 5 109 14 150 20 102 13 211 28 295 40 39 6 102 15 140 20 39 5 133 18 210 29 150 21 466 64 605 81 47 6 114 15 150 20 186 26 445 57 535 65 39 4 128 16 200 26 71 11 197 29 280 40 82 11 167 24 187 28 56 13 56 8 11 -96 -7 -18 -18 -35 -23 -38 -5 -3 -159 -30 -342 -60 -183 -30 -358 -59 -388 -65 -59 -10 -269 -43 -385 -60 -38 -6 -96 -15 -127 -20 -32 -6 -84 -14 -115 -20 -68 -11 -145 -22 -413 -59 -41 -6 -109 -15 -150 -21 -41 -5 -142 -19 -225 -31 -82 -11 -249 -36 -370 -55 -258 -41 -290 -46 -495 -73 -85 -11 -189 -25 -230 -31 -110 -16 -205 -28 -390 -51 -178 -21 -297 -36 -400 -48 -36 -5 -130 -16 -210 -25 -80 -9 -233 -28 -340 -41 -239 -30 -475 -55 -515 -55 l-30 1 25 20 c110 92 770 414 920 449 30 7 76 23 102 36 172 86 587 225 1073 358 94 26 226 63 295 82 69 19 166 43 215 54 50 10 142 31 205 45 302 67 398 87 570 116 102 17 219 37 260 44 82 14 92 14 97 -1z m-196 -243 c-143 -157 -157 -167 -237 -175 -113 -11 -394 -46 -624 -76 -118 -16 -253 -34 -300 -40 -47 -6 -134 -19 -195 -30 -60 -10 -150 -24 -200 -30 -49 -7 -128 -19 -175 -27 -135 -23 -311 -44 -339 -41 -24 3 -23 5 14 21 55 25 233 79 465 143 107 30 267 74 355 98 88 25 189 52 225 60 36 8 112 26 170 40 100 24 207 45 495 100 72 14 186 32 255 42 69 9 134 20 145 24 44 16 24 -24 -54 -109z m-9926 -63 c4 -35 27 -137 52 -226 24 -90 41 -167 38 -170 -22 -23 -153 178 -189 292 -29 89 -28 95 35 141 54 40 55 39 64 -37z m12565 58 c0 -8 -6 -16 -14 -19 -14 -6 -115 -124 -237 -278 -312 -394 -595 -914 -760 -1394 -20 -60 -49 -141 -62 -180 -148 -415 -298 -1020 -347 -1400 -6 -44 -15 -114 -21 -155 -42 -309 -59 -558 -66 -928 -3 -199 -10 -365 -15 -368 -26 -16 -717 -49 -1753 -84 -176 -6 -427 -15 -558 -21 -131 -6 -241 -8 -245 -5 -4 4 2 22 12 39 43 74 94 179 137 287 l46 115 89 12 c49 6 159 19 244 28 649 66 965 127 1117 216 136 80 192 156 315 429 30 65 169 475 228 670 17 58 53 175 80 260 100 319 142 458 164 540 8 30 24 87 36 125 61 206 58 307 -11 376 -58 58 -152 62 -404 14 -44 -8 -127 -22 -185 -31 -176 -27 -201 -31 -330 -57 -69 -14 -186 -35 -260 -47 -275 -43 -1011 -193 -1305 -265 -241 -59 -312 -78 -460 -125 -49 -15 -124 -38 -165 -50 -131 -39 -226 -74 -209 -78 15 -3 65 9 194 48 89 26 724 183 830 205 44 9 188 39 320 66 369 77 591 120 760 149 61 10 160 28 220 39 61 12 157 25 215 30 58 5 199 25 313 45 454 79 491 39 360 -384 -25 -80 -51 -170 -59 -200 -50 -197 -333 -1086 -408 -1283 -60 -158 -146 -293 -227 -359 -70 -57 -139 -86 -293 -122 -137 -33 -228 -48 -501 -81 -66 -8 -149 -20 -185 -25 -135 -21 -419 -45 -477 -41 -7 1 -19 16 -28 35 -59 123 -659 804 -1054 1195 -488 483 -704 642 -986 729 -199 61 -323 68 -1460 77 -418 3 -1093 10 -1500 16 -3378 46 -3286 45 -3381 19 -184 -50 -344 -232 -559 -635 -26 -49 -56 -103 -66 -120 -9 -16 -53 -111 -97 -210 -44 -99 -96 -214 -115 -255 -19 -41 -53 -124 -76 -185 -23 -60 -49 -126 -58 -145 -9 -19 -24 -60 -33 -90 -22 -70 -33 -72 -64 -12 -67 133 -68 188 -6 498 68 342 150 677 240 974 17 58 51 170 75 250 24 80 53 180 65 223 11 43 27 94 35 114 8 19 15 44 15 54 0 32 24 21 49 -24 13 -23 45 -71 71 -107 25 -36 68 -96 94 -133 68 -97 68 -76 0 35 -31 51 -88 149 -125 218 l-68 125 -30 225 c-17 124 -34 240 -37 258 -6 38 -5 39 61 8 247 -117 645 -1 707 207 14 47 9 65 -78 319 -32 92 -56 170 -53 172 3 3 32 1 65 -4 377 -63 1959 -119 3354 -120 660 0 1165 7 2065 30 523 13 1052 41 1172 61 98 17 96 5 -7 -43 -581 -274 -764 -414 -680 -521 88 -112 762 -315 1435 -433 533 -93 881 -103 1410 -41 371 44 767 98 925 126 330 60 400 73 580 111 466 98 606 178 786 448 116 174 158 260 302 617 l48 120 165 23 c90 12 286 37 434 56 149 18 273 34 278 35 4 0 7 -5 7 -13z m4851 -178 c-1 -40 -9 -152 -17 -248 -20 -234 -30 -992 -15 -1165 24 -278 32 -359 37 -381 5 -21 3 -24 -21 -24 -23 0 -31 10 -70 93 -55 115 -175 407 -225 547 -21 58 -50 132 -65 164 -39 88 -128 339 -184 521 -95 310 -95 504 2 506 17 0 147 17 287 38 140 20 259 34 264 29 5 -4 8 -40 7 -80z m-17571 -5 c22 -102 91 -217 194 -323 51 -52 102 -109 114 -125 27 -40 96 -214 88 -222 -24 -25 -264 138 -412 280 -170 162 -185 266 -57 407 48 54 59 51 73 -17z m28510 17 c320 -70 576 -256 794 -580 210 -310 316 -589 386 -1011 37 -222 47 -349 25 -304 -8 17 -14 36 -15 43 0 22 -67 234 -98 312 -40 103 -115 283 -144 350 -32 72 -174 308 -234 391 -146 199 -263 315 -433 428 -277 186 -480 253 -898 296 -35 4 -63 11 -63 15 0 13 100 47 187 64 43 8 87 17 98 20 48 12 303 -4 395 -24z m-16930 -195 c-30 -32 -120 -60 -274 -85 -67 -10 -283 -46 -481 -80 -423 -72 -562 -95 -705 -115 -58 -9 -159 -24 -225 -35 -162 -25 -316 -47 -460 -65 -66 -9 -142 -19 -170 -24 -50 -10 -122 -20 -310 -46 -190 -26 -341 -47 -510 -72 -93 -13 -228 -33 -300 -43 -71 -11 -159 -24 -195 -30 -36 -5 -96 -14 -135 -20 -38 -5 -164 -23 -280 -40 -115 -17 -257 -38 -315 -46 -58 -8 -173 -26 -257 -39 l-151 -25 -84 24 c-163 48 -205 76 -113 76 64 0 260 19 555 55 113 14 261 32 330 40 212 25 532 65 600 75 36 6 119 17 185 25 66 9 197 27 290 40 94 13 206 29 250 34 44 5 157 20 250 34 94 14 208 30 255 36 47 7 159 23 250 36 91 14 219 32 285 40 161 20 242 33 355 55 52 11 143 26 202 35 59 8 142 22 185 29 70 13 229 38 433 67 41 6 95 14 120 19 122 24 386 66 424 69 18 1 18 -1 -4 -24z m16355 15 c138 -11 175 -18 175 -31 0 -5 -18 -9 -39 -9 -215 0 -527 -147 -735 -348 -383 -369 -669 -941 -791 -1582 -83 -439 -105 -664 -105 -1100 0 -358 7 -454 57 -739 115 -664 388 -1239 751 -1582 144 -135 231 -193 412 -274 l65 -29 -60 -7 c-143 -16 -743 -2 -915 22 -518 72 -864 291 -1161 734 -110 166 -309 570 -309 629 0 16 11 18 210 36 69 6 152 15 185 20 33 5 103 14 155 21 133 16 191 48 264 143 122 161 186 469 186 902 0 108 5 239 10 292 32 296 45 393 72 552 16 96 34 193 38 215 88 457 171 726 326 1061 19 41 34 77 34 80 0 14 147 265 213 364 164 247 360 451 571 593 l68 47 102 0 c55 0 155 -5 221 -10z m-13257 -85 c96 -15 116 -19 223 -49 124 -34 339 -128 429 -189 402 -271 665 -599 871 -1088 91 -215 169 -476 198 -659 34 -209 43 -277 57 -390 15 -135 31 -579 20 -569 -4 4 -16 80 -27 170 -11 90 -31 211 -44 269 -13 58 -35 157 -49 220 -48 219 -224 697 -322 872 -131 234 -357 541 -500 678 -206 197 -309 273 -534 392 -70 37 -300 130 -365 147 -222 58 -436 88 -672 94 -56 1 -105 6 -108 9 -7 7 121 50 204 69 165 39 453 50 619 24z m13623 -49 c272 -20 617 -275 851 -632 89 -135 245 -450 309 -621 60 -162 162 -557 179 -693 6 -52 18 -140 25 -195 61 -444 44 -1056 -41 -1456 -193 -916 -583 -1553 -1114 -1819 -385 -192 -859 -100 -1201 233 -181 177 -321 374 -435 613 -177 372 -250 619 -309 1044 -72 525 -61 927 46 1575 155 945 686 1755 1254 1913 113 32 126 35 205 42 73 6 95 6 231 -4z m-16837 -182 c-104 -193 -225 -320 -379 -397 -152 -76 -635 -185 -1135 -257 -1072 -153 -1338 -167 -1880 -96 -339 45 -451 66 -870 169 -191 46 -210 52 -210 68 0 19 161 4 280 -26 163 -40 668 -133 915 -167 55 -8 207 -13 395 -13 328 0 443 9 845 66 116 16 275 39 355 50 80 11 181 27 225 35 44 8 132 24 195 34 102 17 221 41 345 70 22 5 85 19 140 31 151 32 309 76 363 101 157 73 339 254 424 423 35 68 51 84 56 54 2 -11 -27 -76 -64 -145z m-104 105 c0 -18 -91 -149 -144 -207 -118 -128 -334 -223 -626 -272 -36 -6 -166 -31 -290 -55 -124 -25 -297 -56 -385 -69 -88 -14 -175 -28 -192 -32 -39 -8 -40 -3 -9 39 13 18 74 113 136 212 l111 180 147 27 c81 15 210 36 287 48 77 12 167 26 200 31 82 13 327 49 400 59 33 5 94 14 135 20 63 10 106 16 218 29 6 0 12 -4 12 -10z m2935 -104 c145 -22 156 -35 30 -35 -149 0 -399 -37 -510 -74 -610 -208 -1107 -725 -1454 -1513 -56 -128 -172 -496 -220 -698 -220 -935 -171 -1932 134 -2697 262 -660 700 -1154 1208 -1365 48 -20 87 -39 87 -43 0 -15 -568 13 -730 35 -620 87 -1107 420 -1456 996 -108 178 -147 255 -140 275 4 11 26 14 90 14 236 0 358 126 442 458 27 105 35 425 13 507 -22 81 -10 558 22 875 23 236 89 622 136 800 14 52 36 138 49 191 12 52 56 196 97 320 187 566 404 964 756 1391 174 211 362 372 591 507 58 34 112 66 120 71 26 17 607 5 735 -15z m-14276 -35 c43 -34 178 -124 324 -217 66 -42 39 -65 -45 -37 -62 20 -114 53 -221 142 -129 107 -183 211 -58 112z m-119 -77 c12 -16 71 -62 133 -103 118 -80 131 -94 95 -104 -69 -18 -153 8 -226 69 -52 43 -72 10 -27 -43 52 -62 190 -90 333 -69 69 10 73 -14 5 -38 -111 -39 -325 -29 -394 18 -85 58 -85 96 -3 225 52 81 54 83 84 45z m9940 -14 c0 -14 -246 -392 -268 -412 -52 -47 -853 -114 -1146 -96 -250 15 -785 91 -911 128 -16 5 -47 12 -67 16 -22 3 -38 12 -38 19 0 14 61 25 275 51 61 7 220 29 355 48 135 19 322 45 415 57 94 12 238 32 320 45 83 14 191 29 240 36 198 24 413 56 630 93 162 28 195 30 195 15z m4630 1 c105 -11 246 -45 372 -88 409 -142 845 -579 1100 -1102 387 -792 512 -1864 327 -2803 -39 -199 -135 -522 -203 -680 -25 -59 -46 -110 -46 -113 0 -23 -212 -422 -270 -509 -395 -591 -871 -915 -1432 -976 -685 -75 -1272 242 -1706 922 -344 537 -510 1184 -514 1995 -2 267 2 325 43 669 86 722 376 1454 764 1932 337 415 796 697 1210 743 196 22 231 23 355 10z m8401 -762 c0 -7 4 -80 10 -163 27 -432 26 -445 -28 -445 -14 0 -104 -16 -201 -36 -443 -90 -574 -117 -822 -168 -653 -136 -901 -188 -975 -207 -64 -17 -478 -104 -705 -149 -75 -15 -605 -126 -760 -160 -169 -37 -288 -61 -610 -127 -527 -106 -688 -53 -909 303 -103 164 -155 291 -181 440 -11 65 -25 137 -30 159 -5 22 -10 43 -10 46 0 4 55 10 123 13 138 8 306 21 447 36 52 5 156 14 230 20 119 10 219 19 625 60 55 5 152 14 215 20 63 6 174 17 245 25 72 8 164 17 205 20 41 3 161 15 265 25 105 11 240 25 300 30 61 6 146 15 190 20 101 12 226 25 485 50 113 11 284 29 380 40 96 11 261 29 365 40 105 12 289 32 410 45 121 13 299 31 395 40 96 9 202 20 235 25 90 11 105 11 106 -2z m-11102 -354 c21 -59 139 -173 239 -233 l90 -53 -46 -126 c-193 -540 -292 -940 -358 -1457 -28 -220 -53 -589 -54 -787 0 -124 -1 -128 -22 -132 -35 -7 -238 -26 -281 -26 l-39 0 5 358 c6 357 11 440 41 712 46 403 81 634 126 825 5 22 19 85 31 140 23 112 120 456 179 640 63 197 66 202 89 139z m5819 -141 c15 -28 26 -131 12 -113 -18 24 -60 109 -60 120 0 17 39 11 48 -7z m5298 -220 c-2 -16 -10 -66 -16 -113 -20 -141 -49 -298 -80 -425 -16 -66 -38 -163 -50 -215 -29 -134 -33 -140 -74 -140 -19 0 -133 -16 -253 -35 -766 -124 -973 -159 -1163 -194 -85 -16 -189 -34 -230 -41 -41 -6 -97 -15 -125 -21 -27 -5 -99 -18 -160 -29 -246 -45 -414 -76 -535 -100 -52 -10 -169 -33 -260 -50 -369 -70 -949 -189 -1090 -225 -52 -13 -135 -33 -185 -44 -209 -46 -546 -123 -770 -176 -132 -32 -251 -60 -264 -63 -22 -4 -23 -2 -18 24 47 225 99 759 125 1289 l7 140 27 -45 c51 -86 179 -235 251 -293 173 -139 347 -157 732 -79 290 59 562 117 885 188 63 14 288 61 500 105 212 43 446 92 520 108 74 17 257 55 405 86 149 31 320 67 380 81 158 36 446 96 780 165 326 66 443 91 530 112 33 8 77 15 98 16 37 1 38 0 33 -26z m-21146 -43 c294 -5 1001 -14 1570 -20 569 -5 1325 -15 1680 -20 355 -6 803 -10 995 -11 649 0 809 -32 1095 -224 329 -221 1252 -1175 1584 -1638 64 -88 65 -93 32 -101 -40 -10 -254 -26 -352 -26 l-91 0 -7 52 c-9 69 -19 84 -133 219 -54 64 -142 169 -196 232 -409 486 -935 1018 -1130 1145 -187 120 -258 129 -1102 136 -1848 14 -3694 39 -4552 62 -351 9 -575 11 -616 5 -163 -23 -279 -137 -451 -445 -35 -61 -74 -129 -88 -152 -69 -108 -335 -711 -366 -829 -38 -148 38 -193 403 -240 412 -52 672 -66 739 -41 50 19 137 106 178 178 22 37 62 106 215 363 13 22 39 70 58 108 40 77 43 78 74 36 27 -36 76 -59 125 -59 40 0 66 -8 66 -21 0 -23 -179 -463 -206 -505 -8 -14 -68 -45 -161 -84 -207 -87 -220 -103 -40 -49 118 35 199 38 585 19 221 -10 659 -22 1467 -40 248 -6 695 -17 995 -25 300 -8 680 -15 845 -16 354 -2 357 -2 366 -48 8 -39 24 -52 59 -49 19 2 25 9 26 28 1 47 15 185 30 295 32 246 123 767 137 781 9 9 27 -6 27 -23 0 -8 24 -67 54 -132 30 -64 64 -141 76 -171 57 -148 192 -372 261 -434 111 -100 197 -107 1211 -104 637 2 633 2 626 -46 -5 -35 -62 -54 -198 -65 -119 -10 -1175 -30 -1792 -34 -159 -1 -288 -5 -288 -8 0 -46 120 -54 820 -54 784 1 1414 26 1479 60 67 34 89 102 55 168 -24 46 -169 236 -266 348 -80 93 -160 183 -400 450 -62 69 -188 198 -280 287 -338 325 -367 335 -930 330 l-343 -3 -48 -28 c-101 -60 -139 -160 -198 -537 -27 -168 -31 -180 -77 -209 l-36 -24 -571 6 c-771 9 -2405 37 -3090 53 -349 8 -329 -4 -369 224 -56 330 -87 497 -97 535 -6 22 -13 51 -16 64 l-6 24 554 -7 c305 -4 784 -11 1064 -16 281 -5 1194 -14 2030 -19 836 -6 1561 -13 1612 -15 184 -10 313 -83 562 -317 155 -145 473 -478 630 -659 45 -52 124 -142 176 -200 248 -277 343 -417 331 -484 -19 -102 -105 -133 -409 -147 -303 -15 -2332 -15 -3107 -1 -360 6 -916 17 -1235 22 -909 16 -1938 45 -2170 60 -82 5 -280 17 -440 25 -159 9 -301 18 -315 20 -14 2 -101 9 -195 15 -210 14 -627 65 -658 81 -78 40 -111 117 -112 259 0 93 1 98 54 225 30 72 60 148 68 170 35 98 312 679 358 750 250 391 303 458 410 511 117 58 51 56 1355 34z m-730 -290 c58 -8 89 -16 98 -27 19 -26 14 -36 -15 -28 -16 3 -146 9 -291 12 -364 7 -377 3 -498 -183 -138 -212 -266 -455 -403 -761 -140 -317 -136 -367 36 -392 154 -22 522 -52 693 -57 96 -3 174 -8 173 -13 -1 -4 -24 -31 -51 -60 l-48 -53 -170 12 c-171 11 -632 62 -724 80 -70 13 -105 34 -120 70 -14 34 -8 54 78 245 92 202 212 475 212 481 0 9 104 193 214 379 130 220 179 273 271 296 47 11 451 10 545 -1z m29136 -127 c-3 -16 -10 -64 -16 -108 -37 -259 -138 -580 -228 -722 -58 -93 -66 -92 -58 5 3 42 8 205 11 362 7 344 4 323 57 341 48 15 173 95 202 127 26 30 39 27 32 -5z m-29253 -3 c204 -12 207 -14 233 -190 7 -52 16 -110 19 -127 l6 -33 -224 0 c-304 0 -647 11 -647 21 0 5 14 28 30 51 17 24 59 86 93 137 34 52 73 103 87 113 51 37 151 44 403 28z m5554 -105 c125 -24 194 -63 343 -194 108 -95 133 -122 123 -130 -11 -8 -1300 2 -1308 11 -4 4 -3 29 3 55 6 26 16 75 22 108 20 102 60 153 130 167 60 11 608 -2 687 -17z m17368 -355 c151 -11 221 -20 415 -51 222 -35 242 -38 470 -79 124 -22 250 -44 280 -50 30 -5 105 -18 165 -29 61 -11 148 -25 195 -31 47 -6 114 -15 150 -20 36 -5 138 -15 228 -22 89 -6 162 -15 162 -20 0 -4 -2 -8 -4 -8 -2 0 -41 -13 -87 -29 -158 -55 -233 -65 -729 -101 -80 -6 -188 -15 -240 -20 -52 -5 -153 -14 -225 -20 -162 -14 -311 -30 -725 -79 -91 -11 -264 -31 -385 -45 -121 -14 -290 -35 -375 -46 -215 -27 -389 -48 -495 -60 -49 -5 -126 -14 -170 -20 -83 -11 -198 -23 -370 -40 -55 -6 -149 -17 -210 -25 -110 -15 -644 -78 -805 -95 -98 -11 -706 -81 -955 -110 -93 -11 -246 -29 -340 -40 -93 -11 -208 -25 -255 -30 -47 -6 -148 -17 -225 -25 -186 -20 -353 -41 -560 -70 -93 -14 -231 -31 -305 -39 -74 -9 -254 -29 -400 -46 -146 -17 -305 -35 -355 -41 -201 -22 -411 -23 -565 -1 -80 11 -169 24 -197 27 -64 8 -68 20 -10 35 23 6 114 31 202 55 88 24 268 70 400 101 132 31 303 72 380 91 147 37 249 61 640 149 367 84 588 132 725 159 128 26 143 29 290 64 120 29 425 89 820 162 63 11 147 27 185 34 39 8 122 23 185 34 63 11 151 27 195 35 91 18 627 109 940 161 116 19 260 44 320 54 129 24 209 36 325 51 47 6 112 15 145 20 363 58 852 83 1170 60z m-22800 -19 l160 -6 13 -70 13 -70 -109 -180 c-262 -431 -236 -405 -387 -405 -124 0 -375 16 -458 29 -34 6 -120 15 -192 22 -157 14 -160 16 -136 77 44 111 254 544 298 615 6 9 402 3 798 -12z m6133 -178 c173 -181 552 -625 552 -648 0 -18 -578 -29 -1074 -21 -532 10 -527 8 -656 201 -38 57 -97 149 -131 206 -34 57 -74 122 -88 144 -15 22 -33 54 -41 70 -8 17 -31 55 -52 86 -20 31 -34 59 -31 63 4 3 324 6 712 6 l706 0 103 -107z m19003 -125 c23 -35 -3 -524 -28 -549 -8 -8 -140 -19 -468 -39 -99 -6 -245 -15 -325 -20 -80 -6 -264 -17 -410 -26 -146 -8 -339 -21 -430 -29 -91 -8 -286 -24 -435 -35 -148 -11 -277 -22 -285 -25 -8 -2 -132 -13 -275 -25 -143 -11 -363 -29 -490 -40 -126 -11 -268 -22 -315 -25 -47 -4 -168 -15 -270 -26 -176 -19 -468 -47 -720 -70 -63 -5 -178 -16 -255 -24 -77 -8 -192 -20 -255 -25 -63 -6 -205 -19 -315 -30 -110 -11 -317 -31 -460 -46 -143 -14 -348 -34 -455 -44 -107 -11 -240 -24 -295 -30 -55 -6 -145 -15 -200 -20 -55 -5 -190 -19 -300 -30 -262 -27 -776 -76 -990 -95 -316 -27 -516 -46 -765 -71 -85 -8 -202 -19 -260 -24 -58 -5 -190 -18 -295 -30 -104 -11 -235 -25 -290 -30 -55 -6 -115 -13 -134 -16 -32 -6 -34 -6 -27 17 3 13 22 98 41 188 19 91 38 168 42 172 15 14 179 59 214 59 19 0 91 -11 160 -24 368 -72 499 -78 839 -37 88 11 358 41 585 66 72 7 252 29 400 49 149 19 410 51 580 71 341 40 550 65 785 95 85 11 241 29 345 40 105 11 233 24 285 30 52 5 140 15 195 20 308 33 440 48 615 71 80 10 228 28 330 39 102 11 329 39 505 61 283 35 551 66 1205 139 102 12 210 25 240 31 30 5 111 16 180 23 517 56 803 86 910 96 69 6 166 15 215 20 50 5 155 14 235 20 348 27 426 44 605 130 66 32 127 61 135 64 25 9 92 -1 101 -16z m-22916 -113 c545 -8 1249 -17 1565 -21 316 -3 576 -7 577 -8 9 -8 -61 -438 -80 -493 l-12 -38 -315 2 c-330 2 -1066 16 -1720 33 -212 5 -585 15 -830 21 -689 17 -1011 27 -1016 32 -3 2 4 24 15 48 11 24 29 71 41 104 12 33 34 92 50 130 27 68 62 160 74 199 6 19 18 19 334 13 180 -4 772 -14 1317 -22z m22865 -555 c0 -19 -58 -139 -90 -185 -66 -96 -91 -102 -660 -145 -277 -21 -378 -30 -650 -55 -91 -8 -221 -19 -290 -25 -69 -6 -174 -15 -235 -20 -180 -17 -452 -41 -575 -50 -63 -5 -162 -14 -220 -20 -58 -6 -157 -15 -220 -20 -63 -5 -164 -15 -225 -20 -60 -6 -155 -15 -210 -20 -351 -30 -472 -41 -570 -50 -60 -6 -209 -19 -330 -30 -121 -11 -267 -24 -325 -30 -227 -21 -330 -30 -450 -40 -69 -6 -170 -14 -225 -20 -117 -11 -269 -25 -445 -40 -69 -6 -165 -15 -215 -20 -49 -5 -157 -14 -240 -20 -150 -11 -285 -23 -445 -40 -47 -5 -141 -14 -210 -20 -69 -6 -172 -15 -230 -20 -177 -16 -329 -29 -470 -40 -74 -6 -180 -15 -235 -20 -55 -5 -156 -14 -225 -20 -69 -6 -161 -15 -205 -20 -44 -5 -138 -14 -210 -20 -198 -16 -458 -39 -575 -50 -58 -6 -159 -15 -225 -20 -66 -5 -169 -14 -230 -20 -376 -35 -379 -35 -370 -12 4 9 22 70 40 135 38 138 31 128 92 134 26 2 131 13 233 24 625 66 713 74 1050 105 151 14 309 29 350 34 41 6 140 14 219 20 141 10 164 12 326 30 44 5 132 14 195 20 103 10 308 31 565 60 133 14 275 28 410 40 165 14 522 48 625 60 185 20 433 45 610 60 69 6 163 15 210 20 47 5 141 14 210 20 69 6 166 15 215 20 50 5 140 14 200 20 61 5 198 19 305 30 107 10 276 26 375 35 99 9 223 20 275 25 52 5 154 14 225 19 72 6 204 18 295 26 382 35 745 66 885 75 83 5 310 20 505 34 979 68 1390 88 1390 66z m-26422 -215 c92 -13 232 -29 312 -35 80 -6 154 -13 165 -16 21 -4 216 -19 470 -34 138 -9 487 -24 1150 -50 143 -5 469 -14 725 -20 1094 -24 1419 -30 2020 -42 757 -15 3053 -16 3320 -1 212 12 267 27 334 92 l41 39 150 11 c304 22 345 23 345 14 0 -10 -60 -154 -85 -205 -45 -90 -112 -189 -130 -193 -147 -33 -4241 -33 -4425 0 -14 2 -236 7 -495 10 -258 3 -616 10 -795 15 -179 5 -491 14 -695 20 -468 13 -748 26 -1145 51 -173 11 -387 24 -475 29 -88 5 -241 19 -340 30 -99 11 -243 27 -320 36 -263 29 -384 60 -437 111 -45 43 -36 64 55 142 41 35 51 39 68 30 11 -6 95 -21 187 -34z m-176 -285 c70 -30 465 -78 898 -110 80 -6 192 -15 250 -20 187 -17 400 -30 655 -40 138 -6 345 -15 460 -20 116 -5 370 -14 565 -20 195 -5 427 -12 515 -15 462 -16 2390 -43 3330 -47 761 -3 2345 9 2376 18 16 4 216 11 1044 34 565 15 1143 40 1430 60 77 5 217 14 310 20 94 5 204 13 246 16 l76 7 13 -53 c11 -48 11 -334 -1 -344 -6 -6 -1039 -54 -1629 -76 -151 -6 -417 -18 -590 -28 -233 -12 -472 -17 -915 -17 -573 1 -800 5 -2095 39 -311 9 -749 20 -975 26 -225 5 -540 15 -700 20 -159 5 -490 14 -735 20 -245 6 -560 15 -700 20 -140 5 -415 14 -610 20 -195 6 -501 15 -680 20 -179 5 -494 14 -700 20 -693 19 -990 35 -1130 62 -257 48 -373 91 -540 200 -162 105 -278 235 -168 188z m1701 -597 l268 -6 21 -51 c75 -177 249 -467 361 -601 202 -242 511 -468 760 -556 62 -22 42 -29 -80 -29 -238 0 -528 30 -678 70 -448 120 -761 358 -1047 795 -82 126 -198 353 -198 388 0 7 56 8 163 3 89 -3 283 -9 430 -13z m1064 -51 c12 -15 46 -59 76 -99 341 -457 899 -658 1385 -498 271 90 485 240 708 498 l50 58 162 -7 c89 -4 162 -10 162 -14 0 -12 -150 -232 -215 -315 -257 -329 -637 -608 -965 -707 -233 -70 -456 -98 -620 -78 -313 40 -639 188 -875 399 -201 179 -417 477 -500 689 -16 40 -32 75 -37 78 -4 3 -8 12 -8 21 0 14 33 15 328 9 l327 -7 22 -27z m9378 28 c15 -24 -71 -226 -119 -278 -66 -74 -221 -86 -1001 -79 -597 5 -606 6 -775 88 -104 50 -270 154 -270 169 0 10 92 15 575 35 784 32 1365 60 1445 69 50 6 141 3 145 -4z m-8605 -30 c447 -14 1063 -30 1178 -30 71 0 92 -3 92 -14 0 -23 -200 -207 -295 -272 -400 -272 -880 -272 -1268 0 -126 88 -329 299 -313 325 6 9 54 8 606 -9z"/> <path d="M27645 8620 c-329 -44 -394 -64 -425 -132 -24 -53 -25 -81 -4 -141 32 -95 88 -107 330 -73 177 25 317 46 351 51 75 13 123 86 123 190 0 57 -3 66 -31 94 -30 30 -33 31 -117 30 -48 0 -150 -9 -227 -19z m317 -61 c17 -23 18 -31 7 -72 -20 -82 -48 -101 -164 -116 -55 -7 -120 -16 -145 -21 -77 -16 -339 -42 -358 -36 -61 20 -67 167 -8 189 17 7 167 31 286 47 47 6 126 17 175 25 132 20 183 16 207 -16z"/> <path d="M15120 9464 c-413 -21 -656 -45 -1180 -118 -418 -59 -1068 -188 -1390 -276 -58 -16 -150 -40 -205 -54 -55 -14 -149 -41 -210 -59 -60 -19 -186 -58 -280 -86 -316 -96 -720 -233 -1030 -349 -44 -17 -152 -57 -240 -90 -236 -88 -375 -143 -615 -244 -205 -87 -257 -110 -378 -164 -29 -13 -54 -24 -56 -24 -2 0 -46 -20 -97 -44 -52 -24 -148 -67 -214 -96 -120 -52 -551 -264 -613 -302 -69 -42 -19 -27 150 46 96 41 203 86 239 99 35 13 134 56 219 95 85 38 245 106 355 151 110 44 261 105 335 136 316 132 656 266 855 336 373 130 833 287 940 319 780 236 1456 403 1860 460 83 12 231 34 330 50 161 25 379 52 670 81 55 5 138 14 185 20 474 53 1429 49 2690 -11 129 -7 249 -10 265 -8 30 4 30 4 -10 15 -170 50 -656 96 -1175 113 -479 16 -1125 18 -1400 4z"/> <path d="M9545 9449 c-859 -21 -1316 -40 -1565 -65 -80 -8 -190 -19 -245 -24 -293 -27 -549 -55 -648 -71 -65 -10 -102 -6 -61 7 40 12 70 33 84 59 14 25 14 28 -19 55 -44 38 -116 43 -556 38 -367 -3 -381 -5 -419 -60 -24 -34 -19 -57 22 -98 53 -53 97 -62 273 -59 81 2 151 0 155 -4 4 -4 3 -7 -3 -7 -24 0 -732 -156 -803 -176 -30 -9 -89 -24 -130 -34 -73 -18 -307 -86 -583 -170 -137 -41 -488 -169 -590 -214 -29 -13 -71 -29 -92 -36 -119 -39 -544 -240 -751 -356 -76 -42 -153 -85 -170 -95 -193 -108 -651 -426 -774 -538 -57 -51 -43 -53 24 -3 148 110 558 371 756 479 30 17 96 53 145 80 93 52 159 84 355 173 63 29 144 66 180 82 321 148 1034 398 1350 474 80 19 237 57 350 84 382 93 878 186 1149 215 80 9 184 22 231 30 110 19 681 80 875 95 645 47 936 52 3170 60 1553 5 2179 11 2255 19 278 32 259 43 -97 58 -322 13 -3359 15 -3868 2z m-2637 -90 c-39 -22 -587 -53 -633 -35 -39 15 7 21 218 32 306 15 437 16 415 3z"/> <path d="M12085 9205 c-202 -35 -364 -69 -640 -135 -93 -22 -226 -54 -295 -70 -141 -33 -507 -134 -650 -179 -52 -16 -167 -52 -255 -80 -172 -54 -570 -190 -700 -239 -141 -53 -387 -149 -475 -185 -47 -20 -134 -54 -195 -78 -60 -23 -139 -56 -175 -72 -36 -16 -85 -38 -110 -49 -335 -145 -1170 -587 -1170 -620 0 -5 125 54 278 131 152 76 293 145 312 154 19 9 89 41 155 72 66 31 175 79 243 106 67 27 166 70 220 95 53 26 151 69 217 96 66 28 158 66 205 85 83 35 162 64 440 163 74 26 162 58 195 70 258 96 1004 334 1270 405 66 18 197 53 290 78 94 25 278 71 410 102 410 96 700 168 710 177 18 16 -93 5 -280 -27z"/> <path d="M23360 8148 c-41 -4 -122 -13 -180 -19 -110 -11 -250 -28 -287 -35 -126 -24 -131 -261 -6 -298 35 -11 586 43 634 62 89 35 139 213 78 278 -25 27 -88 30 -239 12z m210 -68 c13 -24 -3 -92 -31 -131 -24 -34 -57 -46 -144 -53 -38 -3 -110 -10 -160 -16 -49 -5 -146 -15 -215 -21 l-124 -11 -23 26 c-31 37 -39 86 -18 125 21 42 38 47 191 61 71 7 179 18 239 25 183 20 272 19 285 -5z"/> <path d="M15180 7704 c-495 -91 -743 -197 -1105 -468 -420 -315 -726 -700 -995 -1251 -107 -220 -88 -231 27 -16 68 126 253 411 341 524 313 401 535 606 890 821 766 464 1686 400 2360 -162 185 -153 497 -528 614 -734 117 -208 143 -209 37 -2 -140 276 -263 453 -448 645 -339 354 -680 540 -1132 620 -110 19 -522 35 -589 23z"/> <path d="M11765 5545 c-38 -7 -128 -24 -198 -39 -71 -14 -143 -26 -160 -26 -18 0 -68 -7 -112 -16 -44 -9 -122 -24 -172 -34 -247 -47 -281 -153 -204 -645 5 -33 17 -109 26 -170 8 -60 27 -177 41 -260 14 -82 29 -177 34 -210 5 -33 16 -96 24 -140 8 -44 24 -134 35 -200 37 -209 74 -275 160 -289 115 -18 164 64 306 514 14 47 40 128 57 180 36 114 120 400 154 525 14 50 33 115 44 145 10 30 31 96 45 145 15 50 35 119 46 155 36 117 59 204 70 260 5 30 15 65 21 78 10 19 9 25 -2 32 -20 13 -129 10 -215 -5z m90 -122 c-4 -10 -15 -47 -25 -83 -30 -109 -100 -341 -125 -415 -13 -38 -37 -119 -55 -180 -17 -60 -45 -153 -61 -205 -16 -52 -34 -111 -39 -130 -39 -149 -187 -602 -220 -677 -28 -61 -56 -88 -78 -74 -18 11 -65 221 -92 411 -5 36 -13 90 -19 120 -27 146 -97 563 -120 715 -5 33 -17 107 -26 164 -28 183 10 224 240 261 39 6 126 23 195 37 374 78 437 86 425 56z"/> <path d="M29110 6444 c-384 -74 -765 -472 -994 -1037 -29 -74 -65 -181 -80 -238 -14 -57 -40 -156 -56 -219 -106 -397 -136 -998 -70 -1410 25 -156 67 -345 119 -535 79 -294 290 -685 485 -902 52 -58 269 -207 361 -248 190 -86 451 -87 651 -4 787 327 1229 1979 888 3314 -169 659 -502 1116 -914 1255 -64 21 -321 37 -390 24z m327 -104 c346 -83 674 -470 843 -995 88 -271 113 -393 124 -590 5 -99 6 -100 -29 105 -59 345 -193 682 -281 704 -69 18 -157 -40 -233 -153 -39 -58 -173 -335 -231 -476 -18 -44 -44 -106 -57 -137 -64 -153 -75 -192 -80 -294 -13 -235 61 -314 397 -429 316 -109 440 -79 511 121 20 54 21 73 16 234 -7 222 11 208 25 -19 21 -330 8 -385 -120 -518 -68 -71 -71 -73 -118 -73 -80 0 -270 66 -584 203 -135 58 -215 187 -227 362 -10 161 25 269 262 810 32 72 69 162 82 200 76 211 171 322 268 313 19 -1 37 1 41 5 8 8 -88 153 -144 218 -21 24 -53 63 -71 87 -18 24 -36 41 -38 38 -3 -3 -5 -52 -4 -110 1 -58 -3 -131 -9 -164 -13 -73 -102 -308 -209 -554 -44 -103 -81 -190 -81 -193 0 -18 -134 -312 -162 -355 -32 -49 -107 -110 -135 -110 -26 0 -90 39 -120 73 -26 29 -113 226 -113 254 0 7 -24 72 -76 203 -7 19 -30 80 -50 135 -20 55 -49 128 -65 162 -16 35 -38 93 -50 130 -11 38 -25 82 -31 98 -6 17 -13 96 -15 178 -3 81 -9 147 -14 147 -22 0 -258 -326 -288 -398 -18 -42 -17 -42 56 -27 95 20 160 -2 226 -74 20 -22 40 -53 43 -68 4 -16 25 -71 47 -123 21 -52 68 -176 102 -275 35 -99 75 -211 89 -250 89 -240 93 -453 11 -630 -33 -72 -51 -90 -235 -236 -61 -49 -277 -189 -317 -205 -98 -41 -215 5 -292 114 -31 44 -41 40 -41 -17 0 -47 2 -51 58 -101 31 -29 81 -65 110 -82 60 -35 62 -41 24 -105 -80 -136 -104 -199 -97 -251 4 -28 13 -59 20 -69 16 -21 12 -29 49 98 30 101 87 192 155 249 146 123 183 151 247 193 40 25 93 62 119 81 165 126 264 146 340 68 90 -92 122 -230 155 -672 5 -69 17 -210 26 -315 9 -104 17 -275 17 -380 0 -254 -18 -321 -128 -471 -17 -23 7 -37 41 -23 16 6 67 13 114 14 47 2 105 8 130 15 52 14 70 18 88 19 21 2 13 29 -23 77 -84 110 -120 241 -135 499 -11 203 -44 649 -60 831 -24 263 -10 383 51 448 l38 41 103 -1 c111 0 159 -14 348 -101 41 -19 96 -43 122 -54 196 -77 260 -138 333 -314 16 -38 35 -77 42 -86 14 -17 9 -58 -22 -179 -32 -128 -33 -128 -28 -20 l5 105 -58 70 c-154 183 -273 265 -494 338 -196 65 -283 53 -338 -48 -22 -39 -20 -347 3 -615 9 -102 20 -241 25 -310 14 -193 28 -300 46 -360 33 -110 123 -210 190 -210 77 0 223 133 334 304 65 99 88 120 50 46 -55 -108 -195 -294 -286 -381 -177 -168 -448 -263 -658 -229 -229 36 -439 168 -616 385 -205 253 -388 672 -465 1065 -8 41 -19 98 -25 125 -66 341 -70 805 -9 1140 10 61 24 135 29 165 52 291 113 504 200 695 10 23 28 66 40 95 58 148 231 399 362 527 247 241 523 331 805 263z m471 -489 c28 -37 52 -71 52 -74 0 -3 -19 -15 -42 -25 -24 -10 -49 -26 -57 -35 -19 -23 -46 -23 -36 1 5 9 10 59 13 110 2 50 7 92 11 92 3 0 30 -31 59 -69z m-1288 -130 c0 -48 5 -102 11 -120 15 -42 7 -48 -38 -27 -21 9 -58 18 -82 19 -69 2 -66 15 33 150 67 91 76 88 76 -22z m1500 -248 c82 -93 191 -462 231 -783 17 -140 23 -457 9 -509 -29 -109 -137 -153 -272 -111 -78 24 -77 22 -42 67 35 46 43 114 33 302 -15 314 -75 596 -165 788 l-35 72 22 43 c31 63 66 106 112 139 52 38 68 37 107 -8z m-260 -349 c80 -186 159 -797 121 -934 -12 -44 -104 -36 -231 22 -176 79 -219 214 -142 441 69 199 209 517 228 517 3 0 14 -21 24 -46z m-775 -569 c41 -41 41 -42 13 -72 -29 -31 -48 -29 -48 5 0 15 -3 44 -6 65 -8 46 -3 46 41 2z m248 -32 c-7 -75 -13 -80 -46 -38 l-28 35 33 30 c45 40 47 38 41 -27z m-80 -93 c85 -74 117 -289 61 -404 -54 -111 -121 -136 -193 -71 -103 94 -104 358 -1 466 47 50 84 52 133 9z m195 -371 c51 -56 51 -59 7 -59 -20 0 -49 -7 -65 -15 -34 -18 -36 -12 -15 38 8 20 15 48 15 63 0 32 6 30 58 -27z m-432 -46 c26 -65 27 -64 -43 -67 -72 -3 -74 0 -34 38 16 16 32 39 35 52 9 36 21 29 42 -23z m1404 -361 c-12 -97 -23 -185 -26 -194 -8 -29 -22 -21 -35 20 -19 59 -68 154 -100 195 -37 46 -38 42 39 106 34 29 79 78 100 108 l37 57 3 -58 c2 -32 -6 -137 -18 -234z m-1160 194 c-5 -13 -14 -42 -20 -65 -14 -54 -22 -52 -48 12 -28 66 -28 67 6 67 15 0 34 4 42 9 21 14 30 3 20 -23z m907 -91 c3 -9 3 -19 -1 -22 -7 -7 -36 16 -36 28 0 15 30 10 37 -6z m-500 -156 c260 -83 274 -117 174 -419 -82 -246 -266 -580 -300 -545 -15 16 -61 633 -61 820 0 188 14 199 187 144z m-1309 -26 c-4 -22 -38 -30 -38 -10 0 14 13 24 33 26 5 1 7 -7 5 -16z m1720 -120 c18 -13 51 -50 74 -81 23 -31 55 -69 70 -83 44 -40 45 -76 4 -237 -72 -287 -223 -569 -408 -765 -75 -78 -87 -87 -119 -87 -66 0 -112 66 -144 204 l-16 67 76 87 c106 120 161 207 221 347 102 238 144 389 144 517 l0 89 33 -17 c17 -9 47 -27 65 -41z m-698 -1248 c12 -31 36 -74 52 -96 36 -50 37 -50 -69 -66 -103 -15 -108 -13 -84 35 10 20 28 70 40 110 12 39 26 72 30 72 5 0 19 -25 31 -55z"/> <path d="M29165 6206 c-263 -55 -385 -195 -385 -442 0 -172 240 -836 348 -962 27 -32 40 -36 100 -34 43 3 41 12 -18 71 -45 45 -64 81 -42 81 16 0 111 158 160 265 62 137 98 237 116 323 25 118 27 149 10 229 -38 179 -23 255 63 314 62 43 120 18 179 -76 46 -71 60 -56 23 25 -72 161 -322 253 -554 206z m282 -77 c54 -19 87 -49 53 -49 -16 0 -90 -71 -106 -101 -8 -16 -14 -44 -14 -63 0 -46 -6 -48 -70 -26 -109 38 -373 11 -426 -43 -31 -31 -30 61 1 126 58 123 388 214 562 156z m-183 -319 c93 -21 128 -87 106 -199 -37 -192 -205 -600 -250 -609 -20 -3 -70 118 -170 403 -21 61 -50 144 -65 185 -18 51 -25 90 -23 124 l3 49 55 14 c158 43 262 53 344 33z"/> <path d="M28367 5331 c-52 -47 -143 -242 -186 -401 -13 -47 -32 -114 -41 -150 -65 -234 -89 -675 -41 -773 54 -112 169 -117 353 -13 73 41 223 159 238 187 27 50 59 172 64 247 7 101 19 131 36 88 16 -44 25 -183 12 -198 -5 -7 -13 -30 -17 -50 -10 -53 18 -51 45 2 35 68 24 192 -25 295 -13 28 -42 125 -65 218 -46 188 -138 462 -169 506 -53 75 -145 93 -204 42z m112 -25 c48 -25 102 -118 100 -174 l0 -27 -17 25 c-45 67 -78 90 -129 90 -27 0 -55 -6 -62 -12 -11 -11 -13 -6 -8 27 11 68 61 99 116 71z m-12 -178 c47 -51 139 -278 188 -463 48 -181 14 -376 -81 -469 -94 -92 -260 -187 -330 -189 -29 -1 -42 6 -67 33 l-30 34 6 160 c10 232 91 677 141 775 30 57 79 113 109 126 42 18 40 19 64 -7z"/> <path d="M28890 3680 c-30 -16 -78 -42 -106 -56 -57 -30 -223 -146 -298 -209 -158 -133 -237 -352 -191 -532 38 -149 207 -444 350 -609 134 -156 356 -259 443 -205 51 33 41 46 -36 47 -76 2 -130 22 -220 83 -90 61 -278 269 -259 287 3 3 29 -8 58 -25 30 -16 89 -42 132 -56 90 -31 115 -26 176 29 109 100 131 414 62 921 -13 98 -43 187 -84 247 -18 28 -18 28 5 38 48 22 73 40 73 52 0 24 -50 19 -105 -12z m-30 -141 c24 -43 40 -130 70 -362 25 -196 7 -588 -30 -658 -72 -134 -349 32 -475 286 -78 157 -83 273 -15 405 37 72 182 196 363 310 74 46 73 46 87 19z"/> <path d="M15309 6049 c-310 -28 -623 -179 -870 -420 -212 -208 -414 -494 -517 -734 -168 -391 -257 -694 -304 -1045 -30 -219 -33 -744 -5 -960 116 -902 465 -1581 996 -1936 230 -155 411 -212 696 -221 326 -10 604 98 909 352 77 65 283 302 356 410 209 313 361 670 439 1035 18 80 36 163 41 185 90 396 102 949 29 1430 -22 146 -114 525 -147 611 -154 388 -312 645 -537 867 -244 242 -515 383 -808 422 -128 16 -135 16 -278 4z m371 -109 c430 -92 804 -430 1061 -959 130 -267 194 -480 259 -861 22 -129 40 -358 42 -540 l2 -195 -32 -72 c-18 -39 -32 -74 -32 -77 0 -40 -179 -194 -258 -222 -78 -28 -214 0 -492 101 -85 31 -204 74 -265 96 -211 77 -267 120 -334 259 l-36 75 1 145 c0 194 25 269 218 650 54 107 128 254 164 325 36 72 86 164 111 205 25 41 55 92 66 113 32 61 120 153 170 176 53 25 140 28 169 6 42 -32 73 -13 35 21 -11 10 -56 66 -98 124 -43 58 -107 132 -142 165 -106 98 -179 158 -186 151 -3 -3 4 -41 15 -85 28 -100 29 -218 2 -326 -17 -71 -263 -585 -346 -725 -21 -36 -70 -127 -145 -267 -115 -216 -168 -286 -244 -322 -120 -56 -233 2 -306 156 -17 37 -60 128 -95 201 -35 73 -64 135 -64 137 0 3 -13 34 -30 70 -16 36 -30 69 -30 73 0 4 -29 66 -64 137 -170 342 -221 507 -214 687 2 59 3 108 0 108 -15 0 -239 -240 -284 -305 -112 -162 -161 -279 -89 -212 41 38 65 47 130 47 161 0 258 -103 374 -395 20 -49 60 -142 90 -205 48 -102 79 -179 183 -445 102 -265 62 -530 -106 -689 -101 -95 -451 -330 -630 -424 -121 -63 -266 -32 -397 83 -28 25 -54 42 -56 38 -24 -39 140 -698 173 -698 8 0 35 48 64 115 99 226 98 225 656 593 196 130 294 156 396 106 156 -75 183 -193 253 -1119 19 -250 24 -502 12 -580 -23 -144 -83 -291 -153 -372 -17 -21 -29 -41 -25 -44 10 -11 321 -8 377 3 30 7 77 15 103 18 71 9 70 26 -6 103 -132 136 -168 271 -197 742 -39 651 -46 1031 -20 1113 22 71 76 137 140 170 95 49 154 39 530 -86 356 -119 486 -175 555 -238 86 -80 139 -170 170 -292 24 -96 36 -108 48 -50 18 87 -16 194 -105 330 -74 114 -73 128 10 173 74 39 166 128 198 191 54 108 59 49 24 -256 -28 -233 -137 -630 -237 -860 -102 -234 -121 -270 -199 -391 -144 -221 -392 -489 -543 -588 -257 -168 -443 -226 -720 -226 -184 1 -305 32 -494 126 -164 81 -239 136 -393 287 -215 209 -336 395 -474 727 -298 715 -351 1603 -140 2347 123 436 246 708 438 968 126 170 138 184 251 289 256 237 476 349 786 400 67 10 312 -3 405 -24z m623 -569 c92 -95 115 -131 82 -131 -33 0 -123 -51 -174 -99 -30 -28 -58 -51 -62 -51 -4 0 4 37 18 83 19 65 24 104 24 190 0 59 4 107 8 107 4 0 51 -45 104 -99z m-1770 -148 c4 -70 13 -129 26 -167 28 -80 28 -93 -1 -72 -80 56 -129 77 -188 80 -33 2 -63 6 -66 9 -14 13 189 257 214 257 5 0 12 -48 15 -107z m1029 -1291 c-23 -64 -42 -158 -42 -209 0 -18 -4 -33 -10 -33 -5 0 -10 5 -10 10 0 16 -81 100 -96 100 -23 0 -16 19 14 34 34 18 79 66 122 130 40 60 50 46 22 -32z m-438 -45 c26 -31 52 -51 78 -59 45 -13 48 -22 9 -37 -15 -7 -43 -28 -62 -47 -41 -43 -49 -43 -49 1 0 19 -9 68 -20 107 -24 85 -26 122 -7 97 7 -9 30 -37 51 -62z m270 -155 c168 -99 152 -492 -24 -582 -129 -66 -255 68 -268 286 -13 230 140 385 292 296z m196 -341 c0 -15 61 -85 108 -125 64 -53 61 -59 -33 -61 -61 -1 -90 -7 -123 -24 -57 -29 -58 -26 -21 46 17 32 33 79 36 104 2 24 6 50 9 57 4 14 24 17 24 3z m-545 -88 c3 -21 17 -58 31 -82 34 -62 33 -65 -35 -58 -33 4 -85 2 -116 -5 -64 -13 -80 -5 -45 24 51 40 112 103 126 130 20 38 30 35 39 -9z m385 -209 c0 -3 -11 -24 -25 -47 -27 -47 -50 -131 -60 -220 -6 -54 -25 -72 -25 -23 0 32 -58 195 -81 228 -27 37 -26 38 49 38 37 1 81 7 97 15 34 15 45 18 45 9z m1231 -163 c11 -10 -9 -51 -23 -50 -21 1 -91 43 -96 57 -4 13 105 7 119 -7z m-2713 -155 c27 -18 68 -36 90 -40 75 -12 89 -56 40 -132 -17 -27 -46 -82 -64 -122 -17 -40 -36 -73 -40 -73 -5 0 -21 38 -36 85 -24 76 -32 121 -53 279 -6 45 0 46 63 3z m302 -15 c0 -11 -74 -71 -87 -71 -17 0 -34 38 -20 47 33 22 107 38 107 24z m1230 -1556 c26 -49 64 -109 84 -132 56 -65 71 -59 -212 -77 -67 -4 -69 1 -33 66 29 51 81 197 81 226 0 36 36 -2 80 -83z"/> <path d="M15225 5774 c-89 -20 -254 -84 -325 -126 -136 -82 -205 -313 -155 -520 19 -79 138 -397 185 -493 16 -33 60 -125 98 -205 95 -200 202 -350 251 -350 30 0 27 8 -18 46 -71 61 -84 124 -24 124 69 0 121 49 209 200 47 80 134 251 134 264 0 3 12 31 26 62 89 195 102 295 78 588 -7 85 4 141 38 188 15 22 17 32 8 48 -26 48 -59 -3 -91 -141 -18 -80 -26 -99 -39 -95 -177 60 -181 60 -330 61 -151 0 -226 -15 -337 -66 -24 -10 -46 -19 -50 -19 -5 0 -19 -9 -33 -20 -45 -35 -53 -27 -48 48 9 129 69 200 231 275 193 90 569 101 727 22 14 -7 49 -23 79 -36 68 -30 133 -94 151 -148 23 -71 46 -69 36 3 -14 91 -115 203 -221 244 -147 57 -431 79 -580 46z m177 -445 c96 -20 175 -65 199 -112 20 -38 21 -46 9 -112 -31 -175 -184 -536 -284 -673 -54 -73 -107 -109 -140 -94 -25 11 -95 138 -144 262 -17 41 -46 109 -65 150 -110 238 -166 419 -143 455 56 85 397 160 568 124z"/> <path d="M16429 5004 c-125 -38 -279 -255 -506 -711 -158 -315 -183 -387 -183 -530 0 -152 59 -262 172 -319 255 -129 762 -242 881 -195 132 52 196 218 183 481 -29 614 -230 1220 -424 1278 -49 15 -65 14 -123 -4z m138 -63 c160 -98 352 -818 353 -1328 0 -168 -39 -266 -123 -309 -49 -26 -190 -12 -325 32 -10 3 -7 12 12 34 43 52 49 96 43 325 -3 116 -10 226 -15 245 -5 19 -15 73 -22 120 -34 236 -129 512 -217 628 l-25 33 41 62 c96 148 198 206 278 158z m-318 -397 c40 -84 106 -293 131 -419 58 -282 81 -674 43 -707 -30 -25 -47 -27 -120 -13 -141 27 -336 107 -396 164 -71 65 -100 227 -63 342 57 173 331 699 365 699 4 0 23 -30 40 -66z"/> <path d="M14222 4804 c-32 -22 -27 -36 11 -33 60 4 76 -1 112 -33 35 -30 83 -108 68 -108 -5 0 -21 9 -38 20 -36 24 -73 25 -179 4 -101 -20 -112 -26 -135 -72 -178 -351 -308 -1163 -225 -1406 18 -54 99 -146 127 -146 23 0 21 13 -4 36 -24 22 -69 106 -69 129 0 13 6 11 33 -8 80 -60 165 -59 314 3 150 62 390 229 440 305 11 17 37 59 58 94 21 35 46 72 57 83 30 30 35 9 -164 618 -76 233 -153 395 -218 460 -65 65 -141 87 -188 54z m136 -251 c83 -85 172 -286 248 -563 25 -91 26 -358 2 -411 -35 -75 -94 -124 -283 -236 -302 -179 -405 -147 -405 128 0 302 83 744 178 951 44 95 131 174 195 177 10 1 39 -20 65 -46z"/> <path d="M15695 2923 c-34 -8 -84 -52 -104 -92 -76 -148 -72 -678 9 -1286 34 -257 179 -453 317 -429 188 32 545 436 730 824 94 198 97 208 97 310 1 91 -1 98 -40 180 -23 47 -54 97 -70 112 -105 97 -291 205 -452 262 -41 14 -82 30 -91 36 -83 44 -337 97 -396 83z m206 -128 c261 -74 399 -158 399 -245 0 -34 -78 -258 -120 -346 -71 -147 -257 -412 -351 -500 -53 -49 -130 -105 -138 -100 -22 14 -56 420 -67 787 -8 264 1 336 48 393 37 46 95 48 229 11z m587 -226 c171 -85 248 -250 192 -410 -132 -374 -477 -841 -707 -958 -99 -50 -176 -14 -234 109 -59 124 -68 190 -24 190 40 0 253 197 345 318 170 225 319 567 320 730 0 75 0 75 108 21z"/> <path d="M14940 2889 c-75 -26 -306 -142 -382 -191 -70 -45 -247 -197 -298 -254 -37 -43 -85 -141 -95 -195 -39 -206 287 -664 540 -758 167 -63 275 -18 320 131 51 173 41 584 -25 982 -11 69 -53 162 -81 179 -32 20 -21 41 37 72 85 46 76 66 -16 34z m-53 -219 c59 -119 97 -707 62 -945 -28 -188 -130 -219 -316 -96 -135 89 -254 232 -347 418 -108 216 13 399 414 625 114 65 154 64 187 -2z"/> <path d="M14037 2073 c-58 -57 184 -480 407 -710 92 -97 214 -198 288 -241 24 -13 59 -33 78 -45 48 -27 137 -57 172 -57 51 0 178 76 178 106 0 18 1 18 -55 -6 -188 -81 -513 126 -807 515 -111 146 -238 375 -238 430 0 16 -12 20 -23 8z"/></g></symbol></svg>
-<div class="bgfx" aria-hidden="true"><i class="bf bf1"></i><i class="bf bf2"></i><i class="bf bf3"></i><i class="bf bf4"></i><i class="bgrain"></i><i class="bvig"></i></div>
+<div class="bgfx" aria-hidden="true"><i class="bgrain"></i></div>
 <div id="app" class="app">
   <aside id="sidebar" class="sidebar glass" aria-label="Навигация"></aside>
   <div class="maincol">
-    <header id="topbar" class="topbar glass refract"></header>
+    <header id="topbar" class="topbar glass"></header>
     <div id="banner" class="banner-slot"></div>
     <main id="main" class="main" tabindex="-1"></main>
   </div>
 </div>
-<div id="caracc" class="caracc-slot"></div>
-<nav id="tabbar" class="tabbar glass refract" aria-label="Разделы"></nav>
+<nav id="tabbar" class="tabbar glass" aria-label="Разделы"></nav>
 <div id="layer"></div>
 <div id="toasts" class="toasts" role="status" aria-live="polite"></div>
 <noscript><div style="padding:40px;color:#FCFBFE;font-family:sans-serif">Для работы Kun нужен JavaScript.</div></noscript>
@@ -1780,8 +1792,10 @@ function syncAttrs(a, b) {
     } else if (name === 'style') {
       if (a.getAttribute('style') !== value) {
         const mx = a.style.getPropertyValue('--mx'), my = a.style.getPropertyValue('--my');
+        const px = a.style.getPropertyValue('--px'), py = a.style.getPropertyValue('--py');
         a.setAttribute('style', value);
         if (mx) { a.style.setProperty('--mx', mx); a.style.setProperty('--my', my); }
+        if (px) { a.style.setProperty('--px', px); a.style.setProperty('--py', py); }
       }
     } else if (a.getAttribute(name) !== value) a.setAttribute(name, value);
   }
@@ -1901,6 +1915,8 @@ const KEYS = ['settings', 'accounts', 'categories', 'transactions', 'debts', 'ta
 const DEFAULT_CITY = { name: 'Ташкент', lat: 41.2995, lon: 69.2401 };
 const DEFAULT_CAR = { model: 'Xiaomi YU7 Max', grossKWh: 101.7, usableKWh: 99.0, cltcRangeKm: 760, consumptionKWhPer100: 19.5 };
 const DEFAULT_GOALS = { steps: 10000, sleepHours: 8, waterMl: 2000 };
+const BACKDROPS = ['auto', 'indigo', 'sage', 'ocean', 'sunset', 'graphite'];
+function normBackdrop(v) { const k = typeof v === 'string' ? v.trim().toLowerCase() : ''; return BACKDROPS.includes(k) ? k : 'auto'; }
 const ACC_TYPES = { card: 'Карта', cash: 'Наличные', savings: 'Накопления', deposit: 'Вклад' };
 const ACC_TYPE_ICON = { card: 'creditcard', cash: 'banknote', savings: 'piggybank', deposit: 'building.columns' };
 const PRIO = { low: 'Низкий', normal: 'Обычный', high: 'Высокий' };
@@ -1918,7 +1934,7 @@ function seedCategories() {
   return [...SEED_EXPENSE.map(([name, icon, color]) => ({ id: uid(), name, kind: 'expense', icon, color })), ...SEED_INCOME.map(([name, icon, color]) => ({ id: uid(), name, kind: 'income', icon, color }))];
 }
 function defaultSettings(name) {
-  return { userName: name || 'Джамшид', city: { ...DEFAULT_CITY }, baseCurrency: 'UZS', rates: { USD: 12100, EUR: 13900, updatedAt: dayKey(new Date()), source: 'default' }, car: { ...DEFAULT_CAR }, goals: { ...DEFAULT_GOALS } };
+  return { userName: name || 'Джамшид', city: { ...DEFAULT_CITY }, baseCurrency: 'UZS', rates: { USD: 12100, EUR: 13900, updatedAt: dayKey(new Date()), source: 'default' }, car: { ...DEFAULT_CAR }, goals: { ...DEFAULT_GOALS }, backdrop: 'auto' };
 }
 function emptyData(name) { return { settings: defaultSettings(name), accounts: [], categories: seedCategories(), transactions: [], debts: [], tasks: [], shopping: [], carLogs: [], health: [] }; }
 
@@ -1948,6 +1964,9 @@ function normSettings(s) {
     rates: { ...rates, USD: toNum(rates.USD, 12100) || 12100, EUR: toNum(rates.EUR, 13900) || 13900, updatedAt: str(rates.updatedAt, dayKey(new Date())), source: ['cbu', 'manual', 'default'].includes(rates.source) ? rates.source : 'manual' },
     car: { ...car, model: str(car.model, DEFAULT_CAR.model), grossKWh: toNum(car.grossKWh, DEFAULT_CAR.grossKWh), usableKWh: toNum(car.usableKWh, DEFAULT_CAR.usableKWh) || DEFAULT_CAR.usableKWh, cltcRangeKm: toNum(car.cltcRangeKm, DEFAULT_CAR.cltcRangeKm), consumptionKWhPer100: toNum(car.consumptionKWhPer100, DEFAULT_CAR.consumptionKWhPer100) || DEFAULT_CAR.consumptionKWhPer100 },
     goals: { ...goals, steps: toNum(goals.steps, DEFAULT_GOALS.steps), sleepHours: toNum(goals.sleepHours, DEFAULT_GOALS.sleepHours), waterMl: toNum(goals.waterMl, DEFAULT_GOALS.waterMl) },
+    // v4 «Фон»: same keys as iOS ("auto" | "indigo" | "sage" | "ocean" | "sunset" | "graphite"), optional in JSON;
+    // tolerant like iOS (case and surrounding spaces ignored); missing, null or unknown → "auto"; always exported as a string
+    backdrop: normBackdrop(s.backdrop),
   };
 }
 function normalize(raw) {
@@ -2648,8 +2667,15 @@ let viewEl = null, curRoute = null, navTok = 0, renderQueued = false;
 
 /* ---------- UI preferences (interface only — never part of the data / JSON export) ---------- */
 const LS_UI = 'kun.ui.v1';
-const PREFS = (() => { const p = kv.get(LS_UI) || {}; return { sb: !!p.sb, nav: isObj(p.nav) ? { ...p.nav } : {}, car: p.car !== false, glass: isFinite(+p.glass) && p.glass !== null && p.glass !== '' ? clamp(+p.glass, 0, 100) : 35, confettiDay: typeof p.confettiDay === 'string' ? p.confettiDay : '' }; })();
-function savePrefs() { kv.set(LS_UI, { sb: PREFS.sb, nav: PREFS.nav, car: PREFS.car, glass: PREFS.glass, confettiDay: PREFS.confettiDay }); }
+/* v4: «Стекло» became Прозрачное (0) ↔ Матовое (50, default) ↔ Плотное (100); a v3 value (default 35) is mapped
+   piecewise so the user's relative choice survives. bk / bkSet remember the last palette for the first paint. */
+const PREFS = (() => {
+  const p = kv.get(LS_UI) || {};
+  let glass = isFinite(+p.glass) && p.glass !== null && p.glass !== '' ? clamp(+p.glass, 0, 100) : 50;
+  if (p.v !== 4 && p.glass != null) glass = Math.round(glass <= 35 ? (glass / 35) * 50 : 50 + ((glass - 35) / 65) * 50);
+  return { sb: !!p.sb, nav: isObj(p.nav) ? { ...p.nav } : {}, glass, confettiDay: typeof p.confettiDay === 'string' ? p.confettiDay : '', bk: typeof p.bk === 'string' ? p.bk : '', bkSet: typeof p.bkSet === 'string' ? p.bkSet : 'auto' };
+})();
+function savePrefs() { kv.set(LS_UI, { v: 4, sb: PREFS.sb, nav: PREFS.nav, glass: PREFS.glass, confettiDay: PREFS.confettiDay, bk: PREFS.bk, bkSet: PREFS.bkSet }); }
 /* mobile tab bar: 5 tabs + integrated search; Долги live in «Финансы», Авто/Настройки are pushed over the last tab */
 const TABS = ['home', 'tasks', 'shopping', 'finance', 'health'];
 function tabOf(r) { if (TABS.includes(r)) return r; if (r === 'debts') return 'finance'; return S.ui.lastTab || 'home'; }
@@ -2669,13 +2695,12 @@ function render() { if (renderQueued) return; renderQueued = true; queueMicrotas
 function renderNow() {
   renderQueued = false;
   applyLayout();
-  applyMood();
-  if (!S.data) { morphChildren($('#sidebar'), toFrag(sidebarHTML())); morphChildren($('#topbar'), toFrag(topbarHTML())); morphChildren($('#caracc'), toFrag('')); positionIndicators(D, true); return; }
+  applyBackdrop();
+  if (!S.data) { morphChildren($('#sidebar'), toFrag(sidebarHTML())); morphChildren($('#topbar'), toFrag(topbarHTML())); positionIndicators(D, true); return; }
   const snap = flipSnapshot();
   morphChildren($('#sidebar'), toFrag(sidebarHTML()));
   morphChildren($('#topbar'), toFrag(topbarHTML()));
   morphChildren($('#tabbar'), toFrag(tabbarHTML()));
-  morphChildren($('#caracc'), toFrag(caraccHTML()));
   morphChildren($('#banner'), toFrag(bannerHTML()));
   if (viewEl && viewEl._route === curRoute && VIEWS[curRoute]) morphChildren(viewEl, toFrag(VIEWS[curRoute].render()));
   for (const sh of sheets) if (!sh.closing) morphChildren(sh.body, toFrag(sh.html()));
@@ -2701,16 +2726,6 @@ function navLink(r, rail) {
   if (r === '@export') return `<button type="button" class="sb-link" data-key="${r}" data-act="export" data-tip="${t}">${inner}</button>`;
   return `<a href="#${r}" class="sb-link${on ? ' on' : ''}" data-key="${r}" data-tip="${t}"${on ? ' aria-current="page"' : ''}>${inner}</a>`;
 }
-function sbCarHTML(rail) {
-  if (!S.data || !PREFS.car) return '';
-  const c = carInfo(); const model = (S.data.settings.car.model || 'Авто').replace(/^Xiaomi\s+/i, '');
-  const t = c.pct != null ? `${model} · ${c.pct}%` : model;
-  const s = c.pct != null ? `≈ ${fmtNum(c.realKm)} км запаса` : 'Внесите заряд и пробег';
-  if (rail) return `<a class="sb-car-mini" href="#car" data-tip="${esc(t)}" aria-label="Авто: ${esc(t)}">${ic('zap')}<i class="sbm-ring" style="--p:${c.pct != null ? (c.pct / 100).toFixed(3) : 0}"></i></a>`;
-  return `<div class="sb-car anim-scope" data-key="sbcar"><a class="sb-car-hit" href="#car" aria-label="Авто: ${esc(t)}, ${esc(s)}"></a>
-<div class="sb-car-h"><span class="sb-car-ic">${ic('zap')}</span><span class="sb-car-t ellip">${esc(t)}</span><button class="sb-car-x" data-act="sb-car-x" aria-label="Скрыть карточку авто" title="Скрыть (вернуть можно в настройках)">${ic('x')}</button></div>
-<div class="sb-car-s">${esc(s)}</div>${carStage('sm', { tilt: false })}${lqBar(c.pct ?? 0, { size: 'sm', color: c.pct == null ? 'none' : '' })}</div>`;
-}
 function sidebarHTML() {
   const rail = isRail(); const q = S.ui.q || '';
   const head = `<div class="sb-head"><a class="logo" href="#home" aria-label="Kun — главная" data-tip="Kun">${LOGO_TILE}<span class="logo-name">Kun</span></a></div>`;
@@ -2726,12 +2741,10 @@ function sidebarHTML() {
       return `<div class="sb-group${closed ? ' closed' : ''}" data-key="g:${g}"><button class="sb-gh" data-act="sb-group" data-v="${g}" aria-expanded="${!closed}"><span>${label}</span>${ic('chevron-up')}</button><div class="sb-items" data-flip>${closed ? '' : items.map((r) => navLink(r, rail)).join('')}</div></div>`;
     }).join('')}</nav>`;
   }
-  return `<div class="sb-in">${head}${search}<div class="sb-scroll">${mid}</div><div class="sb-foot">${sbCarHTML(rail)}</div></div><button class="sb-toggle" data-act="sb-toggle" aria-label="${rail ? 'Развернуть панель' : 'Свернуть панель'}" title="${rail ? 'Развернуть панель' : 'Свернуть панель'}">${ic(rail ? 'chevrons-right' : 'chevrons-left')}</button>`;
+  return `<div class="sb-in">${head}${search}<div class="sb-scroll">${mid}</div></div><button class="sb-toggle" data-act="sb-toggle" aria-label="${rail ? 'Развернуть панель' : 'Свернуть панель'}" title="${rail ? 'Развернуть панель' : 'Свернуть панель'}">${ic(rail ? 'chevrons-right' : 'chevrons-left')}</button>`;
 }
 ACT['sb-toggle'] = () => { PREFS.sb = !PREFS.sb; savePrefs(); hideTip(); renderNow(); setTimeout(() => positionIndicators(D), 340); };
 ACT['sb-group'] = (el) => { const g = el.dataset.v; if (isRail()) return; PREFS.nav[g] = !PREFS.nav[g]; savePrefs(); render(); };
-ACT['sb-car-x'] = () => { PREFS.car = false; savePrefs(); render(); toast('Карточка авто скрыта — вернуть можно в настройках'); };
-ACT['sb-car-toggle'] = () => { PREFS.car = !PREFS.car; savePrefs(); render(); };
 ACT['sb-rail-toggle'] = () => ACT['sb-toggle']();
 
 /* ---------- global search (tasks / shopping / transactions / debts) ---------- */
@@ -2800,13 +2813,6 @@ function tabbarHTML() {
   const act = tabOf(curRoute);
   const srch = sheets.some((s) => s.def.cls === 'search');
   return `<span class="tab-ind" aria-hidden="true"><i class="lens"></i></span>${TABS.map((r) => `<a href="#${r}" data-key="${r}" class="tab${act === r && !srch ? ' on' : ''}"${act === r && curRoute === r ? ' aria-current="page"' : ''}>${ic(NAV_ICON[r])}<span>${TITLES[r]}</span></a>`).join('')}<i class="tab-div" aria-hidden="true"></i><button type="button" data-key="search" data-act="search-open" class="tab tab-search${srch ? ' on' : ''}" aria-label="Поиск">${ic('search')}</button>`;
-}
-/* Music-mini-player-style car accessory above the tab bar (phones) */
-function caraccHTML() {
-  if (!S.data || !PREFS.car) return '';
-  const c = carInfo(); const model = (S.data.settings.car.model || 'Авто').replace(/^Xiaomi\s+/i, '');
-  const meta = c.pct != null ? `${c.pct}${NB}% · ≈${NB}${fmtNum(c.realKm)}${NB}км` : 'внесите заряд';
-  return `<a class="caracc glass refract${curRoute === 'car' ? ' on' : ''}" href="#car" data-key="acc" aria-label="Авто: ${esc(model)}, ${esc(meta)}"><span class="ca-car">${carDrawing()}</span><span class="ca-t"><b>${esc(model)}</b><span>${esc(meta)}</span></span>${lqBar(c.pct ?? 0, { size: 'xs', color: c.pct == null ? 'none' : '' })}<span class="ca-go">${ic('chevron-up')}</span></a>`;
 }
 function bannerHTML() {
   if (S.mode === 'memory' && !S.ui.bannerHidden) return `<div class="banner" role="status">${ic('info')}<span>Данные не сохраняются в этом режиме — хранилище браузера недоступно. Используйте экспорт JSON в настройках.</span><button class="ibtn sm x" data-act="banner-x" aria-label="Скрыть">${ic('x')}</button></div>`;
@@ -2941,9 +2947,16 @@ function go(route) {
   if (old && !reduced) {
     old.style.pointerEvents = 'none';
     for (const a of old.getAnimations()) a.cancel();
-    const a = old.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: `translate3d(${-dir * 10}px,${dir ? 0 : 4}px,0)` }], { duration: 140, easing: 'cubic-bezier(.4,0,1,1)', fill: 'forwards' });
+    // the view only moves; opacity fades its card-free blocks and the cards themselves — never an ancestor of a frosted
+    // card (an opacity < 1 ancestor becomes the backdrop root and the glass would lose its blur for the duration)
+    const a = old.animate([{ transform: 'none' }, { transform: `translate3d(${-dir * 10}px,${dir ? 0 : 4}px,0)` }], { duration: 140, easing: 'cubic-bezier(.4,0,1,1)', fill: 'forwards' });
+    for (const el of fadeTargets(old)) el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 140, easing: 'cubic-bezier(.4,0,1,1)', fill: 'forwards' });
     a.onfinish = swap;
   } else swap();
+}
+function fadeTargets(root, out = []) {
+  for (const c of root.children) { if (c.classList.contains('card') || !c.querySelector('.card')) out.push(c); else fadeTargets(c, out); }
+  return out;
 }
 function navTo(r) { if (location.hash !== '#' + r) location.hash = r; else go(r); }
 ACT.nav = (el) => navTo(el.dataset.to);
@@ -3169,7 +3182,7 @@ ACT['set-field'] = (el, e, sh) => { if (!sh) return; let v = el.dataset.v; if (e
 ACT['toggle-field'] = (el, e, sh) => { if (!sh) return; sh.st[el.dataset.f] = !sh.st[el.dataset.f]; if (sh.def.onInput) sh.def.onInput(sh, el.dataset.f, el); sh.update(); };
 
 // ---- 07-charts.js
-/* ================= charts & visuals (v3: smoked widgets, liquid fills, glass knobs; one lime accent) ================= */
+/* ================= charts & visuals (v4: frosted widgets, liquid fills, glass knobs; one lime accent) ================= */
 const GLOBAL_DEFS = `<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
 <linearGradient id="limeArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#DEFF1C" stop-opacity=".22"/><stop offset=".7" stop-color="#DEFF1C" stop-opacity=".04"/><stop offset="1" stop-color="#DEFF1C" stop-opacity="0"/></linearGradient>
 <linearGradient id="wxArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--wx-c,#DEFF1C)" stop-opacity=".34"/><stop offset=".75" style="stop-color:var(--wx-c,#DEFF1C)" stop-opacity=".05"/><stop offset="1" style="stop-color:var(--wx-c,#DEFF1C)" stop-opacity="0"/></linearGradient>
@@ -3184,8 +3197,6 @@ const GLOBAL_DEFS = `<svg width="0" height="0" style="position:absolute" aria-hi
 <linearGradient id="chipSilver" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F4F5F7"/><stop offset=".45" stop-color="#A9ADB5"/><stop offset=".7" stop-color="#DADDE2"/><stop offset="1" stop-color="#7C8089"/></linearGradient>
 <filter id="capGlow" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="2.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 </defs>
-<filter id="lg" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency="0.0065 0.009" numOctaves="2" seed="7" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="12" xChannelSelector="R" yChannelSelector="G"/></filter>
-<filter id="lge" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency="0.012 0.02" numOctaves="1" seed="2" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="30" xChannelSelector="R" yChannelSelector="G"/></filter>
 </svg>`;
 const LIME = ['#DEFF1C', '#EDFE88', '#F5FFBC', '#FFFFFF'];
 const RANK = ['#DEFF1C', '#EDFE88', '#F5FFBC', '#FFFFFF', '#A1A1AA', '#71717A', '#52525B', '#3F3F46'];
@@ -3314,6 +3325,7 @@ function segProgress(frac, { n = 10, cls = '', label = '' } = {}) {
 /* LIQUID capsule bar: level = pct, animated meniscus + caustic sweep; lime → amber → coral when low.
    act: makes it a button; hit: adds a transparent <svg class="gauge-drag"> overlay for dragging in sheets */
 function lqLevel(pct) { return pct == null ? 'none' : pct < 20 ? 'low' : pct < 35 ? 'mid' : 'ok'; }
+const LVL_ORB = { ok: 'lime', mid: 'amber', low: 'coral', none: '' };
 function lqBar(pct, { size = 'md', act = '', attrs = '', charging = false, color = '', label = 'Заряд батареи', hit = '', ticks = false } = {}) {
   const p = clamp(toNum(pct), 0, 100);
   const lvl = color || lqLevel(pct);
@@ -3374,44 +3386,226 @@ const CHIP_SVG = '<svg class="ac-chip" viewBox="0 0 120 90" aria-hidden="true"><
 const NFC_SVG = '<svg class="ac-nfc" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 8.5a5 5 0 0 1 0 7"/><path d="M12 6a8.5 8.5 0 0 1 0 12"/><path d="M15.5 3.5a12 12 0 0 1 0 17"/></svg>';
 
 /* KPI card: label, big value, viz row (sparkline / liquid / orb), darker footer strip */
-function kpiCard({ k, label, value, foot = '', icon = 'clock', d = 0, cls = '', attrs = '', extra = '', viz = '' }) {
-  return `<section class="card kpi ${cls}" data-k="${k}" style="--d:${d}" ${attrs}><div class="kpi-b"><div class="kpi-l">${label}</div><div class="kpi-v" data-fit>${value}</div>${extra}${viz ? `<div class="kpi-viz">${viz}</div>` : ''}</div><div class="kpi-f">${ic(icon)}<span class="ellip">${foot}</span></div></section>`;
+/* orb: data-tinted glow inside the frosted tile ('lime' | 'coral' | 'amber' | 'violet' | 'teal' | 'sky'), orbA: its strength */
+function kpiCard({ k, label, value, foot = '', icon = 'clock', d = 0, cls = '', attrs = '', extra = '', viz = '', orb = '', orbA = null }) {
+  return `<section class="card kpi ${cls}" data-k="${k}"${orb ? ` data-orb="${orb}"` : ''} style="--d:${d}${orb && orbA != null ? `;--orb-a:${(+orbA).toFixed(3)}` : ''}" ${attrs}><div class="kpi-b"><div class="kpi-l">${label}</div><div class="kpi-v" data-fit>${value}</div>${extra}${viz ? `<div class="kpi-viz">${viz}</div>` : ''}</div><div class="kpi-f">${ic(icon)}<span class="ellip">${foot}</span></div></section>`;
 }
 
 // ---- 07b-fx.js
-/* ================= v3 effects: ambient mood, Liquid-Glass prefs, lens morph, interactive widgets, scenes ================= */
+/* ================= v4 effects: mesh-gradient backdrop (5 palettes, «Фон»), matte frosted glass («Стекло»),
+   lens morph, interactive widgets, scenes ================= */
 
-/* ---------- glass intensity («Стекло»: Прозрачное ↔ Тонированное; max / reduced transparency → solid) ---------- */
-const IS_CHROMIUM = (() => { try { const b = navigator.userAgentData && navigator.userAgentData.brands; if (b && b.some((x) => /Chromium|Google Chrome|Microsoft Edge/.test(x.brand))) return true; } catch (e) { /* ignore */ } return /Chrome\/\d+/.test(navigator.userAgent) && !/Edg\/|OPR\//.test(navigator.userAgent) && !!window.chrome; })();
-function glassSolid() { return PREFS.glass >= 100 || !!RTQ.matches; }
+/* ---------- backdrop palettes: land (≥ 1:1) / port compositions. pts = hue mesh, mask = intensity (dark periphery,
+   rich centre), mods = local intensity bumps, light = drifting light source (layer 1), glow = drifting accent (layer 2),
+   dim = brightness of the backdrop seen through widgets (keeps white text ≥ 4.5:1 over the brightest light) ---------- */
+const BK_KEYS = ['indigo', 'sage', 'ocean', 'sunset', 'graphite'];
+const BK_NAMES = { auto: 'Автоматически', indigo: 'Индиго', sage: 'Шалфей', ocean: 'Океан', sunset: 'Закат', graphite: 'Графит' };
+const BK_LMASK = { x: 0.6, y: 0.5, rx: 0.66, ry: 0.7, i0: 0.1, i1: 0.95, a: 0.74 };
+const BK_PMASK = { x: 0.55, y: 0.5, rx: 0.95, ry: 0.62, i0: 0.1, i1: 0.95, a: 0.74 };
+const BK_PAL = {
+  indigo: { dim: 0.86, base: '#0A0A1C',
+    land: { mask: BK_LMASK, pts: [{ x: 0.3, y: 0.7, c: '#2E2A8F', w: 1.3 }, { x: 0.52, y: 0.46, c: '#3B30B4' }, { x: 0.84, y: 0.24, c: '#5B3FD1', w: 1.3 }, { x: 0.98, y: 0.92, c: '#8E2F79', w: 1.1 }, { x: 0.66, y: 0.94, c: '#26237A' }],
+      mods: [{ x: 0.96, y: 0.92, r: 0.16, a: 0.32 }, { x: 0.86, y: 0.2, r: 0.18, a: 0.1 }, { x: 0.1, y: 0.05, r: 0.22, a: -0.3 }],
+      light: { x: 0.56, y: 0.12, r: 0.3, ry: 0.19, c: '#9C8CFF', a: 0.3 }, glow: { x: 0.84, y: 0.24, r: 0.24, ry: 0.2, c: '#6A4BE0', a: 0.2 } },
+    port: { mask: BK_PMASK, pts: [{ x: 0.25, y: 0.62, c: '#2E2A8F', w: 1.3 }, { x: 0.6, y: 0.4, c: '#3B30B4' }, { x: 0.9, y: 0.16, c: '#5B3FD1', w: 1.3 }, { x: 0.95, y: 0.92, c: '#8E2F79', w: 1.1 }, { x: 0.2, y: 0.92, c: '#26237A' }],
+      mods: [{ x: 0.95, y: 0.92, r: 0.14, a: 0.3 }, { x: 0, y: 0.04, r: 0.2, a: -0.3 }],
+      light: { x: 0.66, y: 0.1, r: 0.26, ry: 0.17, c: '#9C8CFF', a: 0.3 }, glow: { x: 0.92, y: 0.86, r: 0.22, ry: 0.18, c: '#8E2F79', a: 0.18 } } },
+  sage: { dim: 0.6, base: '#0E1312',
+    land: { mask: { ...BK_LMASK, a: 0.72 }, pts: [{ x: 0.3, y: 0.66, c: '#4F7F74', w: 1.3 }, { x: 0.56, y: 0.42, c: '#4F7F74' }, { x: 0.86, y: 0.26, c: '#3E665E' }, { x: 0.99, y: 0.95, c: '#D99A55', w: 1 }, { x: 0.62, y: 0.95, c: '#1A1F1E', w: 1.2 }, { x: 0.12, y: 0.95, c: '#1A1F1E' }],
+      mods: [{ x: 0.99, y: 0.96, r: 0.14, a: 0.28 }, { x: 0.1, y: 0.05, r: 0.22, a: -0.3 }],
+      light: { x: 0.56, y: 0.12, r: 0.3, ry: 0.19, c: '#8FB3A6', a: 0.3 }, glow: { x: 0.3, y: 0.62, r: 0.26, ry: 0.22, c: '#5E9285', a: 0.18 } },
+    port: { mask: { ...BK_PMASK, y: 0.48, a: 0.72 }, pts: [{ x: 0.25, y: 0.58, c: '#4F7F74', w: 1.3 }, { x: 0.65, y: 0.36, c: '#4F7F74' }, { x: 0.9, y: 0.16, c: '#3E665E' }, { x: 1, y: 0.96, c: '#D99A55', w: 1 }, { x: 0.2, y: 0.95, c: '#1A1F1E', w: 1.2 }],
+      mods: [{ x: 1, y: 0.96, r: 0.12, a: 0.26 }, { x: 0, y: 0.04, r: 0.2, a: -0.3 }],
+      light: { x: 0.66, y: 0.1, r: 0.26, ry: 0.17, c: '#8FB3A6', a: 0.3 }, glow: { x: 0.25, y: 0.6, r: 0.24, ry: 0.2, c: '#5E9285', a: 0.18 } } },
+  ocean: { dim: 0.76, base: '#071220',
+    land: { mask: BK_LMASK, pts: [{ x: 0.28, y: 0.56, c: '#1F4FA8', w: 1.3 }, { x: 0.54, y: 0.4, c: '#1F4FA8' }, { x: 0.84, y: 0.76, c: '#12606F', w: 1.4 }, { x: 0.9, y: 0.22, c: '#155A78' }, { x: 0.5, y: 0.95, c: '#0E3A5A' }],
+      mods: [{ x: 0.84, y: 0.8, r: 0.18, a: 0.12 }, { x: 0.1, y: 0.05, r: 0.22, a: -0.3 }],
+      light: { x: 0.58, y: 0.12, r: 0.28, ry: 0.18, c: '#5FC4D6', a: 0.3 }, glow: { x: 0.84, y: 0.76, r: 0.24, ry: 0.2, c: '#168094', a: 0.2 } },
+    port: { mask: BK_PMASK, pts: [{ x: 0.2, y: 0.42, c: '#1F4FA8', w: 1.3 }, { x: 0.7, y: 0.3, c: '#1F4FA8' }, { x: 0.8, y: 0.78, c: '#12606F', w: 1.4 }, { x: 0.2, y: 0.9, c: '#0E3A5A' }],
+      mods: [{ x: 0, y: 0.04, r: 0.2, a: -0.3 }],
+      light: { x: 0.66, y: 0.1, r: 0.26, ry: 0.17, c: '#5FC4D6', a: 0.3 }, glow: { x: 0.8, y: 0.78, r: 0.22, ry: 0.18, c: '#168094', a: 0.2 } } },
+  sunset: { dim: 0.74, base: '#120A12',
+    land: { mask: { ...BK_LMASK, a: 0.76 }, pts: [{ x: 0.3, y: 0.68, c: '#5A2350', w: 1.3 }, { x: 0.56, y: 0.44, c: '#5A2350' }, { x: 0.86, y: 0.26, c: '#6B2C4E' }, { x: 0.94, y: 0.9, c: '#E0674F', w: 1 }, { x: 0.6, y: 0.95, c: '#3A1534' }],
+      mods: [{ x: 0.95, y: 0.9, r: 0.14, a: 0.24 }, { x: 0.1, y: 0.05, r: 0.22, a: -0.3 }],
+      light: { x: 0.6, y: 0.12, r: 0.3, ry: 0.19, c: '#F2A65A', a: 0.3 }, glow: { x: 0.92, y: 0.88, r: 0.2, ry: 0.17, c: '#E0674F', a: 0.18 } },
+    port: { mask: { ...BK_PMASK, a: 0.76 }, pts: [{ x: 0.25, y: 0.6, c: '#5A2350', w: 1.3 }, { x: 0.65, y: 0.38, c: '#5A2350' }, { x: 0.9, y: 0.18, c: '#6B2C4E' }, { x: 0.92, y: 0.9, c: '#E0674F', w: 1 }, { x: 0.2, y: 0.92, c: '#3A1534' }],
+      mods: [{ x: 0.92, y: 0.92, r: 0.12, a: 0.22 }, { x: 0, y: 0.04, r: 0.2, a: -0.3 }],
+      light: { x: 0.66, y: 0.1, r: 0.26, ry: 0.17, c: '#F2A65A', a: 0.3 }, glow: { x: 0.9, y: 0.88, r: 0.2, ry: 0.16, c: '#E0674F', a: 0.18 } } },
+  graphite: { dim: 0.92, base: '#0B0C0F',
+    land: { mask: { ...BK_LMASK, a: 0.8 }, pts: [{ x: 0.3, y: 0.64, c: '#2B3340', w: 1.3 }, { x: 0.58, y: 0.42, c: '#2B3340' }, { x: 0.86, y: 0.28, c: '#343E4E' }, { x: 0.88, y: 0.88, c: '#202631' }],
+      mods: [{ x: 0.1, y: 0.05, r: 0.22, a: -0.3 }],
+      light: { x: 0.58, y: 0.12, r: 0.3, ry: 0.19, c: '#6C7A8F', a: 0.3 }, glow: { x: 0.3, y: 0.62, r: 0.26, ry: 0.22, c: '#3A4556', a: 0.2 } },
+    port: { mask: { ...BK_PMASK, a: 0.8 }, pts: [{ x: 0.25, y: 0.58, c: '#2B3340', w: 1.3 }, { x: 0.65, y: 0.36, c: '#2B3340' }, { x: 0.9, y: 0.18, c: '#343E4E' }, { x: 0.8, y: 0.9, c: '#202631' }],
+      mods: [{ x: 0, y: 0.04, r: 0.2, a: -0.3 }],
+      light: { x: 0.66, y: 0.1, r: 0.26, ry: 0.17, c: '#6C7A8F', a: 0.3 }, glow: { x: 0.25, y: 0.6, r: 0.24, ry: 0.2, c: '#3A4556', a: 0.2 } } },
+};
+
+/* «Фон»: settings.backdrop ('auto' | palette); 'auto' follows the weather and the time of day */
+function bkSetting() { const v = S.data ? S.data.settings.backdrop : PREFS.bkSet; return BK_KEYS.includes(v) ? v : 'auto'; }
+function bkAuto() {
+  const wx = S.data ? wxDerived() : null;
+  if (wx) {
+    const c = wx.code;
+    if (c != null && ((c >= 45 && c <= 67) || (c >= 71 && c <= 86) || c >= 95)) return 'ocean'; // fog, drizzle, rain, snow, storm
+    const f = wx.sunFrac;
+    if (f != null && f >= 0.86 && f <= 1.07) return 'sunset';                                 // golden hour around sunset
+    if (!wx.isDay || (f != null && (f < 0 || f > 1))) return 'indigo';                        // night
+    if (c === 3) return 'graphite';                                                             // overcast
+    return 'sage';
+  }
+  const h = new Date().getHours();
+  return h >= 17 && h < 19 ? 'sunset' : h >= 6 && h < 17 ? 'sage' : 'indigo';
+}
+function bkResolve() { const v = bkSetting(); return v === 'auto' ? bkAuto() : v; }
+
+/* smooth field: hue mesh (normalised gaussians, OKLab) × intensity mask, vignette, dithered sRGB. Gaussians are
+   separable → factor tables per column / row, no exp() in the pixel loop (≈ 15–25 ms for 576×360) */
+const _s2l = (v) => { v /= 255; return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); };
+function hexLin(h) { const n = parseInt(h.slice(1), 16); return [_s2l((n >> 16) & 255), _s2l((n >> 8) & 255), _s2l(n & 255)]; }
+function lin2lab([r, g, b]) {
+  const l = Math.cbrt(0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b), m = Math.cbrt(0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b), s = Math.cbrt(0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b);
+  return [0.2104542553 * l + 0.793617785 * m - 0.0040720468 * s, 1.9779984951 * l - 2.428592205 * m + 0.4505937099 * s, 0.0259040371 * l + 0.7827717662 * m - 0.808675766 * s];
+}
+let _bkLut = null, _bkDz = null;
+function bkTables() {
+  if (_bkLut) return;
+  const N = 4096; _bkLut = new Float32Array(N + 1);
+  for (let i = 0; i <= N; i++) { const v = i / N; _bkLut[i] = 255 * (v <= 0.0031308 ? v * 12.92 : 1.055 * Math.pow(v, 1 / 2.4) - 0.055); }
+  const R = mulberry32(20261107); _bkDz = new Float32Array(8192); for (let i = 0; i < 8192; i++) _bkDz[i] = R() - R(); // triangular dither ±1 LSB
+}
+function renderField(W, H, base, P) {
+  bkTables();
+  const out = new Uint8ClampedArray(W * H * 4); const lut = _bkLut, dz = _bkDz, N = 4096, DN = 8191;
+  const M = Math.max(W, H), ax = W / M, ay = H / M; const B0 = lin2lab(hexLin(base));
+  const n = P.pts.length; const PL = new Float64Array(n * 3), PX = [], PY = [];
+  P.pts.forEach((q, k) => {
+    const c = lin2lab(hexLin(q.c)); PL[k * 3] = c[0]; PL[k * 3 + 1] = c[1]; PL[k * 3 + 2] = c[2];
+    const kk = 1 / (2 * 0.17 * 0.17); const w = q.w ?? 1; const ex = new Float64Array(W), ey = new Float64Array(H);
+    for (let i = 0; i < W; i++) { const d = ((i + 0.5) / W - q.x) * ax; ex[i] = w * Math.exp(-d * d * kk); }
+    for (let j = 0; j < H; j++) { const d = ((j + 0.5) / H - q.y) * ay; ey[j] = Math.exp(-d * d * kk) + 1e-300; }
+    PX.push(ex); PY.push(ey);
+  });
+  const mods = (P.mods || []).map((q) => { const kk = 1 / (2 * q.r * q.r); const ex = new Float64Array(W), ey = new Float64Array(H); for (let i = 0; i < W; i++) { const d = ((i + 0.5) / W - q.x) * ax; ex[i] = q.a * Math.exp(-d * d * kk); } for (let j = 0; j < H; j++) { const d = ((j + 0.5) / H - q.y) * ay; ey[j] = Math.exp(-d * d * kk); } return [ex, ey]; });
+  const E = P.mask; const V = 0.62;
+  const ss = (a, b, x) => { const t = x <= a ? 0 : x >= b ? 1 : (x - a) / (b - a); return t * t * (3 - 2 * t); };
+  let p = 0, di = 0;
+  for (let j = 0; j < H; j++) {
+    const v = (j + 0.5) / H, ey = (v - E.y) / E.ry, ey2 = ey * ey, cy = (v - 0.5) / 0.5, cy2 = cy * cy;
+    di = (j * 977) & DN;
+    for (let i = 0; i < W; i++) {
+      const u = (i + 0.5) / W;
+      let sw = 0, L = 0, A = 0, Bb = 0;
+      for (let k = 0; k < n; k++) { const w = PX[k][i] * PY[k][j]; sw += w; L += PL[k * 3] * w; A += PL[k * 3 + 1] * w; Bb += PL[k * 3 + 2] * w; }
+      L /= sw; A /= sw; Bb /= sw;
+      const ex = (u - E.x) / E.rx; let I = E.a * (1 - ss(E.i0, E.i1, Math.sqrt(ex * ex + ey2)));
+      for (let k = 0; k < mods.length; k++) I += mods[k][0][i] * mods[k][1][j];
+      I = I < 0 ? 0 : I > 1 ? 1 : I;
+      L = B0[0] + (L - B0[0]) * I; A = B0[1] + (A - B0[1]) * I; Bb = B0[2] + (Bb - B0[2]) * I;
+      const l_ = L + 0.3963377774 * A + 0.2158037573 * Bb, m_ = L - 0.1055613458 * A - 0.0638541728 * Bb, s_ = L - 0.0894841775 * A - 1.291485548 * Bb;
+      const l3 = l_ * l_ * l_, m3 = m_ * m_ * m_, s3 = s_ * s_ * s_;
+      const cx = (u - 0.5) / 0.5; const f = 1 - V * ss(0.5, 1.4, Math.sqrt(cx * cx + cy2));
+      let r = (4.0767416621 * l3 - 3.3077115913 * m3 + 0.2309699292 * s3) * f, g = (-1.2684380046 * l3 + 2.6097574011 * m3 - 0.3413193965 * s3) * f, b = (-0.0041960863 * l3 - 0.7034186147 * m3 + 1.707614701 * s3) * f;
+      r = r < 0 ? 0 : r > 1 ? 1 : r; g = g < 0 ? 0 : g > 1 ? 1 : g; b = b < 0 ? 0 : b > 1 ? 1 : b;
+      out[p++] = lut[(r * N + 0.5) | 0] + dz[di = (di + 1) & DN];
+      out[p++] = lut[(g * N + 0.5) | 0] + dz[di = (di + 7) & DN];
+      out[p++] = lut[(b * N + 0.5) | 0] + dz[di = (di + 13) & DN];
+      out[p++] = 255;
+    }
+  }
+  return out;
+}
+/* a pre-blurred glow (soft long-tailed falloff, windowed to exactly 0 at the canvas edge → never a visible edge) */
+function renderGlow(W, H, col, a) {
+  bkTables();
+  const out = new Uint8ClampedArray(W * H * 4); const dz = _bkDz;
+  const n = parseInt(col.slice(1), 16); const cr = (n >> 16) & 255, cg = (n >> 8) & 255, cb = n & 255;
+  let p = 0, di = 0;
+  for (let j = 0; j < H; j++) {
+    const dy = ((j + 0.5) / H * 2 - 1) * 3;
+    for (let i = 0; i < W; i++) {
+      const dx = ((i + 0.5) / W * 2 - 1) * 3; const d2 = dx * dx + dy * dy;
+      const win = d2 >= 9 ? 0 : (1 - d2 / 9) * (1 - d2 / 9);
+      const w = (a / Math.pow(1 + d2 * 1.1, 2.1)) * win;
+      out[p++] = cr; out[p++] = cg; out[p++] = cb; out[p++] = Math.max(0, w * 255 + dz[di = (di + 1) & 8191] * (w > 0.002 ? 1 : 0));
+    }
+  }
+  return out;
+}
+function bkCanvas(w, h, px, cls) { const c = D.createElement('canvas'); c.width = w; c.height = h; c.className = cls; c.getContext('2d').putImageData(new ImageData(px, w, h), 0, 0); return c; }
+function bkScene(key) {
+  const host = $('.bgfx'); const W = Math.max(1, host.clientWidth || innerWidth), H = Math.max(1, host.clientHeight || innerHeight);
+  const pal = BK_PAL[key]; const P = W >= H ? pal.land : pal.port; const M = Math.max(W, H);
+  const f = Math.min(0.4, 640 / W, 640 / H); const cw = Math.max(48, Math.round(W * f)), ch = Math.max(48, Math.round(H * f));
+  const el = D.createElement('div'); el.className = 'bk'; el.dataset.pal = key;
+  el.appendChild(bkCanvas(cw, ch, renderField(cw, ch, pal.base, P), 'bk-field'));
+  [['light', 'bk-d1'], ['glow', 'bk-d2']].forEach(([k, cls]) => {
+    const g = P[k]; if (!g) return;
+    const bw = 6 * g.r * M, bh = 6 * g.ry * M; const gw = clamp(Math.round(bw / 6), 24, 320), gh = clamp(Math.round(bh / 6), 24, 320);
+    const c = bkCanvas(gw, gh, renderGlow(gw, gh, g.c, g.a), 'bk-drift ' + cls);
+    Object.assign(c.style, { left: (g.x * W - bw / 2).toFixed(1) + 'px', top: (g.y * H - bh / 2).toFixed(1) + 'px', width: bw.toFixed(1) + 'px', height: bh.toFixed(1) + 'px' });
+    el.appendChild(c);
+  });
+  return el;
+}
+const BK = { key: null, sig: '', t: 0 };
+function applyBackdrop(force = false) {
+  const key = bkResolve(); const r = D.documentElement;
+  if (r.dataset.bk !== key) r.dataset.bk = key;
+  const host = $('.bgfx'); if (!host) return;
+  const sig = `${key}:${Math.round((host.clientWidth || innerWidth) / 48)}x${Math.round((host.clientHeight || innerHeight) / 48)}`;
+  if (!force && sig === BK.sig) return;
+  const prev = BK.key; BK.sig = sig; BK.key = key;
+  const set = bkSetting();
+  if (PREFS.bk !== key || (S.data && PREFS.bkSet !== set)) { PREFS.bk = key; if (S.data) PREFS.bkSet = set; savePrefs(); }
+  applyGlass();
+  if (!prev) { requestAnimationFrame(() => bkSwap(host, key, prev)); return; } // first paint shows the CSS gradient; the canvas fades in
+  bkSwap(host, key, prev);
+}
+function bkSwap(host, key, prev) {
+  if (BK.key !== key) return;
+  let el;
+  try { el = bkScene(key); } catch (e) { return; } // no canvas → the CSS gradient fallback stays
+  host.insertBefore(el, host.querySelector('.bgrain'));
+  const olds = [...host.querySelectorAll(':scope > .bk')].filter((x) => x !== el);
+  const drop = () => { for (const o of olds) o.remove(); };
+  if (reduced) { drop(); return; }
+  if (!prev) { el.classList.add('in'); setTimeout(drop, 1300); return; }
+  // palette change: 800 ms cross-fade; same palette (resize / rotation): quick 300 ms blend
+  const a = el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: prev !== key ? 800 : 300, easing: 'cubic-bezier(.4,0,.2,1)' });
+  a.onfinish = drop; setTimeout(drop, 1400);
+}
+window.addEventListener('resize', debounce(() => applyBackdrop(), 180));
+/* drift is paused while the page scrolls (≤ 1 animated layer on phones during scroll → none) and when hidden */
+{
+  let t = 0;
+  window.addEventListener('scroll', () => { const r = D.documentElement; if (!r.classList.contains('scrolling')) r.classList.add('scrolling'); clearTimeout(t); t = setTimeout(() => r.classList.remove('scrolling'), 220); }, { passive: true });
+}
+
+/* ---------- «Стекло»: Прозрачное (0) ↔ Матовое (50, default) ↔ Плотное (100: #1A1B24 @ 92 %);
+   system «Reduce transparency» → solid surfaces without blur ---------- */
+function glassSolid() { return !!RTQ.matches; }
+function glassLevel(v = PREFS.glass) { v = toNum(v, 50); return v <= 25 ? 'прозрачное' : v >= 75 ? 'плотное' : 'матовое'; }
 function applyGlass() {
-  const r = D.documentElement; const t = clamp(toNum(PREFS.glass, 35), 0, 100) / 100;
-  r.style.setProperty('--g-fill', (0.05 + 0.06 * t).toFixed(3));
-  r.style.setProperty('--g-tint', (0.3 + 0.56 * t).toFixed(3));
-  r.style.setProperty('--g-blur', Math.round(22 + 14 * t) + 'px');
-  r.style.setProperty('--g-sat', Math.round(185 - 45 * t) + '%');
-  r.style.setProperty('--p-tint', (0.56 + 0.32 * t).toFixed(3));
+  const r = D.documentElement; const v = clamp(toNum(PREFS.glass, 50), 0, 100) / 100;
+  const T = { blur: 16, milk: 0.06, milk2: 0.02, tint: 0.16, sat: 125, rim: 0.22 };   // Прозрачное: blur 16 px / fill 6 %
+  const Mt = { blur: 32, milk: 0.14, milk2: 0.05, tint: 0.36, sat: 145, rim: 0.3 };   // Матовое (default)
+  const Pd = { blur: 36, milk: 0.05, milk2: 0.02, tint: 0.92, sat: 120, rim: 0.2 };   // Плотное: near-solid
+  const a = Math.min(1, v / 0.5), b = Math.max(0, (v - 0.5) / 0.5);
+  const at = (k) => (v <= 0.5 ? T[k] + (Mt[k] - T[k]) * a : Mt[k] + (Pd[k] - Mt[k]) * b);
+  const pal = BK_PAL[r.dataset.bk] || BK_PAL.indigo;
+  const dim = v <= 0.5 ? 1 + (pal.dim - 1) * (0.5 + 0.5 * a) : pal.dim;
+  const tr = [18 + 8 * b, 19 + 8 * b, 28 + 8 * b].map((x) => Math.round(x)).join(',');
+  const set = (k, x) => r.style.setProperty(k, x);
+  set('--g-blur', Math.round(at('blur')) + 'px'); set('--n-blur', Math.round(at('blur') + 4) + 'px');
+  set('--g-milk', at('milk').toFixed(3)); set('--g-milk2', at('milk2').toFixed(3));
+  set('--n-milk', (at('milk') + 0.02).toFixed(3)); set('--n-milk2', (at('milk2') + 0.02).toFixed(3));
+  set('--g-tint', at('tint').toFixed(3)); set('--n-tint', Math.min(0.96, at('tint') + 0.1).toFixed(3));
+  set('--g-tint-rgb', tr); set('--g-sat', Math.round(at('sat')) + '%'); set('--g-dim', dim.toFixed(3)); set('--g-rim-hi', at('rim').toFixed(3));
+  r.dataset.glass = glassLevel(PREFS.glass) === 'прозрачное' ? 'clear' : glassLevel(PREFS.glass) === 'плотное' ? 'dense' : 'matte';
   r.classList.toggle('glass-solid', glassSolid());
-  // SVG refraction only where it renders (Chromium) and only when glass is actually translucent
-  const canRefract = IS_CHROMIUM && !!(window.CSS && CSS.supports && CSS.supports('backdrop-filter', 'url(#lg) blur(2px)'));
-  r.classList.toggle('lg-refract', canRefract && !glassSolid() && t < 0.85);
 }
 RTQ.addEventListener ? RTQ.addEventListener('change', applyGlass) : RTQ.addListener && RTQ.addListener(applyGlass);
 
-/* ---------- ambient background mood (weather × time of day) ---------- */
-function skyMood() {
-  const wx = S.data ? wxDerived() : null;
-  const h = new Date().getHours();
-  const night = wx ? !wx.isDay : (h < 6 || h >= 19);
-  const c = wx ? wx.code : null;
-  if (c != null && c >= 95) return 'storm';
-  if (c != null && ((c >= 51 && c <= 67) || (c >= 80 && c <= 82))) return 'rain';
-  if (c != null && ((c >= 71 && c <= 77) || c === 85 || c === 86)) return 'snow';
-  if (night) return 'night';
-  if (c != null && (c === 3 || c === 45 || c === 48)) return 'cloudy';
-  return 'clear';
-}
-function applyMood() { const m = skyMood(); if (D.documentElement.dataset.sky !== m) D.documentElement.dataset.sky = m; }
 function wxCond(code) {
   if (code == null) return 'clear';
   if (code >= 95) return 'storm';
@@ -3421,6 +3615,21 @@ function wxCond(code) {
   if (code === 3) return 'cloudy';
   if (code === 2) return 'partly';
   return 'clear';
+}
+
+/* rim highlight follows the pointer over frosted widgets (hover devices; --px/--py survive re-renders, see morph) */
+{
+  let el = null, raf = 0, ev = null;
+  const run = () => {
+    raf = 0; if (!ev) return;
+    const t = ev.target && ev.target.closest ? ev.target.closest('.card') : null;
+    if (el && el !== t) { el.style.removeProperty('--px'); el.style.removeProperty('--py'); }
+    el = t; if (!t || reduced) return;
+    const b = t.getBoundingClientRect();
+    t.style.setProperty('--px', Math.round(ev.clientX - b.left) + 'px'); t.style.setProperty('--py', Math.round(ev.clientY - b.top) + 'px');
+  };
+  D.addEventListener('pointermove', (e) => { if (e.pointerType !== 'mouse') return; ev = e; if (!raf) raf = requestAnimationFrame(run); }, { passive: true });
+  D.addEventListener('pointerleave', () => { if (el) { el.style.removeProperty('--px'); el.style.removeProperty('--py'); el = null; } });
 }
 
 /* ---------- elastic glass lens: stretches toward the target, then settles (transform only) ---------- */
@@ -3462,6 +3671,20 @@ function hydrate(root = D) {
   for (const el of root.querySelectorAll('.wx-scene')) { if (!el._scene) el._scene = new WxScene(el); else el._scene.sync(); }
   for (const el of root.querySelectorAll('.wx-hourly')) if (!el._hy) bindWxScrub(el);
   for (const el of root.querySelectorAll('.lq.charging')) if (!el._fx) el._fx = new ChargeFx(el);
+  for (const el of root.querySelectorAll('canvas.bk-sw')) if (el._pal !== el.dataset.pal) bkSwatch(el);
+}
+/* «Фон» previews: the real field + both glows, rendered small */
+function bkSwatch(cv) {
+  const key = cv.dataset.pal; const pal = BK_PAL[key]; if (!pal) return;
+  cv._pal = key;
+  try {
+    const W = cv.width, H = cv.height, M = Math.max(W, H); const x = cv.getContext('2d');
+    x.putImageData(new ImageData(renderField(W, H, pal.base, pal.land), W, H), 0, 0);
+    for (const g of [pal.land.glow, pal.land.light]) {
+      const gw = 48, gh = 48; const t = bkCanvas(gw, gh, renderGlow(gw, gh, g.c, g.a), '');
+      const bw = 6 * g.r * M, bh = 6 * g.ry * M; x.drawImage(t, g.x * W - bw / 2, g.y * H - bh / 2, bw, bh);
+    }
+  } catch (e) { /* no canvas — the swatch keeps its CSS background */ }
 }
 
 /* car stage parallax tilt (±6°), spring back on leave */
@@ -3792,10 +4015,12 @@ function dashKpis() {
   const k4 = c.pct != null ? `${c.pct}% · обновлено ${esc(updLabel(c.lastDate))}` : 'внесите заряд';
   const sp = 'span-3 t-span-6 m-span-6 tap';
   const expCum = cumulative(ms.daily.slice(0, now.getDate()).map((d) => d.exp));
-  return kpiCard({ k: 'total', label: 'Общий баланс', value: moneyHTML(totalBalanceUZS(), 'UZS', { cu: true }), foot: k1, icon: ms.net >= 0 ? 'trending-up' : 'trending-down', d: 1, cls: sp, attrs: 'data-act="nav" data-to="finance"', viz: hasAcc ? sparkHTML(balanceTrend(14), { color: 'lime' }) : '' })
-    + kpiCard({ k: 'month-exp', label: 'Расходы за месяц', value: moneyHTML(ms.expense, 'UZS', { cu: true }), foot: k2, icon: 'calendar-days', d: 2, cls: sp, attrs: 'data-act="nav" data-to="finance"', viz: expCum.length > 1 && expCum.some((x) => x > 0) ? sparkHTML(expCum, { color: 'coral' }) : '' })
-    + kpiCard({ k: 'tasks', label: 'Задачи на сегодня', value: `${numHTML(tp.done, 'int', { cu: true })}<span class="u">из ${tp.total}</span>`, foot: k3, icon: 'list-checks', d: 3, cls: sp, attrs: 'data-act="nav" data-to="tasks"', viz: lqBar(tp.total ? (tp.done / tp.total) * 100 : 0, { size: 'xs', color: 'ok', label: 'Выполнено сегодня' }) })
-    + kpiCard({ k: 'range', label: 'Запас хода YU7', value: c.pct != null ? `${numHTML(c.realKm, 'int', { cu: true })}<span class="u">км</span>` : '—', foot: k4, icon: 'battery-charging', d: 4, cls: sp, attrs: 'data-act="nav" data-to="car"', viz: lqBar(c.pct ?? 0, { size: 'xs', color: c.pct == null ? 'none' : '' }) });
+  // frosted tiles carry a data-tinted glow: balance — lime (coral when the month is negative), expenses — coral when
+  // they grow vs last month (calm sky otherwise), tasks — lime by progress, range — lime → amber → coral by battery
+  return kpiCard({ k: 'total', label: 'Общий баланс', value: moneyHTML(totalBalanceUZS(), 'UZS', { cu: true }), foot: k1, icon: ms.net >= 0 ? 'trending-up' : 'trending-down', d: 1, cls: sp, attrs: 'data-act="nav" data-to="finance"', viz: hasAcc ? sparkHTML(balanceTrend(14), { color: 'lime' }) : '', orb: hasAcc ? (ms.net >= 0 ? 'lime' : 'coral') : '' })
+    + kpiCard({ k: 'month-exp', label: 'Расходы за месяц', value: moneyHTML(ms.expense, 'UZS', { cu: true }), foot: k2, icon: 'calendar-days', d: 2, cls: sp, attrs: 'data-act="nav" data-to="finance"', viz: expCum.length > 1 && expCum.some((x) => x > 0) ? sparkHTML(expCum, { color: 'coral' }) : '', orb: ms.expense > 0 ? (dE != null && dE > 0 ? 'coral' : 'sky') : '' })
+    + kpiCard({ k: 'tasks', label: 'Задачи на сегодня', value: `${numHTML(tp.done, 'int', { cu: true })}<span class="u">из ${tp.total}</span>`, foot: k3, icon: 'list-checks', d: 3, cls: sp, attrs: 'data-act="nav" data-to="tasks"', viz: lqBar(tp.total ? (tp.done / tp.total) * 100 : 0, { size: 'xs', color: 'ok', label: 'Выполнено сегодня' }), orb: tp.total ? 'lime' : '', orbA: tp.total ? 0.08 + 0.18 * (tp.done / tp.total) : null })
+    + kpiCard({ k: 'range', label: 'Запас хода YU7', value: c.pct != null ? `${numHTML(c.realKm, 'int', { cu: true })}<span class="u">км</span>` : '—', foot: k4, icon: 'battery-charging', d: 4, cls: sp, attrs: 'data-act="nav" data-to="car"', viz: lqBar(c.pct ?? 0, { size: 'xs', color: c.pct == null ? 'none' : '' }), orb: LVL_ORB[lqLevel(c.pct)] });
 }
 
 function catParts(ms) {
@@ -3825,7 +4050,8 @@ function finCard() {
   const total = totalBalanceUZS(); const avail = availableUZS();
   const days = lastNDays(14); const dm = dayExpenseMap(); const vals = days.map((d) => dm.get(dayKey(d)) || 0);
   const sum = vals.reduce((s, x) => s + x, 0);
-  return `<section class="card c-fin span-8 t-span-12" style="--d:6" aria-label="Доступный баланс">
+  const net = monthStats(monthKey(new Date())).net;
+  return `<section class="card c-fin span-8 t-span-12" style="--d:6" data-orb="${net >= 0 ? 'lime' : 'coral'}" aria-label="Доступный баланс">
 <div class="fin-top"><div style="min-width:0;flex:1"><div class="kpi-l">Доступный баланс</div><div class="fin-bal"><div class="big" data-fit>${moneyHTML(avail, 'UZS', { cu: true })}</div></div></div><button class="btn sm" data-act="fin-go-ops">${ic('receipt')}Операции</button></div>
 <div class="fin-ctl">${chartToggle('dash')}<span class="cs">Расходы за 14 дней · ${esc(fmtMoney(sum))}</span></div>
 ${barChart(vals, { labels: days.map((d) => String(d.getDate())), hl: 13, h: 196, mode: S.ui.chartMode.dash, tip: (v, i) => `${fmtDay(days[i])}: ${fmtMoney(v)}` })}
@@ -3871,7 +4097,7 @@ function wxCard() {
   } else {
     body = `<div class="wx-main"><div class="wx-now"><div class="skel" style="width:120px;height:56px"></div><div class="wx-cond"><div class="skel" style="width:140px;height:16px"></div><div class="skel" style="width:180px;height:12px;margin-top:10px"></div></div></div></div><div class="wx-stats">${'<div class="skel" style="height:36px"></div>'.repeat(4)}</div><div class="skel" style="height:130px;margin-top:16px"></div>`;
   }
-  return `<section class="card c-wx span-7 t-span-12" style="--d:5" data-cond="${cond}" data-day="${isDay}" aria-label="Погода">
+  return `<section class="card c-wx span-7 t-span-12" style="--d:5" data-cond="${cond}" data-day="${isDay}"${wx ? ' data-orb="wx"' : ''} aria-label="Погода">
 ${wx ? `<div class="wx-scene" data-static data-cond="${cond}" data-day="${isDay}" aria-hidden="true"></div>` : ''}<div class="wx-tint" aria-hidden="true"></div>
 <div class="ch"><div style="min-width:0"><div class="ct">Погода</div><div class="cs">${esc(S.data.settings.city.name)} · по часам</div></div><div class="ch-r">${meta}</div></div>${body}</section>`;
 }
@@ -3881,7 +4107,7 @@ function chargingNow() { return !!(S.ui.chargeFx && Date.now() - S.ui.chargeFx <
 function carCard() {
   const c = carInfo(); const car = S.data.settings.car;
   const sub = c.lastDate ? `обновлено ${relDay(c.lastDate).toLowerCase()}, ${hm(c.lastDate)}${c.odometer != null ? ' · ' + fmtNum(c.odometer) + NB + 'км' : ''}` : 'данных пока нет';
-  return `<section class="card c-car span-5 t-span-12 tap" data-act="nav" data-to="car" style="--d:6" data-lvl="${lqLevel(c.pct)}" aria-label="Автомобиль">
+  return `<section class="card c-car span-5 t-span-12 tap" data-act="nav" data-to="car" style="--d:6" data-lvl="${lqLevel(c.pct)}"${c.pct != null ? ` data-orb="${LVL_ORB[lqLevel(c.pct)]}"` : ''} aria-label="Автомобиль">
 <div class="ch"><div style="min-width:0"><div class="ct">${esc(car.model)}</div><div class="cs">${esc(sub)}</div></div><button class="ibtn sm" data-act="car-update" aria-label="Обновить заряд" title="Обновить заряд">${ic('battery-charging')}</button></div>
 ${carStage()}
 <div class="car-meta"><div class="car-pct">${c.pct != null ? rollHTML(c.pct, 'int') + '<span class="u">%</span>' : '—'}</div><div class="car-ranges">${c.pct != null ? `<span><b>≈ ${rollHTML(c.realKm, 'int')} км</b> реально</span><span><b>${rollHTML(c.cltcKm, 'int')} км</b> CLTC</span>` : '<span>нет данных — внесите заряд</span>'}</div></div>
@@ -3907,7 +4133,7 @@ function tasksCard() {
   const list = S.data.tasks.length === 0 ? emptyState('list-checks', 'Задач пока нет', 'Запишите первое дело — оно появится здесь.', `<button class="btn sm" data-act="task-new">${ic('plus')}Добавить задачу</button>`, true)
     : open.length === 0 ? emptyState('sparkles', 'Всё сделано', 'Открытых задач нет — можно отдыхать.', '', true)
       : `<div class="list tasks-mini" data-flip>${open.map(taskRowMini).join('')}</div>`;
-  return `<section class="card c-tasks span-3 t-span-6" style="--d:9" aria-label="Задачи">
+  return `<section class="card c-tasks span-3 t-span-6" style="--d:9${tp.total ? `;--orb-a:${(0.08 + 0.2 * (tp.done / tp.total)).toFixed(3)}` : ''}"${tp.total ? ' data-orb="lime"' : ''} aria-label="Задачи">
 <div class="ch"><div style="min-width:0"><a class="ct ct-link" href="#tasks">Задачи${ic('chevron-right')}</a><div class="cs">${esc(sub)}</div><button class="btn sm t-add" data-act="task-new">${ic('plus')}Задача</button></div>${orbHTML(tp.total ? tp.done / tp.total : 0, tp.total ? `${tp.done}<small>/${tp.total}</small>` : '—', { label: `Выполнено ${tp.done} из ${tp.total}`, size: 'sm' })}</div>
 ${list}
 </section>`;
@@ -3945,7 +4171,7 @@ function healthCard() {
   const steps = toNum(h.steps);
   const last = [...S.data.health].sort((a, b) => (a.date < b.date ? 1 : -1))[0] || {};
   const rhr = h.restingHR ?? last.restingHR ?? null;
-  return `<section class="card c-health span-3 t-span-6 tap" data-act="nav" data-to="health" style="--d:11" aria-label="Здоровье">
+  return `<section class="card c-health span-3 t-span-6 tap" data-act="nav" data-to="health" style="--d:11" data-orb="violet" aria-label="Здоровье">
 <div class="ch"><div style="min-width:0"><div class="ct">Здоровье</div><div class="cs">Шаги · цель ${fmtNum(g.steps)}</div></div><span class="pc-badge">${h.steps != null && g.steps ? fmtNum(Math.round((steps / g.steps) * 100)) + '%' : ''}</span></div>
 ${ringsBlock(h, g)}
 <div class="mini-chart">${barChart(lastNDays(7).map((d) => toNum((healthByDay().get(dayKey(d)) || {}).steps)), { labels: lastNDays(7).map((d) => WD_S[d.getDay()]), hl: 6, h: 54, yAxis: false, bw: 14, ticks: 1, goal: g.steps, tip: (v, i) => `${WD_S[lastNDays(7)[i].getDay()]}: ${fmtNum(v)} шагов` })}</div>
@@ -3975,7 +4201,8 @@ function debtsCard() {
     line = `<div class="due-line"><div class="due-t"><span class="ellip">${esc(near.d.person)} · срок ${esc(fmtDay(near.i.due))}</span>${dueChip(near.i)}</div>${lqBar(near.i.progress * 100, { size: 'sm', color: near.i.overdue ? 'low' : 'ok', label: 'Возвращено' })}<div class="due-s"><span>возвращено ${fmtNum(near.i.progress * 100)}%</span><span>${esc(fmtMoney(near.i.remaining, near.d.currency))} осталось</span></div></div>`;
   }
   const sub = near ? `${near.d.person} · ${near.i.overdue ? 'просрочен' : near.i.daysLeft === 0 ? 'сегодня' : 'через ' + near.i.daysLeft + ' ' + plural(near.i.daysLeft, 'день', 'дня', 'дней')}` : (g.n || t.n ? 'без сроков' : 'долгов нет');
-  return `<section class="card c-debts span-3 t-span-6 tap" data-act="nav" data-to="debts" style="--d:12" aria-label="Долги">
+  const dueOrb = near ? (near.i.overdue ? 'coral' : near.i.daysLeft <= 7 ? 'amber' : '') : '';
+  return `<section class="card c-debts span-3 t-span-6 tap" data-act="nav" data-to="debts" style="--d:12"${dueOrb ? ` data-orb="${dueOrb}"` : ''} aria-label="Долги">
 <div class="ch"><div style="min-width:0"><div class="ct">Долги</div><div class="cs ${near && near.i.overdue ? 'neg' : ''}">${esc(sub)}</div></div><span class="ibtn sm ghost-ic" aria-hidden="true">${ic('hand-coins')}</span></div>
 <div class="debt-lines"><div><div class="k"><span class="csq" style="--c:var(--income)"></span>Мне должны</div><div class="v" data-fit>${moneyHTML(g.v, g.cur, { cu: true })}</div></div>
 <div><div class="k"><span class="csq" style="--c:var(--expense)"></span>Я должен</div><div class="v" data-fit>${moneyHTML(t.v, t.cur, { cu: true })}</div></div></div>
@@ -4466,10 +4693,10 @@ function finOverview(mk) {
   const sp = 'span-3 t-span-6 m-span-6';
   const sx = sel ? segs.find((x) => x.key === sel) : null;
   return `<div class="grid fin-ov anim-scope fin-body" data-key="ov:${mk}">
-${kpiCard({ k: 'income', label: 'Доходы', value: moneyHTML(ms.income, 'UZS', { cu: true }), foot: cmp(dI, false), icon: 'arrow-down-left', d: 2, cls: sp, viz: sparkHTML(cumI, { color: 'lime' }) })}
-${kpiCard({ k: 'expense', label: 'Расходы', value: moneyHTML(ms.expense, 'UZS', { cu: true }), foot: cmp(dE, true), icon: 'arrow-up-right', d: 3, cls: sp, viz: sparkHTML(cumE, { color: 'coral' }) })}
-${kpiCard({ k: 'net', label: 'Итог месяца', value: `<span class="${ms.net >= 0 ? '' : 'neg'}">${moneyHTML(ms.net, 'UZS', { cu: true, sign: true })}</span>`, foot: `${ms.count} ${plural(ms.count, 'операция', 'операции', 'операций')} без переводов`, icon: 'activity', d: 4, cls: sp, viz: sparkHTML(cumN, { color: 'teal' }) })}
-${kpiCard({ k: 'savings', label: 'Норма сбережений', value: savings == null ? '—' : numHTML(savings, 'pct', { cu: true }), foot: savings == null ? 'нет доходов в этом месяце' : 'доля дохода после расходов', icon: 'piggy-bank', d: 5, cls: sp, viz: lqBar(savings == null ? 0 : clamp(savings, 0, 100), { size: 'xs', color: savings == null ? 'none' : savings < 0 ? 'low' : 'ok', label: 'Норма сбережений' }) })}
+${kpiCard({ k: 'income', label: 'Доходы', value: moneyHTML(ms.income, 'UZS', { cu: true }), foot: cmp(dI, false), icon: 'arrow-down-left', d: 2, cls: sp, viz: sparkHTML(cumI, { color: 'lime' }), orb: ms.income > 0 ? 'lime' : '' })}
+${kpiCard({ k: 'expense', label: 'Расходы', value: moneyHTML(ms.expense, 'UZS', { cu: true }), foot: cmp(dE, true), icon: 'arrow-up-right', d: 3, cls: sp, viz: sparkHTML(cumE, { color: 'coral' }), orb: ms.expense > 0 ? (dE != null && dE > 0 ? 'coral' : 'sky') : '' })}
+${kpiCard({ k: 'net', label: 'Итог месяца', value: `<span class="${ms.net >= 0 ? '' : 'neg'}">${moneyHTML(ms.net, 'UZS', { cu: true, sign: true })}</span>`, foot: `${ms.count} ${plural(ms.count, 'операция', 'операции', 'операций')} без переводов`, icon: 'activity', d: 4, cls: sp, viz: sparkHTML(cumN, { color: 'teal' }) , orb: ms.count ? (ms.net >= 0 ? 'lime' : 'coral') : '' })}
+${kpiCard({ k: 'savings', label: 'Норма сбережений', value: savings == null ? '—' : numHTML(savings, 'pct', { cu: true }), foot: savings == null ? 'нет доходов в этом месяце' : 'доля дохода после расходов', icon: 'piggy-bank', d: 5, cls: sp, viz: lqBar(savings == null ? 0 : clamp(savings, 0, 100), { size: 'xs', color: savings == null ? 'none' : savings < 0 ? 'low' : 'ok', label: 'Норма сбережений' }) , orb: savings == null ? '' : 'teal' })}
 ${walletCard({ d: 6 })}
 <section class="card span-8 t-span-12" style="--d:7"><div class="ch"><div><div class="ct">Расходы по дням</div><div class="cs">${monthLabel(mk)} · ${esc(fmtMoney(ms.expense))}</div></div><div class="ch-r">${chartToggle('fin')}</div></div>
 <div class="chart-pad">${barChart(exp, { labels, hl, h: 220, mode: S.ui.chartMode.fin, tip: (v, i) => `${i + 1} ${MON_G[monthFromKey(mk).getMonth()]}: ${fmtMoney(v)}`, bw: 26 })}</div></section>
@@ -4756,6 +4983,8 @@ ${open && pays.length ? `<div class="pay-list" data-flip>${pays.map((p) => `<div
 </article>`;
 }
 function nearDue(dir) { const x = S.data.debts.filter((d) => d.direction === dir).map((d) => ({ d, i: debtInfo(d) })).filter((y) => !y.i.closed && y.i.due).sort((a, b) => a.i.due - b.i.due)[0]; return x ? `ближайший срок: ${x.d.person}, ${x.i.overdue ? '<span class="neg">просрочен</span>' : x.i.daysLeft === 0 ? 'сегодня' : esc(fmtDay(x.i.due))}` : 'без сроков'; }
+/* frosted tile glow: coral when a debt of this direction is overdue, amber when one is due within 7 days */
+function dueOrb(dir) { const xs = S.data.debts.filter((d) => d.direction === dir).map(debtInfo).filter((i) => !i.closed && i.due); return xs.some((i) => i.overdue) ? 'coral' : xs.some((i) => i.daysLeft <= 7) ? 'amber' : ''; }
 function debtsSub() {
   const g = debtTotals('given'), t = debtTotals('taken'); const overdue = S.data.debts.filter((d) => debtInfo(d).overdue).length;
   return `${g.n + t.n} ${plural(g.n + t.n, 'активный долг', 'активных долга', 'активных долгов')}${overdue ? dotSep + `<span class="neg">${overdue} ${plural(overdue, 'просрочен', 'просрочено', 'просрочено')}</span>` : ''}`;
@@ -4771,8 +5000,8 @@ VIEWS.debts = {
     return `${pageHead(debtsSub(), `<button class="btn" data-act="debt-new">${ic('circle-plus')}Новый долг</button><button class="btn" data-act="tx-new">${ic('circle-plus')}Операция</button>`, localSearch('debt-q', S.ui.debtQ, 'Поиск по имени…'))}
 ${finTabs('debts')}
 <div class="grid fin-body anim-scope" data-key="debts">
-${kpiCard({ k: 'given', label: `Мне должны · ${g.n} ${plural(g.n, 'человек', 'человека', 'человек')}`, value: moneyHTML(g.uzs, 'UZS', { cu: true }), foot: nearDue('given'), icon: 'arrow-down-left', d: 1, cls: sp + (seg === 'given' ? ' on' : ''), attrs: 'data-act="debt-seg" data-v="given"' })}
-${kpiCard({ k: 'taken', label: `Я должен · ${t.n} ${plural(t.n, 'человеку', 'людям', 'людям')}`, value: moneyHTML(t.uzs, 'UZS', { cu: true }), foot: nearDue('taken'), icon: 'arrow-up-right', d: 2, cls: sp + (seg === 'taken' ? ' on' : ''), attrs: 'data-act="debt-seg" data-v="taken"' })}
+${kpiCard({ k: 'given', label: `Мне должны · ${g.n} ${plural(g.n, 'человек', 'человека', 'человек')}`, value: moneyHTML(g.uzs, 'UZS', { cu: true }), foot: nearDue('given'), icon: 'arrow-down-left', d: 1, cls: sp + (seg === 'given' ? ' on' : ''), attrs: 'data-act="debt-seg" data-v="given"' , orb: dueOrb('given') })}
+${kpiCard({ k: 'taken', label: `Я должен · ${t.n} ${plural(t.n, 'человеку', 'людям', 'людям')}`, value: moneyHTML(t.uzs, 'UZS', { cu: true }), foot: nearDue('taken'), icon: 'arrow-up-right', d: 2, cls: sp + (seg === 'taken' ? ' on' : ''), attrs: 'data-act="debt-seg" data-v="taken"' , orb: dueOrb('taken') })}
 <section class="card tcard span-12" style="--d:3"><div class="ttools">${segHTML([['given', 'Мне должны'], ['taken', 'Я должен']], seg, 'debt-seg')}<span class="spacer"></span><span class="small muted">итоги — в сумах по текущему курсу</span></div>
 <div class="thead debt-head" aria-hidden="true"><span>Кто</span><span>Остаток</span><span>Возвращено</span><span>Срок</span><span>Статус</span><span></span></div>
 <div class="tbody debt-list" data-flip>${list.length ? list.map(debtCard).join('') : `<div class="t-empty" data-key="empty">${emptyState('hand-coins', q ? 'Ничего не найдено' : seg === 'given' ? 'Вам никто не должен' : 'Вы никому не должны', q ? 'Измените запрос.' : seg === 'given' ? 'Запишите, кому одолжили деньги, — Kun напомнит о сроке.' : 'Если возьмёте в долг, запишите здесь, чтобы не забыть вернуть.', q ? '' : `<button class="btn sm primary" data-act="debt-new">${ic('plus')}Новый долг</button>`)}</div>`}</div></section>
@@ -4900,7 +5129,7 @@ VIEWS.car = {
     const sp = 'span-3 t-span-6 m-span-6';
     return `${pageHead(carSub(), `<button class="btn" data-act="car-update">${ic('battery-charging')}Обновить данные</button><button class="btn" data-act="car-charge">${ic('plug-zap')}Зарядка</button>`, searchLauncher())}
 <div class="grid">
-<section class="card car-hero span-12" style="--d:1" data-lvl="${lqLevel(c.pct)}" aria-label="Xiaomi YU7 Max">
+<section class="card car-hero span-12" style="--d:1" data-lvl="${lqLevel(c.pct)}"${c.pct != null ? ` data-orb="${LVL_ORB[lqLevel(c.pct)]}"` : ''} aria-label="Xiaomi YU7 Max">
 <div class="ch"><div style="min-width:0"><div class="ct">${esc(car.model)}</div><div class="cs">${fmtNum(car.usableKWh, 1, true)} кВт·ч полезной ёмкости · ${fmtNum(car.grossKWh, 1, true)} брутто${c.lastDate ? ' · обновлено ' + esc(relDay(c.lastDate).toLowerCase()) + ', ' + hm(c.lastDate) : ''}</div></div><button class="ibtn sm" data-act="car-update" aria-label="Обновить заряд" title="Обновить заряд">${ic('pencil')}</button></div>
 ${carStage('xl')}
 <div class="hero-charge">
@@ -4908,8 +5137,8 @@ ${carStage('xl')}
 ${lqBar(c.pct ?? 0, { size: 'lg', act: 'car-pop', charging: chargingNow(), ticks: true, color: c.pct == null ? 'none' : '' })}
 <div class="hc-ax"><span>0%</span><span>нажмите на шкалу, чтобы обновить заряд</span><span>100%</span></div></div>
 <p class="hint hero-hint">${ic('info', 'tiny-i')} У Xiaomi нет публичного API — заряд и пробег вносятся вручную за пару секунд.</p></section>
-${kpiCard({ k: 'pct', label: 'Заряд', value: c.pct != null ? numHTML(c.pct, 'int', { cu: true }) + '<span class="u">%</span>' : '—', foot: c.pct != null ? `${fmtNum(c.kwh, 1)} кВт·ч из ${fmtNum(car.usableKWh, 1, true)}` : 'нет данных', icon: 'battery-charging', d: 2, cls: sp, viz: lqBar(c.pct ?? 0, { size: 'xs', color: c.pct == null ? 'none' : '' }) })}
-${kpiCard({ k: 'real', label: 'Реальный запас', value: c.pct != null ? '≈ ' + numHTML(c.realKm, 'int', { cu: true }) + '<span class="u">км</span>' : '—', foot: `${fmtNum(car.consumptionKWhPer100, 1, true)} кВт·ч/100 км`, icon: 'route', d: 3, cls: sp, viz: sparkHTML(c.hist.map((l) => rangesFor(l.batteryPercent).realKm || 0), { color: 'lime' }) })}
+${kpiCard({ k: 'pct', label: 'Заряд', value: c.pct != null ? numHTML(c.pct, 'int', { cu: true }) + '<span class="u">%</span>' : '—', foot: c.pct != null ? `${fmtNum(c.kwh, 1)} кВт·ч из ${fmtNum(car.usableKWh, 1, true)}` : 'нет данных', icon: 'battery-charging', d: 2, cls: sp, viz: lqBar(c.pct ?? 0, { size: 'xs', color: c.pct == null ? 'none' : '' }) , orb: LVL_ORB[lqLevel(c.pct)] })}
+${kpiCard({ k: 'real', label: 'Реальный запас', value: c.pct != null ? '≈ ' + numHTML(c.realKm, 'int', { cu: true }) + '<span class="u">км</span>' : '—', foot: `${fmtNum(car.consumptionKWhPer100, 1, true)} кВт·ч/100 км`, icon: 'route', d: 3, cls: sp, viz: sparkHTML(c.hist.map((l) => rangesFor(l.batteryPercent).realKm || 0), { color: 'lime' }) , orb: LVL_ORB[lqLevel(c.pct)] })}
 ${kpiCard({ k: 'cltc', label: 'Запас по CLTC', value: c.pct != null ? numHTML(c.cltcKm, 'int', { cu: true }) + '<span class="u">км</span>' : '—', foot: `${fmtNum(car.cltcRangeKm)} км на 100%`, icon: 'gauge', d: 4, cls: sp, viz: lqBar(c.pct != null ? (c.cltcKm / car.cltcRangeKm) * 100 : 0, { size: 'xs', color: c.pct == null ? 'none' : 'ok', label: 'Доля запаса CLTC' }) })}
 ${kpiCard({ k: 'odo', label: 'Одометр', value: c.odometer != null ? numHTML(c.odometer, 'int', { cu: true }) + '<span class="u">км</span>' : '—', foot: `+${fmtNum(c.kmMonth)} км за ${MON[new Date().getMonth()]}`, icon: 'car-front', d: 5, cls: sp, viz: sparkHTML(c.daily.map((d) => d.km), { color: 'teal' }) })}
 <section class="card span-8 t-span-12" style="--d:6"><div class="ch"><div><div class="ct">Пробег по дням</div><div class="cs">последние 14 дней · ${fmtNum(km14)} км</div></div></div>
@@ -5109,13 +5338,13 @@ VIEWS.health = {
     const last = entries.find((h) => h.restingHR != null);
     return `${pageHead(healthSub(), `<button class="btn" data-act="health-add">${ic('circle-plus')}Внести данные</button><button class="btn" data-act="goals-edit">${ic('flag')}Цели</button>`, searchLauncher())}
 <div class="grid">
-${kpiCard({ k: 'steps', label: 'Шаги сегодня', value: t.steps != null ? numHTML(t.steps, 'int', { cu: true }) : '—', foot: `цель ${fmtNum(g.steps)}${t.steps != null ? ' · ' + pc(t.steps, g.steps) + '%' : ''}`, icon: 'footprints', d: 1, cls: sp, viz: sparkHTML(steps7, { color: 'lime' }) })}
-${kpiCard({ k: 'sleep', label: 'Сон', value: t.sleepHours != null ? fmtNum(t.sleepHours, 1, true) + '<span class="u">ч</span>' : '—', foot: `цель ${fmtNum(g.sleepHours, 1, true)} ч${t.sleepHours != null ? ' · ' + pc(t.sleepHours, g.sleepHours) + '%' : ''}`, icon: 'bed', d: 2, cls: sp, viz: lqBar(g.sleepHours ? clamp(toNum(t.sleepHours) / g.sleepHours * 100, 0, 100) : 0, { size: 'xs', color: 'sleep', label: 'Сон к цели' }) })}
-${kpiCard({ k: 'hr', label: 'Пульс покоя', value: t.restingHR != null ? fmtNum(t.restingHR) + '<span class="u">уд/мин</span>' : '—', foot: t.restingHR != null ? 'сегодня' : last ? `последний: ${fmtNum(last.restingHR)} · ${esc(fmtDay(pDate(last.date)))}` : 'нет данных', icon: 'heart-pulse', d: 3, cls: sp, viz: sparkHTML(days7.map((d) => toNum((byDay.get(dayKey(d)) || {}).restingHR)).filter((x) => x > 0), { color: 'coral' }) })}
-${kpiCard({ k: 'water', label: 'Вода', value: t.waterMl != null ? fmtNum(t.waterMl) + '<span class="u">мл</span>' : '—', foot: `цель ${fmtNum(g.waterMl)} мл${t.waterMl != null ? ' · ' + pc(t.waterMl, g.waterMl) + '%' : ''}`, icon: 'glass-water', d: 4, cls: sp, viz: lqBar(g.waterMl ? clamp(toNum(t.waterMl) / g.waterMl * 100, 0, 100) : 0, { size: 'xs', color: 'water', label: 'Вода к цели' }) })}
+${kpiCard({ k: 'steps', label: 'Шаги сегодня', value: t.steps != null ? numHTML(t.steps, 'int', { cu: true }) : '—', foot: `цель ${fmtNum(g.steps)}${t.steps != null ? ' · ' + pc(t.steps, g.steps) + '%' : ''}`, icon: 'footprints', d: 1, cls: sp, viz: sparkHTML(steps7, { color: 'lime' }) , orb: t.steps != null ? 'lime' : '' })}
+${kpiCard({ k: 'sleep', label: 'Сон', value: t.sleepHours != null ? fmtNum(t.sleepHours, 1, true) + '<span class="u">ч</span>' : '—', foot: `цель ${fmtNum(g.sleepHours, 1, true)} ч${t.sleepHours != null ? ' · ' + pc(t.sleepHours, g.sleepHours) + '%' : ''}`, icon: 'bed', d: 2, cls: sp, viz: lqBar(g.sleepHours ? clamp(toNum(t.sleepHours) / g.sleepHours * 100, 0, 100) : 0, { size: 'xs', color: 'sleep', label: 'Сон к цели' }) , orb: t.sleepHours != null ? 'violet' : '' })}
+${kpiCard({ k: 'hr', label: 'Пульс покоя', value: t.restingHR != null ? fmtNum(t.restingHR) + '<span class="u">уд/мин</span>' : '—', foot: t.restingHR != null ? 'сегодня' : last ? `последний: ${fmtNum(last.restingHR)} · ${esc(fmtDay(pDate(last.date)))}` : 'нет данных', icon: 'heart-pulse', d: 3, cls: sp, viz: sparkHTML(days7.map((d) => toNum((byDay.get(dayKey(d)) || {}).restingHR)).filter((x) => x > 0), { color: 'coral' }) , orb: t.restingHR != null ? 'coral' : '' })}
+${kpiCard({ k: 'water', label: 'Вода', value: t.waterMl != null ? fmtNum(t.waterMl) + '<span class="u">мл</span>' : '—', foot: `цель ${fmtNum(g.waterMl)} мл${t.waterMl != null ? ' · ' + pc(t.waterMl, g.waterMl) + '%' : ''}`, icon: 'glass-water', d: 4, cls: sp, viz: lqBar(g.waterMl ? clamp(toNum(t.waterMl) / g.waterMl * 100, 0, 100) : 0, { size: 'xs', color: 'water', label: 'Вода к цели' }) , orb: t.waterMl != null ? 'teal' : '' })}
 <section class="card span-8 t-span-12" style="--d:5"><div class="ch"><div><div class="ct">Шаги за 7 дней</div><div class="cs">в среднем ${fmtNum(Math.round(avg(steps7)))} · цель ${fmtNum(g.steps)}</div></div><span class="pc-badge">${today && t.steps != null ? pc(t.steps, g.steps) + '% цели' : ''}</span></div>
 <div class="chart-pad">${barChart(steps7, { labels: lbl, hl: 6, h: 200, goal: g.steps, goalLabel: 'цель ' + compactNum(g.steps), fmtY: (v) => compactNum(v), tip: (v, i) => `${fmtDay(days7[i], { weekday: true })}: ${fmtNum(v)} шагов` })}</div></section>
-<section class="card c-today span-4 t-span-12" style="--d:6"><div class="ch"><div><div class="ct">Сегодня</div><div class="cs">${esc(todayLine())} · ручной ввод</div></div>${today ? `<button class="ibtn sm" data-act="health-add" aria-label="Изменить">${ic('pencil')}</button>` : ''}</div>
+<section class="card c-today span-4 t-span-12" style="--d:6" data-orb="violet"><div class="ch"><div><div class="ct">Сегодня</div><div class="cs">${esc(todayLine())} · ручной ввод</div></div>${today ? `<button class="ibtn sm" data-act="health-add" aria-label="Изменить">${ic('pencil')}</button>` : ''}</div>
 ${today ? `${ringsBlock(t, g, { big: true })}
 <div class="goal-row"><span>${ic('heart-pulse')}Пульс покоя</span><b>${t.restingHR != null ? fmtNum(t.restingHR) + ' уд/мин' : '—'}</b></div>
 <div class="goal-row"><span>${ic('weight')}Вес</span><b>${t.weightKg != null ? fmtNum(t.weightKg, 1, true) + ' кг' : '—'}</b></div>`
@@ -5224,10 +5453,11 @@ ${geo && geo.status === 'ok' ? (geo.results.length ? `<div class="geo-list">${ge
 <section class="card set-sec" style="--d:4"><h3>Цели здоровья</h3>
 <div class="fields three"><div class="field"><label for="st-g1">Шаги</label><input id="st-g1" class="inp" inputmode="numeric" value="${g.steps}" data-ch="st-goal" data-k="steps"></div><div class="field"><label for="st-g2">Сон, ч</label><input id="st-g2" class="inp" inputmode="decimal" value="${esc(String(g.sleepHours).replace('.', ','))}" data-ch="st-goal" data-k="sleepHours"></div><div class="field"><label for="st-g3">Вода, мл</label><input id="st-g3" class="inp" inputmode="numeric" value="${g.waterMl}" data-ch="st-goal" data-k="waterMl"></div></div></section>
 <section class="card set-sec" style="--d:5"><h3>Интерфейс</h3>
-<div class="set-glass"><div class="sg-h"><span><div>Стекло</div><div class="hint">${RTQ.matches ? 'Включено системное «Понижение прозрачности» — поверхности сплошные' : 'Как в iOS 27: от прозрачного стекла до тонированного; крайнее правое положение — сплошные поверхности'}</div></span><b class="sg-v">${PREFS.glass >= 100 ? 'сплошное' : PREFS.glass <= 15 ? 'прозрачное' : PREFS.glass >= 70 ? 'тонированное' : 'среднее'}</b></div>
-<div class="sg-row"><span class="faint">Прозрачное</span><input class="range glass-range" type="range" min="0" max="100" step="1" value="${PREFS.glass}" data-in="glass" aria-label="Стекло: прозрачное — тонированное" style="--p:${PREFS.glass}%"${RTQ.matches ? ' disabled' : ''}><span class="faint">Тонированное</span></div>
+${bkPickHTML()}
+<div class="set-glass"><div class="sg-h"><span><div>Стекло</div><div class="hint">${RTQ.matches ? 'Включено системное «Понижение прозрачности» — поверхности сплошные' : 'Матовое — размытый молочный фрост (по умолчанию); прозрачное — меньше размытия; плотное — почти сплошные панели'}</div></span><b class="sg-v">${glassLevel()}</b></div>
+<input class="range glass-range" type="range" min="0" max="100" step="1" value="${PREFS.glass}" data-in="glass" aria-label="Стекло: прозрачное — матовое — плотное" aria-valuetext="${glassLevel()}" style="--p:${PREFS.glass}%"${RTQ.matches ? ' disabled' : ''}>
+<div class="sg-ticks" aria-hidden="true"><span>Прозрачное</span><span>Матовое</span><span>Плотное</span></div>
 <div class="sg-demo" aria-hidden="true"><span class="sg-chip glass">${ic('house')}Главная</span><span class="sg-chip glass">${ic('search')}</span><span class="sg-card">виджет</span></div></div>
-<button type="button" class="set-row set-toggle" data-act="sb-car-toggle" role="switch" aria-checked="${PREFS.car}"><span><div>Мини-карточка авто</div><div class="hint">Внизу боковой панели и над таб-баром на телефоне; скрывается крестиком</div></span><span class="switch ${PREFS.car ? 'on' : ''}"></span></button>
 <button type="button" class="set-row set-toggle" data-act="sb-rail-toggle" role="switch" aria-checked="${PREFS.sb}"><span><div>Компактная боковая панель</div><div class="hint">Только значки с подсказками (на экранах от 1100 px)</div></span><span class="switch ${PREFS.sb ? 'on' : ''}"></span></button>
 <div class="set-row"><span><div>Поиск</div><div class="hint">Клавиша «/» или Ctrl/⌘ + K</div></span><span class="faint">задачи · покупки · операции · долги</span></div></section>
 </div>
@@ -5245,7 +5475,7 @@ ${geo && geo.status === 'ok' ? (geo.results.length ? `<div class="geo-list">${ge
 <div class="set-row"><span><div>Сбросить всё</div><div class="hint">Удалить все данные и начать заново</div></span><button class="btn sm danger" data-act="reset">${ic('trash-2')}Сбросить</button></div></section>
 <section class="card set-sec" style="--d:8"><h3>О приложении</h3>
 <div class="set-row"><span>Версия</span><span class="faint">Kun ${APP_VERSION} · web</span></div>
-<div class="set-row"><span>Дизайн</span><span class="faint">v3 · Liquid Glass</span></div>
+<div class="set-row"><span>Дизайн</span><span class="faint">v4 · матовое стекло</span></div>
 <div class="set-row"><span>Шрифт</span><span class="faint">Inter</span></div>
 <div class="set-row"><span>Погода</span><span class="faint">Open-Meteo</span></div>
 <div class="set-row"><span>Курсы</span><span class="faint">ЦБ Узбекистана (cbu.uz)</span></div>
@@ -5253,7 +5483,19 @@ ${geo && geo.status === 'ok' ? (geo.results.length ? `<div class="geo-list">${ge
 </div></div>`;
   },
 };
-IN.glass = (el) => { PREFS.glass = clamp(Math.round(toNum(el.value, 35)), 0, 100); el.style.setProperty('--p', PREFS.glass + '%'); applyGlass(); savePrefs(); const v = el.closest('.set-glass') && el.closest('.set-glass').querySelector('.sg-v'); if (v) v.textContent = PREFS.glass >= 100 ? 'сплошное' : PREFS.glass <= 15 ? 'прозрачное' : PREFS.glass >= 70 ? 'тонированное' : 'среднее'; };
+/* «Фон»: Автоматически (weather + time of day) or one of the five palettes; stored in settings.backdrop (JSON) */
+function bkPickHTML() {
+  const sel = bkSetting(); const cur = bkResolve();
+  const opts = ['auto', ...BK_KEYS].map((k) => `<button type="button" role="radio" aria-checked="${sel === k}" class="bk-opt${sel === k ? ' on' : ''}" data-act="set-bk" data-v="${k}" data-key="bk-${k}"><span class="bk-swb${k === 'auto' ? ' auto' : ''}"><canvas class="bk-sw" data-pal="${k === 'auto' ? cur : k}" width="112" height="70" aria-hidden="true"></canvas>${k === 'auto' ? `<i class="bk-a">${ic('sparkles')}</i>` : ''}</span><span class="bk-n">${BK_NAMES[k]}</span></button>`).join('');
+  return `<div class="set-bk"><div class="sg-h"><span><div>Фон</div><div class="hint">Плавный градиент за матовым стеклом. «Автоматически» — по погоде и времени суток: ясный день — Шалфей, вечер — Закат, ночь — Индиго, дождь, снег и туман — Океан, пасмурно — Графит.</div></span><b class="sg-v">${sel === 'auto' ? `авто · ${BK_NAMES[cur]}` : BK_NAMES[sel]}</b></div><div class="bk-pick" role="radiogroup" aria-label="Фон">${opts}</div></div>`;
+}
+ACT['set-bk'] = (el) => { const v = el.dataset.v; if (!BK_NAMES[v] || bkSetting() === v) return; haptic(6); commit(['settings'], (d) => { d.settings.backdrop = v; }); };
+IN.glass = (el) => {
+  let v = clamp(Math.round(toNum(el.value, 50)), 0, 100); if (Math.abs(v - 50) <= 3) v = 50; // gentle detent at «Матовое»
+  if (el.value !== String(v)) el.value = String(v);
+  PREFS.glass = v; el.style.setProperty('--p', v + '%'); el.setAttribute('aria-valuetext', glassLevel()); applyGlass(); savePrefs();
+  const lab = el.closest('.set-glass') && el.closest('.set-glass').querySelector('.sg-v'); if (lab) lab.textContent = glassLevel();
+};
 CH['st-name'] = (el) => { const v = el.value.trim(); if (!v) { el.value = S.data.settings.userName; return; } commit(['settings'], (d) => { d.settings.userName = v; }); toast('Имя сохранено'); };
 CH['st-rate'] = (el) => { const v = Math.round(toNum(el.value.replace(',', '.'), NaN) * 100) / 100; if (!(v > 0)) { toast('Курс должен быть положительным числом'); render(); return; } commit(['settings'], (d) => { d.settings.rates = { ...d.settings.rates, [el.dataset.cur]: v, updatedAt: dayKey(new Date()), source: 'manual' }; }); toast(`Курс ${el.dataset.cur} сохранён`); };
 CH['st-goal'] = (el) => { const g = { ...S.data.settings.goals }; const st = { steps: g.steps, sleep: g.sleepHours, water: g.waterMl }; const map = { steps: 'steps', sleepHours: 'sleep', waterMl: 'water' }; st[map[el.dataset.k]] = el.value; if (!saveGoals(st)) render(); };
