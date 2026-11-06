@@ -1154,7 +1154,8 @@ function countUp(el, from, to) {
   el.textContent = fmtBy(fmt, from, sign);
   const step = (now) => {
     if (el._cu !== tok) return;
-    const p = Math.min(1, (now - t0) / dur);
+    // rAF timestamps can precede t0 (frame start < call time) → clamp, otherwise first frame shows negative values
+    const p = Math.max(0, Math.min(1, (now - t0) / dur));
     const e = p >= 1 ? 1 : 1 - Math.pow(2, -10 * p);
     el.textContent = fmtBy(fmt, p >= 1 ? to : from + (to - from) * e, sign);
     if (p < 1) requestAnimationFrame(step);
