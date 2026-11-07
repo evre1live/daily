@@ -5,14 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0A0A1C">
 <meta name="color-scheme" content="dark">
-<meta name="description" content="Kun — персональная панель дня: задачи, покупки, финансы, долги, авто, здоровье и погода.">
-<title>Kun</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23DEFF1C'/%3E%3Cpath d='M24 15v34M24 37l15-13M30 32l11 17' fill='none' stroke='%230B0B0D' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<meta name="description" content="Nado — персональная панель дня: задачи, покупки, финансы, долги, авто, здоровье и погода.">
+<meta name="application-name" content="Nado">
+<meta name="apple-mobile-web-app-title" content="Nado">
+<title>Nado</title>
+<!-- favicon: the Nado mark — lime #DEFF1C rounded tile with the bold «N» (same path as LOGO_N in 06-ui.js) -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='20' fill='%23DEFF1C'/%3E%3Cpath d='M18.59 16.5H25.63L39.31 39.3L38.94 32V16.5H45.41V47.5H38.32L24.64 24.38L25.06 32V47.5H18.59Z' fill='%230B0B0D'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
 <style>
-/* ============ Kun v4 — smooth gradient backdrop + matte frosted glass (Ron Design Lab style) · tokens shared with iOS ============ */
+/* ============ Nado (formerly DayOne, Kun) v4 — smooth gradient backdrop + matte frosted glass (Ron Design Lab style) · tokens shared with iOS ============ */
 @property --hov{syntax:'<number>';inherits:true;initial-value:0}
 :root{
   --bg:#0A0A1C; --panel-solid:#1A1B24; --sidebar:#101116;
@@ -111,8 +114,9 @@ html[data-bk=graphite]{--bg:#0B0C0F;--bk-fb:radial-gradient(42% 40% at 60% 27%,r
 .sb-in{position:relative;height:100%;display:flex;flex-direction:column;overflow:hidden;border-radius:inherit}
 .sb-head{flex:none;height:66px;display:flex;align-items:center;padding:0 18px}
 .logo{display:inline-flex;align-items:center;gap:11px;min-width:0;border-radius:10px}
-.logo-tile{width:30px;height:30px;flex:none;border-radius:10px;display:grid;place-items:center;background:linear-gradient(180deg,#EBFF5E,#D2F20E);color:var(--lime-ink);font:600 18px/1 var(--sans);letter-spacing:-.02em;padding-bottom:2px;box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 0 0 1px rgba(222,255,28,.35),0 8px 22px -8px rgba(222,255,28,.6)}
-.logo-tile.xl{width:60px;height:60px;border-radius:18px;font-size:36px}
+.logo-tile{width:30px;height:30px;flex:none;border-radius:10px;display:grid;place-items:center;background:linear-gradient(180deg,#EBFF5E,#D2F20E);color:var(--lime-ink);box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 0 0 1px rgba(222,255,28,.35),0 8px 22px -8px rgba(222,255,28,.6)}
+.logo-tile .logo-n{display:block;width:100%;height:100%;fill:currentColor;pointer-events:none}
+.logo-tile.xl{width:60px;height:60px;border-radius:18px}
 .logo-name{font:600 19px/1 var(--sans);letter-spacing:-.02em;white-space:nowrap;transition:opacity .2s var(--ease)}
 .sb-toggle{position:absolute;z-index:3;top:19px;right:16px;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;color:var(--text2);transition:background .2s,color .2s,right .34s var(--ease-io)}
 .sb-toggle:hover{color:var(--text);background:var(--fill2)}
@@ -1530,7 +1534,8 @@ html.rm{transition:none!important}
 @media (hover:none),(max-width:759px){.row-act{display:none!important}.row-more{display:inline-grid}}
 
 </style>
-<script>/* first paint: the last backdrop palette (or one by the time of day) so the CSS gradient matches before JS boots */
+<script>/* first paint: the last backdrop palette (or one by the time of day) so the CSS gradient matches before JS boots.
+   «kun.ui.v1» is the internal storage id kept from the app's first name (Kun → DayOne → Nado) so preferences keep working. */
 try{var k=(JSON.parse(localStorage.getItem('kun.ui.v1')||'{}')||{}).bk,h=new Date().getHours();document.documentElement.setAttribute('data-bk',/^(indigo|sage|ocean|sunset|graphite)$/.test(k)?k:h>=17&&h<19?'sunset':h>=6&&h<17?'sage':'indigo')}catch(e){document.documentElement.setAttribute('data-bk','indigo')}</script>
 </head>
 <body>
@@ -1547,7 +1552,7 @@ try{var k=(JSON.parse(localStorage.getItem('kun.ui.v1')||'{}')||{}).bk,h=new Dat
 <nav id="tabbar" class="tabbar glass" aria-label="Разделы"></nav>
 <div id="layer"></div>
 <div id="toasts" class="toasts" role="status" aria-live="polite"></div>
-<noscript><div style="padding:40px;color:#FCFBFE;font-family:sans-serif">Для работы Kun нужен JavaScript.</div></noscript>
+<noscript><div style="padding:40px;color:#FCFBFE;font-family:sans-serif">Для работы Nado нужен JavaScript.</div></noscript>
 <script type="module">
 const ICONS={"house":"<path d=\"M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8\"/><path d=\"M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z\"/>","list-checks":"<path d=\"M13 5h8\"/><path d=\"M13 12h8\"/><path d=\"M13 19h8\"/><path d=\"m3 17 2 2 4-4\"/><path d=\"m3 7 2 2 4-4\"/>","shopping-cart":"<path d=\"m2.05 2.05 1.099-.028a1 1 0 0 1 1.008.815l2.69 14.347A1 1 0 0 0 7.83 18H18\"/><path d=\"M4.563 5h16.435a1 1 0 0 1 .981 1.204l-1.026 6.226A2 2 0 0 1 18.962 14H6.25\"/><circle cx=\"18\" cy=\"20\" r=\"2\"/><circle cx=\"8\" cy=\"20\" r=\"2\"/>","shopping-basket":"<path d=\"m15 11-1 9\"/><path d=\"m19 11-4-7\"/><path d=\"M2 11h20\"/><path d=\"m3.5 11 1.6 7.4a2 2 0 0 0 2 1.6h9.8a2 2 0 0 0 2-1.6l1.7-7.4\"/><path d=\"M4.5 15.5h15\"/><path d=\"m5 11 4-7\"/><path d=\"m9 11 1 9\"/>","wallet":"<path d=\"M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1\"/><path d=\"M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4\"/>","hand-coins":"<path d=\"M11 15h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 17\"/><path d=\"m7 21 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9\"/><path d=\"m2 16 6 6\"/><circle cx=\"16\" cy=\"9\" r=\"2.9\"/><circle cx=\"6\" cy=\"5\" r=\"3\"/>","car-front":"<path d=\"m21 8-2 2-1.5-3.7A2 2 0 0 0 15.646 5H8.4a2 2 0 0 0-1.903 1.257L5 10 3 8\"/><path d=\"M7 14h.01\"/><path d=\"M17 14h.01\"/><rect width=\"18\" height=\"8\" x=\"3\" y=\"10\" rx=\"2\"/><path d=\"M5 18v2\"/><path d=\"M19 18v2\"/>","car":"<path d=\"M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2\"/><circle cx=\"7\" cy=\"17\" r=\"2\"/><path d=\"M9 17h6\"/><circle cx=\"17\" cy=\"17\" r=\"2\"/>","heart-pulse":"<path d=\"M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5\"/><path d=\"M3.22 13H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27\"/>","settings":"<path d=\"M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915\"/><circle cx=\"12\" cy=\"12\" r=\"3\"/>","plus":"<path d=\"M5 12h14\"/><path d=\"M12 5v14\"/>","search":"<path d=\"m21 21-4.34-4.34\"/><circle cx=\"11\" cy=\"11\" r=\"8\"/>","chevron-left":"<path d=\"m15 18-6-6 6-6\"/>","chevron-right":"<path d=\"m9 18 6-6-6-6\"/>","chevron-down":"<path d=\"m6 9 6 6 6-6\"/>","x":"<path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/>","trash-2":"<path d=\"M10 11v6\"/><path d=\"M14 11v6\"/><path d=\"M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6\"/><path d=\"M3 6h18\"/><path d=\"M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2\"/>","pencil":"<path d=\"M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z\"/><path d=\"m15 5 4 4\"/>","ellipsis":"<circle cx=\"12\" cy=\"12\" r=\"1\"/><circle cx=\"19\" cy=\"12\" r=\"1\"/><circle cx=\"5\" cy=\"12\" r=\"1\"/>","sun":"<circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2v2\"/><path d=\"M12 20v2\"/><path d=\"m4.93 4.93 1.41 1.41\"/><path d=\"m17.66 17.66 1.41 1.41\"/><path d=\"M2 12h2\"/><path d=\"M20 12h2\"/><path d=\"m6.34 17.66-1.41 1.41\"/><path d=\"m19.07 4.93-1.41 1.41\"/>","moon":"<path d=\"M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401\"/>","cloud":"<path d=\"M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z\"/>","cloud-sun":"<path d=\"M12 2v2\"/><path d=\"m4.93 4.93 1.41 1.41\"/><path d=\"M20 12h2\"/><path d=\"m19.07 4.93-1.41 1.41\"/><path d=\"M15.947 12.65a4 4 0 0 0-5.925-4.128\"/><path d=\"M13 22H7a5 5 0 1 1 4.9-6H13a3 3 0 0 1 0 6Z\"/>","cloud-moon":"<path d=\"M13 16a3 3 0 0 1 0 6H7a5 5 0 1 1 4.9-6z\"/><path d=\"M18.376 14.512a6 6 0 0 0 3.461-4.127c.148-.625-.659-.97-1.248-.714a4 4 0 0 1-5.259-5.26c.255-.589-.09-1.395-.716-1.248a6 6 0 0 0-4.594 5.36\"/>","cloud-fog":"<path d=\"M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242\"/><path d=\"M16 17H7\"/><path d=\"M17 21H9\"/>","cloud-drizzle":"<path d=\"M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242\"/><path d=\"M8 19v1\"/><path d=\"M8 14v1\"/><path d=\"M16 19v1\"/><path d=\"M16 14v1\"/><path d=\"M12 21v1\"/><path d=\"M12 16v1\"/>","cloud-rain":"<path d=\"M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242\"/><path d=\"M16 14v6\"/><path d=\"M8 14v6\"/><path d=\"M12 16v6\"/>","cloud-snow":"<path d=\"M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242\"/><path d=\"M8 15h.01\"/><path d=\"M8 19h.01\"/><path d=\"M12 17h.01\"/><path d=\"M12 21h.01\"/><path d=\"M16 15h.01\"/><path d=\"M16 19h.01\"/>","cloud-lightning":"<path d=\"M6 16.326A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 .5 8.973\"/><path d=\"m13 12-3 5h4l-3 5\"/>","cloud-hail":"<path d=\"M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242\"/><path d=\"M16 14v2\"/><path d=\"M8 14v2\"/><path d=\"M16 20h.01\"/><path d=\"M8 20h.01\"/><path d=\"M12 16v2\"/><path d=\"M12 22h.01\"/>","snowflake":"<path d=\"m10 20-1.25-2.5L6 18\"/><path d=\"M10 4 8.75 6.5 6 6\"/><path d=\"m14 20 1.25-2.5L18 18\"/><path d=\"m14 4 1.25 2.5L18 6\"/><path d=\"m17 21-3-6h-4\"/><path d=\"m17 3-3 6 1.5 3\"/><path d=\"M2 12h6.5L10 9\"/><path d=\"m20 10-1.5 2 1.5 2\"/><path d=\"M22 12h-6.5L14 15\"/><path d=\"m4 10 1.5 2L4 14\"/><path d=\"m7 21 3-6-1.5-3\"/><path d=\"m7 3 3 6h4\"/>","wind":"<path d=\"M12.8 19.6A2 2 0 1 0 14 16H2\"/><path d=\"M17.5 8a2.5 2.5 0 1 1 2 4H2\"/><path d=\"M9.8 4.4A2 2 0 1 1 11 8H2\"/>","droplets":"<path d=\"M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7.29 6.75 7 5.3c-.29 1.45-1.14 2.84-2.29 3.76S3 11.1 3 12.25c0 2.22 1.8 4.05 4 4.05z\"/><path d=\"M12.56 6.6A10.97 10.97 0 0 0 14 3.02c.5 2.5 2 4.9 4 6.5s3 3.5 3 5.5a6.98 6.98 0 0 1-11.91 4.97\"/>","droplet":"<path d=\"M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z\"/>","sunrise":"<path d=\"M12 2v8\"/><path d=\"m4.93 10.93 1.41 1.41\"/><path d=\"M2 18h2\"/><path d=\"M20 18h2\"/><path d=\"m19.07 10.93-1.41 1.41\"/><path d=\"M22 22H2\"/><path d=\"m8 6 4-4 4 4\"/><path d=\"M16 18a4 4 0 0 0-8 0\"/>","sunset":"<path d=\"M12 10V2\"/><path d=\"m4.93 10.93 1.41 1.41\"/><path d=\"M2 18h2\"/><path d=\"M20 18h2\"/><path d=\"m19.07 10.93-1.41 1.41\"/><path d=\"M22 22H2\"/><path d=\"m16 6-4 4-4-4\"/><path d=\"M16 18a4 4 0 0 0-8 0\"/>","thermometer":"<path d=\"M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z\"/>","zap":"<path d=\"M15.914 4a1.5 1.5 0 00-2.474-1.561l-9 9A1.5 1.5 0 005.5 14h4.002a.5.5 0 01.471.666L8.086 20a1.5 1.5 0 002.475 1.56l9-9A1.5 1.5 0 0018.5 10h-3.997a.5.5 0 01-.472-.667z\"/>","battery-charging":"<path d=\"m11 7-3 5h4l-3 5\"/><path d=\"M14.856 6H16a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.935\"/><path d=\"M22 14v-4\"/><path d=\"M5.14 18H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h2.936\"/>","gauge":"<path d=\"m12 14 4-4\"/><path d=\"M3.34 19a10 10 0 1 1 17.32 0\"/>","calendar":"<path d=\"M8 2v3\"/><path d=\"M16 2v3\"/><rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"2\"/><path d=\"M3 9h18\"/>","clock":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M12 6v6l4 2\"/>","flag":"<path d=\"M4 22V4a1 1 0 0 1 .4-.8A6 6 0 0 1 8 2c3 0 5 2 7.333 2q2 0 3.067-.8A1 1 0 0 1 20 4v10a1 1 0 0 1-.4.8A6 6 0 0 1 16 16c-3 0-5-2-8-2a6 6 0 0 0-4 1.528\"/>","list":"<path d=\"M3 5h.01\"/><path d=\"M3 12h.01\"/><path d=\"M3 19h.01\"/><path d=\"M8 5h13\"/><path d=\"M8 12h13\"/><path d=\"M8 19h13\"/>","tag":"<path d=\"M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z\"/><circle cx=\"7.5\" cy=\"7.5\" r=\".5\" fill=\"currentColor\"/>","arrow-up-right":"<path d=\"M7 7h10v10\"/><path d=\"M7 17 17 7\"/>","arrow-down-left":"<path d=\"M17 7 7 17\"/><path d=\"M17 17H7V7\"/>","arrow-left-right":"<path d=\"M8 3 4 7l4 4\"/><path d=\"M4 7h16\"/><path d=\"m16 21 4-4-4-4\"/><path d=\"M20 17H4\"/>","credit-card":"<rect width=\"20\" height=\"14\" x=\"2\" y=\"5\" rx=\"2\"/><line x1=\"2\" x2=\"22\" y1=\"10\" y2=\"10\"/><path d=\"M6 14h2\"/>","banknote":"<rect width=\"20\" height=\"12\" x=\"2\" y=\"6\" rx=\"2\"/><circle cx=\"12\" cy=\"12\" r=\"2\"/><path d=\"M6 12h.01M18 12h.01\"/>","piggy-bank":"<path d=\"M11 17h3v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-3a3.16 3.16 0 0 0 2-2h1a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1h-1a5 5 0 0 0-2-4V3a4 4 0 0 0-3.2 1.6l-.3.4H11a6 6 0 0 0-6 6v1a5 5 0 0 0 2 4v3a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1z\"/><path d=\"M16 10h.01\"/><path d=\"M2 8v1a2 2 0 0 0 2 2h1\"/>","landmark":"<path d=\"M10 18v-7\"/><path d=\"M11.119 2.205a2 2 0 0 1 1.762 0l7.84 3.846A.5.5 0 0 1 20.5 7h-17a.5.5 0 0 1-.22-.949z\"/><path d=\"M14 18v-7\"/><path d=\"M18 18v-7\"/><path d=\"M3 22h18\"/><path d=\"M6 18v-7\"/>","utensils":"<path d=\"M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2\"/><path d=\"M7 2v20\"/><path d=\"M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7\"/>","coffee":"<path d=\"M10 2v2\"/><path d=\"M14 2v2\"/><path d=\"M16 8a1 1 0 0 1 1 1v8a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1h14a4 4 0 1 1 0 8h-1\"/><path d=\"M6 2v2\"/>","bus":"<path d=\"M8 6v6\"/><path d=\"M15 6v6\"/><path d=\"M2 12h19.6\"/><path d=\"M18 18h3s.5-1.7.8-2.8c.1-.4.2-.8.2-1.2 0-.4-.1-.8-.2-1.2l-1.4-5C20.1 6.8 19.1 6 18 6H4a2 2 0 0 0-2 2v10h3\"/><circle cx=\"7\" cy=\"18\" r=\"2\"/><path d=\"M9 18h5\"/><circle cx=\"16\" cy=\"18\" r=\"2\"/>","wifi":"<path d=\"M12 20h.01\"/><path d=\"M2 8.82a15 15 0 0 1 20 0\"/><path d=\"M5 12.859a10 10 0 0 1 14 0\"/><path d=\"M8.5 16.429a5 5 0 0 1 7 0\"/>","smartphone":"<rect width=\"14\" height=\"20\" x=\"5\" y=\"2\" rx=\"2\" ry=\"2\"/><path d=\"M12 18h.01\"/>","pill":"<path d=\"m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z\"/><path d=\"m8.5 8.5 7 7\"/>","shirt":"<path d=\"M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z\"/>","film":"<rect width=\"18\" height=\"18\" x=\"3\" y=\"3\" rx=\"2\"/><path d=\"M7 3v18\"/><path d=\"M3 7.5h4\"/><path d=\"M3 12h18\"/><path d=\"M3 16.5h4\"/><path d=\"M17 3v18\"/><path d=\"M17 7.5h4\"/><path d=\"M17 16.5h4\"/>","gift":"<path d=\"M12 7v14\"/><path d=\"M20 11v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8\"/><path d=\"M7.5 7a1 1 0 0 1 0-5A4.8 8 0 0 1 12 7a4.8 8 0 0 1 4.5-5 1 1 0 0 1 0 5\"/><rect x=\"3\" y=\"7\" width=\"18\" height=\"4\" rx=\"1\"/>","book-open":"<path d=\"M12 5v16\"/><path d=\"M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z\"/>","repeat":"<path d=\"m17 2 4 4-4 4\"/><path d=\"M3 11v-1a4 4 0 0 1 4-4h14\"/><path d=\"m7 22-4-4 4-4\"/><path d=\"M21 13v1a4 4 0 0 1-4 4H3\"/>","briefcase":"<path d=\"M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16\"/><rect width=\"20\" height=\"14\" x=\"2\" y=\"6\" rx=\"2\"/>","star":"<path d=\"M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z\"/>","laptop":"<path d=\"M18 5a2 2 0 0 1 2 2v8.526a2 2 0 0 0 .212.897l1.068 2.127a1 1 0 0 1-.9 1.45H3.62a1 1 0 0 1-.9-1.45l1.068-2.127A2 2 0 0 0 4 15.526V7a2 2 0 0 1 2-2z\"/><path d=\"M20.054 15.987H3.946\"/>","percent":"<line x1=\"19\" x2=\"5\" y1=\"5\" y2=\"19\"/><circle cx=\"6.5\" cy=\"6.5\" r=\"2.5\"/><circle cx=\"17.5\" cy=\"17.5\" r=\"2.5\"/>","footprints":"<path d=\"M4 16v-2.38C4 11.5 2.97 10.5 3 8c.03-2.72 1.49-6 4.5-6C9.37 2 10 3.8 10 5.5c0 3.11-2 5.66-2 8.68V16a2 2 0 1 1-4 0Z\"/><path d=\"M20 20v-2.38c0-2.12 1.03-3.12 1-5.62-.03-2.72-1.49-6-4.5-6C14.63 6 14 7.8 14 9.5c0 3.11 2 5.66 2 8.68V20a2 2 0 1 0 4 0Z\"/><path d=\"M16 17h4\"/><path d=\"M4 13h4\"/>","bed":"<path d=\"M2 4v16\"/><path d=\"M2 8h18a2 2 0 0 1 2 2v10\"/><path d=\"M2 17h20\"/><path d=\"M6 8v9\"/>","heart":"<path d=\"M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5\"/>","weight":"<circle cx=\"12\" cy=\"5\" r=\"3\"/><path d=\"M6.5 8a2 2 0 0 0-1.905 1.46L2.1 18.5A2 2 0 0 0 4 21h16a2 2 0 0 0 1.925-2.54L19.4 9.5A2 2 0 0 0 17.48 8Z\"/>","glass-water":"<path d=\"M5.116 4.104A1 1 0 0 1 6.11 3h11.78a1 1 0 0 1 .994 1.105L17.19 20.21A2 2 0 0 1 15.2 22H8.8a2 2 0 0 1-2-1.79z\"/><path d=\"M6 12a5 5 0 0 1 6 0 5 5 0 0 0 6 0\"/>","download":"<path d=\"M12 15V3\"/><path d=\"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4\"/><path d=\"m7 10 5 5 5-5\"/>","upload":"<path d=\"M12 3v12\"/><path d=\"m17 8-5-5-5 5\"/><path d=\"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4\"/>","copy":"<rect width=\"14\" height=\"14\" x=\"8\" y=\"8\" rx=\"2\" ry=\"2\"/><path d=\"M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2\"/>","refresh-cw":"<path d=\"M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8\"/><path d=\"M21 3v5h-5\"/><path d=\"M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16\"/><path d=\"M8 16H3v5\"/>","undo-2":"<path d=\"M9 14 4 9l5-5\"/><path d=\"M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11\"/>","user":"<path d=\"M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2\"/><circle cx=\"12\" cy=\"7\" r=\"4\"/>","map-pin":"<path d=\"M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0\"/><circle cx=\"12\" cy=\"10\" r=\"3\"/>","archive":"<rect width=\"20\" height=\"5\" x=\"2\" y=\"3\" rx=\"1\"/><path d=\"M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8\"/><path d=\"M10 12h4\"/>","check":"<path d=\"M20 6 9 17l-5-5\"/>","sparkles":"<path d=\"M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z\"/><path d=\"M20 2v4\"/><path d=\"M22 4h-4\"/><circle cx=\"4\" cy=\"20\" r=\"2\"/>","circle":"<circle cx=\"12\" cy=\"12\" r=\"10\"/>","activity":"<path d=\"M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2\"/>","plug-zap":"<path d=\"M6.3 20.3a2.4 2.4 0 0 0 3.4 0L12 18l-6-6-2.3 2.3a2.4 2.4 0 0 0 0 3.4Z\"/><path d=\"m2 22 3-3\"/><path d=\"M7.5 13.5 10 11\"/><path d=\"M10.5 16.5 13 14\"/><path d=\"m18 3-4 4h6l-4 4\"/>","info":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M12 16v-4\"/><path d=\"M12 8h.01\"/>","triangle-alert":"<path d=\"m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3\"/><path d=\"M12 9v4\"/><path d=\"M12 17h.01\"/>","cloud-off":"<path d=\"M10.94 5.274A7 7 0 0 1 15.71 10h1.79a4.5 4.5 0 0 1 4.222 6.057\"/><path d=\"M18.796 18.81A4.5 4.5 0 0 1 17.5 19H9A7 7 0 0 1 5.79 5.78\"/><path d=\"m2 2 20 20\"/>","gamepad-2":"<line x1=\"6\" x2=\"10\" y1=\"11\" y2=\"11\"/><line x1=\"8\" x2=\"8\" y1=\"9\" y2=\"13\"/><line x1=\"15\" x2=\"15.01\" y1=\"12\" y2=\"12\"/><line x1=\"18\" x2=\"18.01\" y1=\"10\" y2=\"10\"/><path d=\"M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z\"/>","graduation-cap":"<path d=\"M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z\"/><path d=\"M22 10v6\"/><path d=\"M6 12.5V16a6 3 0 0 0 12 0v-3.5\"/>","coins":"<path d=\"M13.744 17.736a6 6 0 1 1-7.48-7.48\"/><path d=\"M15 6h1v4\"/><path d=\"m6.134 14.768.866-.5 2 3.464\"/><circle cx=\"16\" cy=\"8\" r=\"6\"/>","arrow-up":"<path d=\"m5 12 7-7 7 7\"/><path d=\"M12 19V5\"/>","arrow-down":"<path d=\"M12 5v14\"/><path d=\"m19 12-7 7-7-7\"/>","milk":"<path d=\"M8 2h8\"/><path d=\"M9 2v2.789a4 4 0 0 1-.672 2.219l-.656.984A4 4 0 0 0 7 10.212V20a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-9.789a4 4 0 0 0-.672-2.219l-.656-.984A4 4 0 0 1 15 4.788V2\"/><path d=\"M7 15a6.472 6.472 0 0 1 5 0 6.47 6.47 0 0 0 5 0\"/>","beef":"<path d=\"M16.4 13.7A6.5 6.5 0 1 0 6.28 6.6c-1.1 3.13-.78 3.9-3.18 6.08A3 3 0 0 0 5 18c4 0 8.4-1.8 11.4-4.3\"/><path d=\"m18.5 6 1.754 3.5a6.48 6.48 0 0 1-1.854 8.2C15.4 20.2 11 22 7 22a3 3 0 0 1-2.68-1.66L2.4 16.5\"/><circle cx=\"12.5\" cy=\"8.5\" r=\"2.5\"/>","wheat":"<path d=\"M2 22 16 8\"/><path d=\"M3.47 12.53 5 11l1.53 1.53a3.5 3.5 0 0 1 0 4.94L5 19l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z\"/><path d=\"M7.47 8.53 9 7l1.53 1.53a3.5 3.5 0 0 1 0 4.94L9 15l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z\"/><path d=\"M11.47 4.53 13 3l1.53 1.53a3.5 3.5 0 0 1 0 4.94L13 11l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z\"/><path d=\"M20 2h2v2a4 4 0 0 1-4 4h-2V6a4 4 0 0 1 4-4Z\"/><path d=\"M11.47 17.47 13 19l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L5 19l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z\"/><path d=\"M15.47 13.47 17 15l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L9 15l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z\"/><path d=\"M19.47 9.47 21 11l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L13 11l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z\"/>","apple":"<path d=\"M12 6.528V3a1 1 0 0 1 1-1h0\"/><path d=\"M18.237 21A15 15 0 0 0 22 11a6 6 0 0 0-10-4.472A6 6 0 0 0 2 11a15.1 15.1 0 0 0 3.763 10 3 3 0 0 0 3.648.648 5.5 5.5 0 0 1 5.178 0A3 3 0 0 0 18.237 21\"/>","package":"<path d=\"M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z\"/><path d=\"M12 22V12\"/><polyline points=\"3.29 7 12 12 20.71 7\"/><path d=\"m7.5 4.27 9 5.15\"/>","spray-can":"<path d=\"M3 3h.01\"/><path d=\"M7 5h.01\"/><path d=\"M11 7h.01\"/><path d=\"M3 7h.01\"/><path d=\"M7 9h.01\"/><path d=\"M3 11h.01\"/><rect width=\"4\" height=\"4\" x=\"15\" y=\"5\"/><path d=\"m19 9 2 2v10c0 .6-.4 1-1 1h-6c-.6 0-1-.4-1-1V11l2-2\"/><path d=\"m13 14 8-2\"/><path d=\"m13 19 8-2\"/>","carrot":"<path d=\"M15 16a1 1 0 0 0-7-7q-4 4-5.987 12.385a.5.5 0 0 0 .602.602Q11 20 15 16l-3-3\"/><path d=\"M15 9q4 4 7 0-3-4-7 0 4-4 0-7-4 3 0 7\"/><path d=\"m8 15-2.58-2.58\"/>","sliders-horizontal":"<path d=\"M10 5H3\"/><path d=\"M12 19H3\"/><path d=\"M14 3v4\"/><path d=\"M16 17v4\"/><path d=\"M21 12h-9\"/><path d=\"M21 19h-5\"/><path d=\"M21 5h-7\"/><path d=\"M8 10v4\"/><path d=\"M8 12H3\"/>","history":"<path d=\"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8\"/><path d=\"M3 3v5h5\"/><path d=\"M12 7v5l4 2\"/>","route":"<circle cx=\"6\" cy=\"19\" r=\"3\"/><path d=\"M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15\"/><circle cx=\"18\" cy=\"5\" r=\"3\"/>","minus":"<path d=\"M5 12h14\"/>","circle-plus":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M8 12h8\"/><path d=\"M12 8v8\"/>","layout-grid":"<rect width=\"7\" height=\"7\" x=\"3\" y=\"3\" rx=\"1\"/><rect width=\"7\" height=\"7\" x=\"14\" y=\"3\" rx=\"1\"/><rect width=\"7\" height=\"7\" x=\"14\" y=\"14\" rx=\"1\"/><rect width=\"7\" height=\"7\" x=\"3\" y=\"14\" rx=\"1\"/>","inbox":"<polyline points=\"22 12 16 12 14 15 10 15 8 12 2 12\"/><path d=\"M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z\"/>","file-json":"<path d=\"M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z\"/><path d=\"M14 2v5a1 1 0 0 0 1 1h5\"/><path d=\"M10 12a1 1 0 0 0-1 1v1a1 1 0 0 1-1 1 1 1 0 0 1 1 1v1a1 1 0 0 0 1 1\"/><path d=\"M14 18a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1 1 1 0 0 1-1-1v-1a1 1 0 0 0-1-1\"/>","calendar-clock":"<path d=\"M16 14v2.2l1.6 1\"/><path d=\"M16 2v3\"/><path d=\"M21 7.338V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2h2.338\"/><path d=\"M3 9h5.859\"/><path d=\"M8 2v3\"/><circle cx=\"16\" cy=\"16\" r=\"6\"/>","receipt":"<path d=\"M12 17V7\"/><path d=\"M16 8h-6a2 2 0 0 0 0 4h4a2 2 0 0 1 0 4H8\"/><path d=\"M4 3a1 1 0 0 1 1-1 1.3 1.3 0 0 1 .7.2l.933.6a1.3 1.3 0 0 0 1.4 0l.934-.6a1.3 1.3 0 0 1 1.4 0l.933.6a1.3 1.3 0 0 0 1.4 0l.933-.6a1.3 1.3 0 0 1 1.4 0l.934.6a1.3 1.3 0 0 0 1.4 0l.933-.6A1.3 1.3 0 0 1 19 2a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1 1.3 1.3 0 0 1-.7-.2l-.933-.6a1.3 1.3 0 0 0-1.4 0l-.934.6a1.3 1.3 0 0 1-1.4 0l-.933-.6a1.3 1.3 0 0 0-1.4 0l-.933.6a1.3 1.3 0 0 1-1.4 0l-.934-.6a1.3 1.3 0 0 0-1.4 0l-.933.6a1.3 1.3 0 0 1-.7.2 1 1 0 0 1-1-1z\"/>","fuel":"<path d=\"M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 4 0v-6.998a2 2 0 0 0-.59-1.42L18 5\"/><path d=\"M14 21V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v16\"/><path d=\"M2 21h13\"/><path d=\"M3 9h11\"/>","stethoscope":"<path d=\"M11 2v2\"/><path d=\"M5 2v2\"/><path d=\"M5 3H4a2 2 0 0 0-2 2v4a6 6 0 0 0 12 0V5a2 2 0 0 0-2-2h-1\"/><path d=\"M8 15a6 6 0 0 0 12 0v-3\"/><circle cx=\"20\" cy=\"10\" r=\"2\"/>","tv":"<path d=\"m17 2-5 5-5-5\"/><rect width=\"20\" height=\"15\" x=\"2\" y=\"7\" rx=\"2\"/>","music":"<path d=\"M21 16V3a1 1 0 0 0-1.28-.96l-10 2.917a1 1 0 0 0-.72.96V19\"/><circle cx=\"18\" cy=\"16\" r=\"3\"/><circle cx=\"6\" cy=\"19\" r=\"3\"/>","plane":"<path d=\"M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z\"/>","dumbbell":"<path d=\"M17.596 12.768a2 2 0 1 0 2.829-2.829l-1.768-1.767a2 2 0 0 0 2.828-2.829l-2.828-2.828a2 2 0 0 0-2.829 2.828l-1.767-1.768a2 2 0 1 0-2.829 2.829z\"/><path d=\"m2.5 21.5 1.4-1.4\"/><path d=\"m20.1 3.9 1.4-1.4\"/><path d=\"M5.343 21.485a2 2 0 1 0 2.829-2.828l1.767 1.768a2 2 0 1 0 2.829-2.829l-6.364-6.364a2 2 0 1 0-2.829 2.829l1.768 1.767a2 2 0 0 0-2.828 2.829z\"/><path d=\"m9.6 14.4 4.8-4.8\"/>","baby":"<path d=\"M10 16c.5.3 1.2.5 2 .5s1.5-.2 2-.5\"/><path d=\"M15 12h.01\"/><path d=\"M19.38 6.813A9 9 0 0 1 20.8 10.2a2 2 0 0 1 0 3.6 9 9 0 0 1-17.6 0 2 2 0 0 1 0-3.6A9 9 0 0 1 12 3c2 0 3.5 1.1 3.5 2.5s-.9 2.5-2 2.5c-.8 0-1.5-.4-1.5-1\"/><path d=\"M9 12h.01\"/>","dog":"<path d=\"M11.25 16.25h1.5L12 17z\"/><path d=\"M16 14v.5\"/><path d=\"M4.42 11.247A13.152 13.152 0 0 0 4 14.556C4 18.728 7.582 21 12 21s8-2.272 8-6.444a11.702 11.702 0 0 0-.493-3.309\"/><path d=\"M8 14v.5\"/><path d=\"M8.5 8.5c-.384 1.05-1.083 2.028-2.344 2.5-1.931.722-3.576-.297-3.656-1-.113-.994 1.177-6.53 4-7 1.923-.321 3.651.845 3.651 2.235A7.497 7.497 0 0 1 14 5.277c0-1.39 1.844-2.598 3.767-2.277 2.823.47 4.113 6.006 4 7-.08.703-1.725 1.722-3.656 1-1.261-.472-1.855-1.45-2.239-2.5\"/>","home":"<path d=\"M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8\"/><path d=\"M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z\"/>","chevrons-left":"<path d=\"m11 17-5-5 5-5\"/><path d=\"m18 17-5-5 5-5\"/>","chevrons-right":"<path d=\"m6 17 5-5-5-5\"/><path d=\"m13 17 5-5-5-5\"/>","chevron-up":"<path d=\"m18 15-6-6-6 6\"/>","chevrons-up-down":"<path d=\"m7 15 5 5 5-5\"/><path d=\"m7 9 5-5 5 5\"/>","trending-up":"<path d=\"M16 7h6v6\"/><path d=\"m22 7-8.5 8.5-5-5L2 17\"/>","trending-down":"<path d=\"M16 17h6v-6\"/><path d=\"m22 17-8.5-8.5-5 5L2 7\"/>","list-filter":"<path d=\"M2 5h20\"/><path d=\"M6 12h12\"/><path d=\"M9 19h6\"/>","calendar-days":"<path d=\"M8 2v3\"/><path d=\"M16 2v3\"/><rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"2\"/><path d=\"M3 9h18\"/><path d=\"M8 13h.01\"/><path d=\"M12 13h.01\"/><path d=\"M16 13h.01\"/><path d=\"M8 17h.01\"/><path d=\"M12 17h.01\"/><path d=\"M16 17h.01\"/>","battery-full":"<path d=\"M10 10v4\"/><path d=\"M14 10v4\"/><path d=\"M22 14v-4\"/><path d=\"M6 10v4\"/><rect x=\"2\" y=\"6\" width=\"16\" height=\"12\" rx=\"2\"/>","flame":"<path d=\"M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4\"/>","timer":"<line x1=\"10\" x2=\"14\" y1=\"2\" y2=\"2\"/><line x1=\"12\" x2=\"15\" y1=\"14\" y2=\"11\"/><circle cx=\"12\" cy=\"14\" r=\"8\"/>"};
 
@@ -2128,12 +2133,29 @@ function normalize(raw) {
   });
   return out;
 }
+/* ---------- JSON interchange — the same rules as the iOS app ----------
+   Export writes "app": "nado"; import accepts "nado" and the legacy ids "dayone" and "kun" (files written before the app
+   was renamed Kun → DayOne → Nado), all version 1. The iOS app's iCloud Drive file is nado-sync.json; the legacy names
+   dayone-sync.json and kun-sync.json are accepted too. */
+const APP_ID = 'nado';
+const APP_IDS_LEGACY = ['dayone', 'kun']; // read-only ids of earlier names
+const APP_IDS_ACCEPTED = [APP_ID, ...APP_IDS_LEGACY];
+const SYNC_FILE = 'nado-sync.json';
+const SYNC_FILES_LEGACY = { dayone: 'dayone-sync.json', kun: 'kun-sync.json' }; // by app id, in priority order
+const exportFileName = (d = new Date()) => `nado-export-${dayKey(d)}.json`;
+const appIdOf = (obj) => (isObj(obj) && typeof obj.app === 'string' ? obj.app.trim().toLowerCase() : '');
+/* the sync file named in the import confirmation: the picked file's own name, else by the app id inside (pasted text) */
+function syncFileLabel(obj, fileName) {
+  const f = typeof fileName === 'string' ? fileName.trim() : '';
+  if (f) return f.length > 80 ? f.slice(0, 79) + '…' : f;
+  return SYNC_FILES_LEGACY[appIdOf(obj)] || SYNC_FILE;
+}
 function exportObject(d) {
-  return { app: 'kun', version: 1, exportedAt: isoLocal(new Date()), settings: d.settings, accounts: d.accounts, categories: d.categories, transactions: d.transactions, debts: d.debts, tasks: d.tasks, shopping: d.shopping, carLogs: d.carLogs, health: d.health };
+  return { app: APP_ID, version: 1, exportedAt: isoLocal(new Date()), settings: d.settings, accounts: d.accounts, categories: d.categories, transactions: d.transactions, debts: d.debts, tasks: d.tasks, shopping: d.shopping, carLogs: d.carLogs, health: d.health };
 }
 function validateImport(obj) {
   if (!isObj(obj)) return 'Это не JSON-объект.';
-  if (obj.app !== 'kun') return 'Файл не из Kun: поле «app» должно быть «kun».';
+  if (!APP_IDS_ACCEPTED.includes(appIdOf(obj))) return 'Файл не из Nado: поле «app» должно быть «nado».';
   if (Number(obj.version) !== 1) return `Неподдерживаемая версия формата: ${esc(obj.version)}. Ожидается 1.`;
   return null;
 }
@@ -2517,6 +2539,9 @@ const S = {
     walletSel: null, walletFlip: false, donutSel: '', ringSel: '', wxScrub: null, chargeFx: 0, lastTab: 'home',
   },
 };
+/* storage ids: «kun.*» are internal ids kept from the app's first name (Kun → DayOne → Nado; the DayOne build used the same
+   keys) — every existing browser keeps its data and weather cache under them, so they are never renamed (nothing
+   user-visible). The claude.ai db documents are keyed by collection name only (settings, accounts, …) — no migration. */
 const LS_KEY = 'kun.v1';
 const LS_WX = 'kun.weather.v1';
 
@@ -2525,7 +2550,7 @@ const _mem = new Map();
 let _lsOk = null;
 function lsAvailable() {
   if (_lsOk != null) return _lsOk;
-  try { const k = '__kun_probe__'; window.localStorage.setItem(k, '1'); window.localStorage.removeItem(k); _lsOk = true; } catch (e) { _lsOk = false; }
+  try { const k = '__nado_probe__'; window.localStorage.setItem(k, '1'); window.localStorage.removeItem(k); _lsOk = true; } catch (e) { _lsOk = false; }
   return _lsOk;
 }
 const kv = {
@@ -2791,6 +2816,9 @@ async function geocode(q) {
 /* ================= UI core: render loop, router, sidebar, search, sheets, toasts, menus ================= */
 const ROUTES = ['home', 'tasks', 'shopping', 'finance', 'debts', 'car', 'health', 'settings'];
 const TITLES = { home: 'Главная', tasks: 'Задачи', shopping: 'Покупки', finance: 'Финансы', debts: 'Долги', car: 'Авто', health: 'Здоровье', settings: 'Настройки' };
+const APP_NAME = 'Nado';
+const pageTitle = (route) => `${TITLES[route]} · ${APP_NAME}`; // «Главная · Nado»
+const nwFile = (f) => `<span class="nw">${esc(f)}</span>`; // a file name never breaks at its hyphen («kun-» / «sync.json»)
 const NAV_ICON = { home: 'house', tasks: 'list-checks', shopping: 'shopping-cart', finance: 'wallet', debts: 'hand-coins', car: 'car-front', health: 'heart-pulse', settings: 'settings', '@export': 'download' };
 const NAV_GROUPS = [['menu', 'Меню', ['home', 'tasks', 'shopping', 'finance', 'debts']], ['life', 'Жизнь', ['car', 'health']], ['tools', 'Инструменты', ['settings', '@export']]];
 const VIEWS = {};
@@ -2798,7 +2826,7 @@ const ACT = {}, IN = {}, CH = {}, SUBMIT = {}, KEY = {};
 let viewEl = null, curRoute = null, navTok = 0, renderQueued = false;
 
 /* ---------- UI preferences (interface only — never part of the data / JSON export) ---------- */
-const LS_UI = 'kun.ui.v1';
+const LS_UI = 'kun.ui.v1'; // internal id kept from the app's first name (Kun → DayOne → Nado): renaming it would drop the user's preferences
 /* v4: «Стекло» became Прозрачное (0) ↔ Матовое (50, default) ↔ Плотное (100); a v3 value (default 35) is mapped
    piecewise so the user's relative choice survives. bk / bkSet remember the last palette for the first paint. */
 const PREFS = (() => {
@@ -2844,7 +2872,11 @@ function renderNow() {
 }
 
 /* ---------- sidebar ---------- */
-const LOGO_TILE = '<span class="logo-tile" aria-hidden="true">k</span>';
+/* brand mark: the bold «N» of Nado (Inter Bold outline incl. its slanted inner stem edges, centred in a 64-unit tile,
+   31 units tall) on the lime tile. The same path is the favicon in shell.html — keep both in sync. */
+const LOGO_N = 'M18.59 16.5H25.63L39.31 39.3L38.94 32V16.5H45.41V47.5H38.32L24.64 24.38L25.06 32V47.5H18.59Z';
+const logoTile = (cls = '') => `<span class="logo-tile${cls ? ' ' + cls : ''}" aria-hidden="true"><svg class="logo-n" viewBox="0 0 64 64" focusable="false"><path d="${LOGO_N}"/></svg></span>`;
+const LOGO_TILE = logoTile();
 function navCount(r) {
   if (!S.data) return '';
   if (r === 'tasks') { const n = todayProgress().open; return n ? String(n) : ''; }
@@ -2860,7 +2892,7 @@ function navLink(r, rail) {
 }
 function sidebarHTML() {
   const rail = isRail(); const q = S.ui.q || '';
-  const head = `<div class="sb-head"><a class="logo" href="#home" aria-label="Kun — главная" data-tip="Kun">${LOGO_TILE}<span class="logo-name">Kun</span></a></div>`;
+  const head = `<div class="sb-head"><a class="logo" href="#home" aria-label="${APP_NAME} — главная" data-tip="${APP_NAME}">${LOGO_TILE}<span class="logo-name">${APP_NAME}</span></a></div>`;
   if (!S.data) return `<div class="sb-in">${head}</div>`;
   const search = rail
     ? `<div class="sb-search"><button class="sb-sf sb-sbtn" data-act="search-open" data-tip="Поиск" aria-label="Поиск">${ic('search')}</button></div>`
@@ -2933,12 +2965,12 @@ ACT['search-open'] = () => {
 function topbarHTML() {
   const has = !!S.data && !!curRoute;
   const name = S.data ? S.data.settings.userName : '';
-  const ini = (name || 'K').trim().charAt(0).toUpperCase() || 'K';
+  const ini = (name || 'N').trim().charAt(0).toUpperCase() || 'N';
   const dot = !S.data ? '' : S.mode === 'memory' ? 'mem' : S.sync === 'pending' ? 'pending' : S.sync === 'err' ? 'err' : '';
   const dotTitle = { mem: 'Данные не сохраняются', pending: 'Сохранение…', err: 'Ошибка сохранения', '': S.mode === 'claude' ? 'Сохранено в аккаунте' : 'Сохранено в браузере' }[dot];
   const sub = has && VIEWS[curRoute] && VIEWS[curRoute].sub ? VIEWS[curRoute].sub() : '';
-  return `<a class="logo tb-logo" href="#home" aria-label="Kun — главная">${LOGO_TILE}</a>
-<div class="tb-l"><h1 class="tb-title">${esc(has ? TITLES[curRoute] : 'Kun')}</h1>${sub ? `<span class="tb-sep" aria-hidden="true"></span><span class="tb-sub">${sub}</span>` : ''}</div>
+  return `<a class="logo tb-logo" href="#home" aria-label="${APP_NAME} — главная">${LOGO_TILE}</a>
+<div class="tb-l"><h1 class="tb-title">${esc(has ? TITLES[curRoute] : APP_NAME)}</h1>${sub ? `<span class="tb-sep" aria-hidden="true"></span><span class="tb-sub">${sub}</span>` : ''}</div>
 <div class="tb-r">${S.data ? `<button class="ibtn tb-search" data-act="search-open" aria-label="Поиск" title="Поиск  /">${ic('search')}</button><button class="ibtn tb-add" data-act="quick-add" aria-label="Быстро добавить" title="Быстро добавить">${ic('plus')}</button>` : ''}<a class="avatar" href="#settings" aria-label="Профиль: ${esc(name)} — ${esc(dotTitle || '')}" title="${esc(dotTitle || '')}">${esc(ini)}${S.data ? `<span class="sync-dot ${dot}"></span>` : ''}</a></div>`;
 }
 function tabbarHTML() {
@@ -3048,7 +3080,7 @@ function go(route) {
     // same view family: keep the view, morph the body — the segmented lens slides between «Обзор / … / Долги»
     curRoute = route; viewEl._route = route; navTok++;
     closePop(); hideTip(); for (const k in S.ui.txSel) S.ui.txSel[k].clear();
-    D.title = `${TITLES[route]} · Kun`;
+    D.title = pageTitle(route);
     renderNow();
     return;
   }
@@ -3058,7 +3090,7 @@ function go(route) {
   const tok = ++navTok;
   closePop(); hideTip();
   for (const k in S.ui.txSel) S.ui.txSel[k].clear();
-  D.title = route === 'home' ? 'Kun' : `${TITLES[route]} · Kun`;
+  D.title = pageTitle(route);
   renderNow(); // sidebar pill slides immediately
   const swap = () => {
     if (tok !== navTok) return;
@@ -4112,14 +4144,15 @@ D.addEventListener('visibilitychange', () => { D.documentElement.classList.toggl
 // ---- 07c-integrations.js
 /* ================= v5 · iOS integrations — the web side is compatibility + display only =================
    The iOS app talks to iCloud, Apple Health, Calendar and Reminders; their results reach the web through the JSON
-   export/import (or the iCloud Drive file kun-sync.json). Shown here: the «Apple Здоровье» source badge, the extra
+   export/import (or the iCloud Drive file nado-sync.json; legacy dayone-sync.json / kun-sync.json). Shown here: the
+   «Apple Здоровье» source badge, the extra
    Health metrics (distance, active energy, exercise, HRV, sleep stages) and the Reminders glyph. Nothing is written back. */
 
 /* filled heart in the Health pink (gradient #ahHeart in GLOBAL_DEFS) */
 const AH_HEART = '<svg class="ah-heart" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.7 4.8 13.8C3.3 12.3 2 10.7 2 8.6 2 5.5 4.4 3.1 7.4 3.1c1.8 0 3.5.9 4.6 2.3 1.1-1.4 2.8-2.3 4.6-2.3 3 0 5.4 2.4 5.4 5.5 0 2.1-1.3 3.7-2.8 5.2Z"/></svg>';
 /* Reminders: three coloured list bullets with lines, as on the iPhone app */
 const REM_SVG = '<svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="3.2" cy="3.6" r="1.9" fill="#0A84FF"/><circle cx="3.2" cy="8" r="1.9" fill="#FF453A"/><circle cx="3.2" cy="12.4" r="1.9" fill="#FF9F0A"/><path d="M7.3 3.6h6.5M7.3 8h6.5M7.3 12.4h6.5"/></svg>';
-const AH_TITLE = 'Данные из Apple Здоровье — переданы iOS-приложением Kun';
+const AH_TITLE = 'Данные из Apple Здоровье — переданы iOS-приложением Nado';
 function ahBadge(cls = '') { return `<span class="ah-badge ${cls}" title="${AH_TITLE}">${AH_HEART}<span>Apple Здоровье</span></span>`; }
 
 /* extra metrics: key, short label, full name (tooltip), icon, unit, decimals, tint (icon + sparkline) */
@@ -4195,15 +4228,15 @@ ${stageBar(st)}${stageLegend(st)}</section>`;
 
 /* Настройки › «Интеграции»: what lives in the iOS app and how its data gets here */
 function integrationsCard(d) {
-  const row = (k, glyph, title, text) => `<div class="int-row" data-k="${k}"><span class="av int-ic">${glyph}</span><span class="int-m"><span class="int-t">${title}</span><span class="hint">${text}</span></span><span class="badge int-st" title="Работает в iOS-приложении Kun">${ic('smartphone')}iOS</span></div>`;
+  const row = (k, glyph, title, text) => `<div class="int-row" data-k="${k}"><span class="av int-ic">${glyph}</span><span class="int-m"><span class="int-t">${title}</span><span class="hint">${text}</span></span><span class="badge int-st" title="Работает в iOS-приложении Nado">${ic('smartphone')}iOS</span></div>`;
   return `<section class="card set-sec c-int" style="--d:${d}" aria-label="Интеграции"><h3>Интеграции</h3>
-<p class="int-lead">iCloud, Apple${NB}Здоровье, Календарь и Напоминания работают в <span class="nw">iOS-приложении</span> Kun.</p>
-<div class="int-list">${row('icloud', ic('cloud'), 'iCloud', `Синхронизация данных Kun через файл kun-sync.json в iCloud${NB}Drive`)}
+<p class="int-lead">iCloud, Apple${NB}Здоровье, Календарь и Напоминания работают в <span class="nw">iOS-приложении</span> Nado.</p>
+<div class="int-list">${row('icloud', ic('cloud'), 'iCloud', `Синхронизация данных Nado через файл ${nwFile(SYNC_FILE)} в iCloud${NB}Drive`)}
 ${row('health', AH_HEART, 'Apple Здоровье', `Шаги, дистанция, энергия, упражнения, пульс, ВСР и фазы сна — здесь с бейджем «Apple${NB}Здоровье»`)}
 ${row('calendar', ic('calendar'), 'Календарь', 'События дня — на главной <span class="nw">iOS-приложения</span>; задачи со сроком и временем можно добавить в Календарь')}
 ${row('reminders', `<span class="rem-g lg">${REM_SVG}</span>`, 'Напоминания', 'Задачи и покупки ↔ Напоминания на iPhone; такие пункты здесь отмечены значком')}</div>
-<div class="int-note">${ic('info')}<div><p>Данные попадают сюда через <span class="nw">экспорт/импорт</span> JSON. На Mac можно импортировать файл kun-sync.json из папки iCloud${NB}Drive, которую выбрали в <span class="nw">iOS-приложении</span>.</p><p>Веб-синхронизация через iCloud — следующий шаг.</p></div></div>
-<div class="row-flex"><button class="btn sm" data-act="import">${ic('upload')}Импорт JSON</button><span class="hint">файл экспорта или kun-sync.json</span></div></section>`;
+<div class="int-note">${ic('info')}<div><p>Данные попадают сюда через <span class="nw">экспорт/импорт</span> JSON. На Mac можно импортировать файл ${nwFile(SYNC_FILE)} (или прежние ${nwFile(SYNC_FILES_LEGACY.dayone)} и ${nwFile(SYNC_FILES_LEGACY.kun)}) из папки iCloud${NB}Drive, выбранной в <span class="nw">iOS-приложении</span>.</p><p>Веб-синхронизация через iCloud — следующий шаг.</p></div></div>
+<div class="row-flex"><button class="btn sm" data-act="import">${ic('upload')}Импорт JSON</button><span class="hint">файл экспорта или ${nwFile(SYNC_FILE)}</span></div></section>`;
 }
 
 // ---- 08-view-home.js
@@ -5246,7 +5279,7 @@ ${kpiCard({ k: 'given', label: `Мне должны · ${g.n} ${plural(g.n, 'ч�
 ${kpiCard({ k: 'taken', label: `Я должен · ${t.n} ${plural(t.n, 'человеку', 'людям', 'людям')}`, value: moneyHTML(t.uzs, 'UZS', { cu: true }), foot: nearDue('taken'), icon: 'arrow-up-right', d: 2, cls: sp + (seg === 'taken' ? ' on' : ''), attrs: 'data-act="debt-seg" data-v="taken"' , orb: dueOrb('taken') })}
 <section class="card tcard span-12" style="--d:3"><div class="ttools">${segHTML([['given', 'Мне должны'], ['taken', 'Я должен']], seg, 'debt-seg')}<span class="spacer"></span><span class="small muted">итоги — в сумах по текущему курсу</span></div>
 <div class="thead debt-head" aria-hidden="true"><span>Кто</span><span>Остаток</span><span>Возвращено</span><span>Срок</span><span>Статус</span><span></span></div>
-<div class="tbody debt-list" data-flip>${list.length ? list.map(debtCard).join('') : `<div class="t-empty" data-key="empty">${emptyState('hand-coins', q ? 'Ничего не найдено' : seg === 'given' ? 'Вам никто не должен' : 'Вы никому не должны', q ? 'Измените запрос.' : seg === 'given' ? 'Запишите, кому одолжили деньги, — Kun напомнит о сроке.' : 'Если возьмёте в долг, запишите здесь, чтобы не забыть вернуть.', q ? '' : `<button class="btn sm primary" data-act="debt-new">${ic('plus')}Новый долг</button>`)}</div>`}</div></section>
+<div class="tbody debt-list" data-flip>${list.length ? list.map(debtCard).join('') : `<div class="t-empty" data-key="empty">${emptyState('hand-coins', q ? 'Ничего не найдено' : seg === 'given' ? 'Вам никто не должен' : 'Вы никому не должны', q ? 'Измените запрос.' : seg === 'given' ? 'Запишите, кому одолжили деньги, — Nado напомнит о сроке.' : 'Если возьмёте в долг, запишите здесь, чтобы не забыть вернуть.', q ? '' : `<button class="btn sm primary" data-act="debt-new">${ic('plus')}Новый долг</button>`)}</div>`}</div></section>
 </div>`;
   },
 };
@@ -5678,7 +5711,7 @@ function storageLabel() {
   return { claude: ['Аккаунт Claude', 'данные хранятся в приватном хранилище вашего аккаунта'], local: ['Браузер (localStorage)', 'данные хранятся в этом браузере на этом устройстве'], memory: ['Только память', 'хранилище недоступно — после перезагрузки данные пропадут'] }[S.mode] || ['—', ''];
 }
 VIEWS.settings = {
-  sub: () => `Kun ${APP_VERSION}${dotSep}${esc(storageLabel()[0])}`,
+  sub: () => `${APP_NAME} ${APP_VERSION}${dotSep}${esc(storageLabel()[0])}`,
   render() {
     const s = S.data.settings; const r = s.rates; const car = s.car; const g = s.goals; const geo = S.ui.geo;
     const [stT, stS] = storageLabel();
@@ -5718,13 +5751,13 @@ ${bkPickHTML()}
 <div class="hint">Пример: 72% → ${fmtNum(0.72 * car.usableKWh, 1)} кВт·ч → ≈ ${fmtNum(Math.floor((0.72 * car.usableKWh) / car.consumptionKWhPer100 * 100 + 1e-9))} км реально, ${fmtNum(Math.floor(0.72 * car.cltcRangeKm + 1e-9))} км CLTC.</div></section>
 <section class="card set-sec" style="--d:7"><h3>Данные</h3>
 <div class="set-row"><span><div>Хранилище</div><div class="hint">${esc(stT)} — ${esc(stS)}</div></span><span class="badge ${S.mode === 'memory' ? 'warn' : S.sync === 'err' ? 'neg' : 'pos'}">${S.mode === 'memory' ? 'не сохраняется' : S.sync === 'pending' ? 'сохранение…' : S.sync === 'err' ? 'ошибка' : 'сохранено'}</span></div>
-<div class="set-row"><span><div>Экспорт данных (JSON)</div><div class="hint">Формат совместим с iOS-версией Kun</div></span><button class="btn sm" data-act="export">${ic('download')}Экспорт</button></div>
+<div class="set-row"><span><div>Экспорт данных (JSON)</div><div class="hint">Формат совместим с iOS-версией Nado</div></span><button class="btn sm" data-act="export">${ic('download')}Экспорт</button></div>
 <div class="set-row"><span><div>Импорт данных (JSON)</div><div class="hint">Файл или вставка текста; текущие данные будут заменены</div></span><button class="btn sm" data-act="import">${ic('upload')}Импорт</button></div>
 <div class="set-row"><span><div>Загрузить демо-данные</div><div class="hint">Реалистичные данные за последние 45 дней</div></span><button class="btn sm" data-act="demo">${ic('sparkles')}Демо</button></div>
 <div class="set-row"><span><div>Сбросить всё</div><div class="hint">Удалить все данные и начать заново</div></span><button class="btn sm danger" data-act="reset">${ic('trash-2')}Сбросить</button></div></section>
 ${integrationsCard(8)}
 <section class="card set-sec" style="--d:9"><h3>О приложении</h3>
-<div class="set-row"><span>Версия</span><span class="faint">Kun ${APP_VERSION} · web</span></div>
+<div class="set-row"><span>Версия</span><span class="faint">${APP_NAME} ${APP_VERSION} · web</span></div>
 <div class="set-row"><span>Дизайн</span><span class="faint">v4 · матовое стекло</span></div>
 <div class="set-row"><span>Шрифт</span><span class="faint">Inter</span></div>
 <div class="set-row"><span>Погода</span><span class="faint">Open-Meteo</span></div>
@@ -5775,12 +5808,12 @@ ACT.export = () => {
   const inClaude = typeof window.claude === 'object' && window.claude !== null && typeof window.claude.use === 'function';
   let url = null;
   if (!inClaude) { try { url = URL.createObjectURL(new Blob([json], { type: 'application/json' })); } catch (e) { url = null; } }
-  const fname = `kun-export-${dayKey(new Date())}.json`;
+  const fname = exportFileName();
   const saveBtn = inClaude ? `<button class="btn" data-act="exp-save">${ic('download')}Скачать файл</button>` : '';
   openSheet({
     cls: 'wide', label: 'Экспорт данных', state: { copied: '' },
     render: (sh) => `${sheetHead('Экспорт данных')}<div class="sheet-body"><div class="fields">
-<p class="dlg-text" style="margin:0">JSON в формате Kun v1 — его понимает и iOS-версия. ${(json.length / 1024).toFixed(1).replace('.', ',')} КБ.</p>
+<p class="dlg-text" style="margin:0">JSON в формате Nado v1 — его понимает и iOS-версия. ${(json.length / 1024).toFixed(1).replace('.', ',')} КБ.</p>
 <textarea class="inp code" readonly data-static rows="14" aria-label="JSON экспорта" id="exp-json">${esc(json)}</textarea>
 ${sh.st.copied === 'ok' ? '<span class="hint pos">Скопировано в буфер обмена</span>' : sh.st.copied === 'sel' ? '<span class="hint warn">Буфер обмена недоступен — текст выделен, нажмите Ctrl/⌘+C</span>' : ''}
 </div></div><div class="sheet-foot">${url ? `<a class="btn" href="${url}" download="${fname}" data-noact="1">${ic('download')}Скачать файл</a>` : saveBtn}<button class="btn primary" data-act="exp-copy">${ic('copy')}Скопировать</button></div>`,
@@ -5814,9 +5847,9 @@ ACT.import = () => {
   openSheet({
     cls: 'wide', label: 'Импорт данных', state: { text: '', err: '', fileName: '' },
     render: (sh) => `${sheetHead('Импорт данных')}<div class="sheet-body"><div class="fields">
-<p class="dlg-text" style="margin:0">Выберите файл экспорта Kun (из веб- или iOS-версии), файл kun-sync.json из папки iCloud Drive или вставьте JSON. Перед заменой данных будет подтверждение.</p>
+<p class="dlg-text" style="margin:0">Выберите файл экспорта Nado (из веб- или iOS-версии, подходят и файлы прежних версий), файл ${nwFile(SYNC_FILE)} (или прежние ${nwFile(SYNC_FILES_LEGACY.dayone)} и ${nwFile(SYNC_FILES_LEGACY.kun)}) из папки iCloud Drive или вставьте JSON. Перед заменой данных будет подтверждение.</p>
 <label class="btn" style="align-self:flex-start;cursor:pointer">${ic('file-json')}${sh.st.fileName ? esc(sh.st.fileName) : 'Выбрать файл…'}<input type="file" accept="application/json,.json,text/plain" data-ch="imp-file" class="sr"></label>
-<textarea class="inp code" rows="10" data-bind="text" placeholder='{"app": "kun", "version": 1, …}' aria-label="JSON для импорта">${esc(sh.st.text)}</textarea>
+<textarea class="inp code" rows="10" data-bind="text" placeholder='{"app": "nado", "version": 1, …}' aria-label="JSON для импорта">${esc(sh.st.text)}</textarea>
 ${sh.st.err ? `<span class="err-text">${sh.st.err}</span>` : ''}
 </div></div><div class="sheet-foot"><button class="btn primary" data-act="imp-go" ${sh.st.text.trim() ? '' : 'disabled'}>${ic('upload')}Проверить и импортировать</button></div>`,
     onInput: (sh) => { sh.st.err = ''; },
@@ -5835,10 +5868,10 @@ async function doImport(sh) {
   try { obj = JSON.parse(sh.st.text.replace(/^﻿/, '')); } catch (e) { sh.st.err = 'Это не корректный JSON: ' + esc(e.message); sh.update(); return; }
   const err = validateImport(obj);
   if (err) { sh.st.err = err; sh.update(); return; }
-  const nd = normalize(obj); // only the known collections are read: a kun-sync.json's top-level «sync» block is ignored
+  const nd = normalize(obj); // only the known collections are read: a sync file's top-level «sync» block is ignored
   const cnt = (k, a, b, c) => `${nd[k].length} ${plural(nd[k].length, a, b, c)}`;
   const dev = isObj(obj.sync) && typeof obj.sync.device === 'string' ? obj.sync.device.trim().slice(0, 60) : '';
-  const syncNote = 'sync' in obj ? `Это файл синхронизации iOS-приложения (kun-sync.json${dev ? ', ' + esc(dev) : ''}): берутся только данные, служебный раздел «sync» не переносится.<br><br>` : '';
+  const syncNote = 'sync' in obj ? `Это файл синхронизации iOS-приложения (${nwFile(syncFileLabel(obj, sh.st.fileName))}${dev ? ', ' + esc(dev) : ''}): берутся только данные, служебный раздел «sync» не переносится.<br><br>` : '';
   const ok = await confirmDialog({ title: 'Заменить все данные?', text: `${syncNote}Будет импортировано: ${cnt('accounts', 'счёт', 'счёта', 'счетов')}, ${cnt('transactions', 'операция', 'операции', 'операций')}, ${cnt('debts', 'долг', 'долга', 'долгов')}, ${cnt('tasks', 'задача', 'задачи', 'задач')}, ${cnt('shopping', 'покупка', 'покупки', 'покупок')}, ${cnt('carLogs', 'запись авто', 'записи авто', 'записей авто')}, ${cnt('health', 'день здоровья', 'дня здоровья', 'дней здоровья')}.<br><br>Текущие данные будут удалены.`, ok: 'Заменить' });
   if (!ok) return;
   replaceAll(nd);
@@ -5868,14 +5901,14 @@ ACT.reset = async () => {
 
 /* ---------- onboarding ---------- */
 function showOnboarding() {
-  D.title = 'Добро пожаловать · Kun';
+  D.title = `Добро пожаловать · ${APP_NAME}`;
   $('#main').innerHTML = '';
   openSheet({
-    cls: 'sm', label: 'Добро пожаловать в Kun', dismissible: false, state: { name: 'Джамшид' },
+    cls: 'sm', label: `Добро пожаловать в ${APP_NAME}`, dismissible: false, state: { name: 'Джамшид' },
     render: (sh) => `<div class="sheet-body"><div class="onb">
-<div class="onb-mark" aria-hidden="true"><span class="logo-tile xl">k</span></div>
-<h2>Добро пожаловать в&nbsp;Kun</h2>
-<p>Kun — «день» по-узбекски. Задачи, покупки, деньги, долги, авто и здоровье — на одной спокойной панели.</p>
+<div class="onb-mark" aria-hidden="true">${logoTile('xl')}</div>
+<h2>Добро пожаловать в&nbsp;Nado</h2>
+<p>Всё, что надо, — на одном экране: задачи, покупки, деньги, долги, машина и здоровье.</p>
 <div class="field" style="text-align:left"><label for="onb-name">Как вас зовут?</label><input id="onb-name" class="inp" data-bind="name" value="${esc(sh.st.name)}" maxlength="40" autocomplete="given-name" autofocus></div>
 <div class="btns"><button class="btn primary block" data-act="onb-demo">${ic('sparkles')}Начать с демо-данными</button><button class="btn block" data-act="onb-clean">Начать с чистого листа</button></div>
 <p class="hint" style="margin:14px 0 0">${S.mode === 'claude' ? 'Данные сохраняются в вашем аккаунте Claude.' : S.mode === 'local' ? 'Данные сохраняются в этом браузере.' : 'Хранилище недоступно — данные не сохранятся после перезагрузки.'}</p>
